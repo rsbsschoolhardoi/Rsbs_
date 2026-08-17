@@ -1,0 +1,1 @@
+alter table public.saved_accounts add column otp_verified boolean not null default false;

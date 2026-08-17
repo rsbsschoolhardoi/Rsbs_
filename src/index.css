@@ -1,0 +1,403 @@
+/* stylelint-disable */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here.
+All colors MUST be HSL.
+*/
+
+/* Professional school theme — Ivy League academy palette */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    /* Professional School — Ivy League academy palette */
+    --background: 220 20% 98%;
+    --foreground: 218 47% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 218 47% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 218 47% 10%;
+
+    --primary: 210 52% 24%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 45% 34%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 218 24% 95%;
+    --muted-foreground: 215 20% 40%;
+
+    --accent: 45 75% 47%;
+    --accent-foreground: 218 47% 10%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 20% 86%;
+    --input: 214 20% 86%;
+    --ring: 210 52% 24%;
+
+    --success: 160 84% 39%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --info: 212 95% 68%;
+    --info-foreground: 218 47% 10%;
+
+    --shadow-card: 0 4px 20px hsl(var(--primary) / 0.04);
+    --shadow-hover: 0 8px 24px hsl(var(--primary) / 0.06);
+
+    --radius: 0.5rem;
+
+    /* Chart colors */
+    --chart-1: 210 52% 24%;
+    --chart-2: 45 75% 47%;
+    --chart-3: 210 45% 34%;
+    --chart-4: 218 24% 95%;
+    --chart-5: 218 47% 10%;
+
+    /* Sidebar */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 218 47% 10%;
+    --sidebar-primary: 210 52% 24%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 218 24% 95%;
+    --sidebar-accent-foreground: 210 52% 24%;
+    --sidebar-border: 214 20% 86%;
+    --sidebar-ring: 210 52% 24%;
+  }
+
+  .dark {
+    --background: 217 33% 6%;
+    --foreground: 220 20% 93%;
+
+    --card: 215 26% 10%;
+    --card-foreground: 220 20% 93%;
+
+    --popover: 215 26% 10%;
+    --popover-foreground: 220 20% 93%;
+
+    --primary: 213 38% 47%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 213 40% 39%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 215 25% 12%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 45 70% 52%;
+    --accent-foreground: 217 33% 6%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 22% 21%;
+    --input: 215 22% 21%;
+    --ring: 213 38% 47%;
+
+    --success: 160 60% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 80% 55%;
+    --warning-foreground: 0 0% 100%;
+    --info: 212 80% 60%;
+    --info-foreground: 222 47% 11%;
+
+    --shadow-card: 0 4px 20px hsl(var(--primary) / 0.08);
+    --shadow-hover: 0 8px 24px hsl(var(--primary) / 0.12);
+
+    --sidebar-background: 215 26% 8%;
+    --sidebar-foreground: 220 20% 93%;
+    --sidebar-primary: 213 38% 47%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 215 25% 12%;
+    --sidebar-accent-foreground: 220 20% 93%;
+    --sidebar-border: 215 22% 21%;
+    --sidebar-ring: 213 38% 47%;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   Mobile-first global scaling
+   Base values are tuned for premium native app feel on phones; desktop values
+   are restored at the md breakpoint (768px) to avoid breaking the existing
+   desktop experience.
+   ═══════════════════════════════════════════════════════════════════════════════ */
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+
+  :root {
+    --radius: 0.75rem;
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --radius: 0.5rem;
+  }
+
+  /* Compact typography hierarchy */
+  h1 { @apply text-2xl font-bold tracking-tight; }
+  h2 { @apply text-xl font-semibold tracking-tight; }
+  h3 { @apply text-lg font-semibold; }
+  h4 { @apply text-base font-semibold; }
+  p, span, li, td, th, label, input, textarea, select { @apply text-sm; }
+
+  /* CardTitle / DialogTitle come as text-2xl by default; shrink on phones */
+  .mobile-page-root [class*="text-2xl font-semibold"] {
+    @apply text-base;
+  }
+
+  /* Tighter spacing on common mobile shells */
+  .mobile-page-root [class*="rounded-lg border bg-card"] {
+    @apply p-3;
+  }
+
+  .mobile-page-root [class*="flex flex-col space-y-1.5 p-6"] {
+    @apply p-3;
+  }
+
+  .mobile-page-root [class*="p-6 pt-0"] {
+    @apply p-0 pt-0;
+  }
+
+  /* Compact shadcn CardHeader / CardContent / CardFooter spacing */
+  .mobile-page-root [class*="space-y-1.5 p-6"],
+  .mobile-page-root [class*="p-6 pt-0"],
+  .mobile-page-root [class*="flex items-center p-6"] {
+    padding: 0.75rem;
+  }
+
+  /* Compact buttons */
+  .mobile-page-root [class*="h-10 px-4 py-2"],
+  .mobile-page-root [class*="h-11 px-4 py-2"],
+  .mobile-page-root [class*="h-9 px-4 py-2"] {
+    @apply h-8 px-3 text-xs;
+  }
+
+  /* Compact inputs */
+  .mobile-page-root [class*="h-10"] {
+    @apply h-9;
+  }
+
+  .mobile-page-root [class*="h-11"] {
+    @apply h-10;
+  }
+
+  /* Compact tables */
+  .mobile-page-root table,
+  .mobile-page-root [class*="table"] {
+    @apply text-xs;
+  }
+
+  .mobile-page-root th,
+  .mobile-page-root td {
+    @apply py-2 px-2 whitespace-nowrap;
+  }
+
+  /* Compact badges */
+  .mobile-page-root [class*="badge"] {
+    @apply text-[10px] px-1.5 py-0;
+  }
+
+  /* Compact list / menu items */
+  .mobile-page-root [class*="rounded-xl p-3"],
+  .mobile-page-root [class*="px-3 py-3"] {
+    @apply p-2.5;
+  }
+
+  /* Reduce oversized stat numbers */
+  .mobile-page-root [class*="text-4xl"],
+  .mobile-page-root [class*="text-5xl"],
+  .mobile-page-root [class*="text-3xl"] {
+    @apply text-2xl;
+  }
+
+  /* Smaller avatars in mobile contexts */
+  .mobile-page-root [class*="h-12 w-12"] {
+    @apply h-10 w-10;
+  }
+
+  .mobile-page-root [class*="h-10 w-10"] {
+    @apply h-8 w-8;
+  }
+
+  .mobile-page-root [class*="h-8 w-8"] {
+    @apply h-7 w-7;
+  }
+
+  /* Code blocks */
+  .mobile-page-root .code-block {
+    border-radius: 0.75rem;
+  }
+
+  .mobile-page-root .code-block-pre {
+    font-size: 0.75rem !important;
+    padding: 0.5rem !important;
+  }
+}
+
+/* Mobile-first dialogs / popovers rendered in portals */
+@media (max-width: 767px) {
+  [data-radix-dialog-content] {
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    max-width: calc(100% - 1rem);
+  }
+
+  [data-radix-dialog-content] h2,
+  [data-radix-dialog-content] [class*="text-2xl"] {
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  [data-radix-popover-content] {
+    max-width: calc(100vw - 2rem);
+  }
+}
+
+/* Safe-area padding for fixed bottom nav / input bars */
+.safe-area-inset-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.pb-safe-bottom {
+  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+}
+
+/* Native app glow for active bottom nav icons */
+.nav-glow {
+  filter: drop-shadow(0 0 4px hsl(var(--primary) / 0.8)) drop-shadow(0 0 8px hsl(var(--primary) / 0.4));
+}
+
+.nav-glow-dot {
+  box-shadow: 0 0 6px 1.5px hsl(var(--primary) / 0.8);
+}
+
+/* Native app touch feedback */
+button, a, [role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.card-native {
+  @apply transition-transform duration-200 active:scale-[0.99];
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border)) transparent;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Refined Typography Scale */
+  h1 { @apply text-3xl font-bold tracking-tight md:text-4xl; }
+  h2 { @apply text-2xl font-semibold tracking-tight md:text-3xl; }
+  h3 { @apply text-xl font-semibold tracking-tight md:text-2xl; }
+  p { @apply leading-relaxed; }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-background/80 backdrop-blur-md border border-white/20;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  /* Requirement 2: Mobile Touch Optimization */
+  @media (max-width: 768px) {
+    button, a, .clickable {
+      @apply min-h-[44px] min-w-[44px] transition-transform active:scale-95;
+    }
+    
+    input, select, textarea {
+      font-size: 16px !important; /* Prevent iOS zoom */
+    }
+  }
+}
+
+
+/* 
+ * 1. Objective: Permanently hide the "Made with Medo" badge across the entire application.
+ * 2. Implementation: Using CSS display: none and visibility: hidden for visual removal.
+ * 3. Selector: Targeting specific platform badge classes (.medo-badge, .miaoda-badge).
+ * 4. Persistence: Added to global index.css imported at application root.
+ * 5. Fallback: Fixed positioning off-screen and zeroing dimensions.
+ */
+.medo-badge,
+.miaoda-badge,
+#medo-badge,
+#miaoda-badge {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: fixed !important;
+  left: -9999px !important;
+  bottom: -9999px !important;
+  z-index: -9999 !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}

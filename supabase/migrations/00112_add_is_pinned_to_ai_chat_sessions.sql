@@ -1,0 +1,1 @@
+ALTER TABLE ai_chat_sessions ADD COLUMN IF NOT EXISTS is_pinned boolean NOT NULL DEFAULT false;
