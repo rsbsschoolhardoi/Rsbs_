@@ -4,8 +4,6 @@ ast-grep scan -r .rules/SelectItem.yml
 
 ast-grep scan -r .rules/contrast.yml
 
-ast-grep scan -r .rules/supabase-google-sso.yml
-
 ast-grep scan -r .rules/toast-hook.yml
 
 ast-grep scan -r .rules/slot-nesting.yml

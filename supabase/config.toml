@@ -1,3 +1,10 @@
+# RSBS School OAuth redirect configuration.
+# The site_url and additional_redirect_urls must match the production deployment
+# domain (e.g. https://<your-domain>/ and https://<your-domain>/auth/callback).
+# Local development uses http://localhost:5173.
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["http://localhost:5173/auth/callback"]
+
 [auth.email]
 enable_confirmations = false
 

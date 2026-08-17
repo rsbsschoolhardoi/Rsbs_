@@ -638,9 +638,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithGoogle = useCallback(async () => {
     try {
-      const { data, error } = await supabase.auth.signInWithSSO({
-        domain: 'miaoda-gg.com',
-        options: { redirectTo: window.location.origin },
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?role=admin`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'select_account',
+          },
+        },
       });
       if (error) throw error;
       if (data?.url) window.open(data.url, '_self');
