@@ -113,6 +113,7 @@ export default function TeacherLogin() {
         onSelectAccount={handlePickerSelect}
         onUseAnother={() => setView('form')}
         onRemoveAccount={removeAccount}
+        isProcessing={loading}
       />
     );
   }
@@ -155,7 +156,7 @@ export default function TeacherLogin() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-foreground truncate">{reauthAccount.fullName}</p>
-                <p className="text-xs font-mono text-primary truncate">{reauthAccount.verificationId}</p>
+                <p className="text-xs font-mono text-primary truncate">{reauthAccount.loginId}</p>
               </div>
             </div>
             <div className="relative">

@@ -40,6 +40,8 @@ interface AccountPickerScreenProps {
   onSelectAccount: (account: SavedAccount) => Promise<void>;
   onUseAnother: () => void;
   onRemoveAccount: (profileId: string) => void;
+  /** When true, the whole list is disabled to prevent double-taps while auth state settles. */
+  isProcessing?: boolean;
 }
 
 function getInitials(fullName?: string): string {
@@ -58,6 +60,7 @@ export const AccountPickerScreen: React.FC<AccountPickerScreenProps> = ({
   onSelectAccount,
   onUseAnother,
   onRemoveAccount,
+  isProcessing = false,
 }) => {
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [removeMode, setRemoveMode] = useState(false);
@@ -157,8 +160,8 @@ export const AccountPickerScreen: React.FC<AccountPickerScreenProps> = ({
           )}
         </AnimatePresence>
 
-        {/* Account list — always a vertical list, compact rows */}
-        <div className="w-full rounded-2xl border border-border/60 bg-card overflow-hidden divide-y divide-border/40 shadow-sm">
+        {/* Account list — individual premium rounded cards */}
+        <div className="w-full flex flex-col gap-3">
           {accounts.map((acc, i) => {
             const isLoading = loadingId === acc.profileId;
             const initials = getInitials(acc.fullName);
@@ -166,53 +169,66 @@ export const AccountPickerScreen: React.FC<AccountPickerScreenProps> = ({
             return (
               <motion.button
                 key={acc.profileId}
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.04 }}
+                layoutId={acc.profileId}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.28, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}
+                whileTap={removeMode ? {} : { scale: 0.985 }}
                 onClick={() => handleSelect(acc)}
-                disabled={!!loadingId}
+                disabled={!!loadingId || isProcessing}
                 className={cn(
-                  'w-full flex items-center gap-3 px-3 py-2.5 transition-all duration-150 text-left disabled:opacity-60',
-                  isCurrent && 'bg-primary/5',
+                  'w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-left transition-all duration-200 disabled:opacity-60 min-h-[72px]',
+                  'bg-card border shadow-sm',
+                  isCurrent && !removeMode
+                    ? 'border-primary/50 shadow-md shadow-primary/10 ring-1 ring-primary/20'
+                    : 'border-border/60 hover:border-primary/30 hover:shadow-md',
                   removeMode
-                    ? 'hover:bg-destructive/5 active:bg-destructive/10'
-                    : 'hover:bg-muted/40 active:bg-muted/60',
+                    ? 'hover:border-destructive/40 hover:bg-destructive/[0.03] active:bg-destructive/[0.06]'
+                    : 'active:scale-[0.99]',
                 )}
               >
-                {/* Avatar — 40×40 */}
+                {/* Avatar — 48×48 */}
                 <div className="relative shrink-0">
-                  <Avatar className={cn('h-10 w-10 border', isCurrent ? 'border-primary/40' : 'border-border/40')}>
+                  <Avatar className={cn('h-12 w-12 border-2', isCurrent ? 'border-primary/50' : 'border-border/40')}>
                     <AvatarImage src={acc.avatarUrl || ''} className="object-cover" />
-                    <AvatarFallback className={cn('font-bold text-xs', gradientClass, 'text-white')}>
+                    <AvatarFallback className={cn('font-bold text-sm', gradientClass, 'text-white')}>
                       {initials}
                     </AvatarFallback>
                   </Avatar>
                   {isCurrent && !removeMode && (
-                    <span className="absolute -bottom-0.5 -right-0.5 bg-primary text-primary-foreground rounded-full p-0.5 border border-background">
-                      <Check className="w-2.5 h-2.5" />
+                    <span className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground rounded-full p-0.5 border-2 border-background">
+                      <Check className="w-3 h-3" />
                     </span>
                   )}
                   {removeMode && (
-                    <div className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-destructive flex items-center justify-center">
-                      <Trash2 className="w-2.5 h-2.5 text-white" />
+                    <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive flex items-center justify-center border-2 border-background">
+                      <Trash2 className="w-3 h-3 text-white" />
                     </div>
                   )}
                 </div>
 
-                {/* Name + login ID */}
+                {/* Name + Login ID */}
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm text-foreground truncate leading-tight">{acc.fullName}</p>
-                  <p className="text-xs text-muted-foreground truncate leading-tight">
-                    Login ID: <span className="font-mono text-muted-foreground/70">{acc.verificationId}</span>
+                  <p className="font-semibold text-[15px] leading-tight truncate text-foreground">
+                    {acc.fullName}
+                  </p>
+                  <p className="text-[13px] text-muted-foreground truncate leading-tight mt-0.5">
+                    {acc.loginId}
                   </p>
                 </div>
 
                 {/* Current / Loading */}
-                {isCurrent && !isLoading && !removeMode && (
-                  <span className="text-[10px] font-semibold text-primary shrink-0">Current</span>
-                )}
-                {isLoading && (
-                  <Loader2 className="w-4 h-4 animate-spin text-primary shrink-0" />
+                {!removeMode && (
+                  <div className="shrink-0 min-w-[4.5rem] text-right">
+                    {isCurrent && !isLoading && (
+                      <span className="text-[11px] font-semibold text-primary">Current</span>
+                    )}
+                    {isLoading && (
+                      <span className="inline-flex items-center justify-center w-6 h-6">
+                        <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                      </span>
+                    )}
+                  </div>
                 )}
               </motion.button>
             );
@@ -253,8 +269,8 @@ export const AccountPickerScreen: React.FC<AccountPickerScreenProps> = ({
             <AlertDialogTitle className="text-base font-black">Remove Account?</AlertDialogTitle>
             <AlertDialogDescription className="text-sm leading-relaxed">
               <strong className="text-foreground">{removeTarget?.fullName}</strong>
-              {removeTarget?.verificationId && (
-                <> <span className="font-mono text-primary">({removeTarget.verificationId})</span></>
+              {removeTarget?.loginId && (
+                <> <span className="font-mono text-primary">{removeTarget.loginId}</span></>
               )}{' '}
               will be removed from this device only. The account itself is not deleted.
             </AlertDialogDescription>

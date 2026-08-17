@@ -13,9 +13,10 @@ export type SavedAccountRole = 'student' | 'teacher' | 'parent';
 
 export interface SavedAccount {
   profileId: string;    // internal Supabase auth user / profile id
-  username: string;     // login credential (usually verification_id)
+  username: string;     // login credential (e.g. RSBS7991)
   fullName: string;
-  verificationId: string;
+  loginId: string;      // displayed secondary identifier
+  verificationId: string; // internal verification identifier
   role: SavedAccountRole;
   avatarUrl?: string;
   pinVerified: boolean;
@@ -25,6 +26,7 @@ export interface SavedAccount {
 
 interface SavedAccountRow {
   profile_id: string;
+  login_id: string;
   verification_id: string;
   full_name: string;
   role: SavedAccountRole;
@@ -37,8 +39,9 @@ interface SavedAccountRow {
 function mapRow(row: SavedAccountRow): SavedAccount {
   return {
     profileId: row.profile_id,
-    username: row.verification_id,
+    username: row.login_id || row.verification_id,
     fullName: row.full_name,
+    loginId: row.login_id || row.verification_id,
     verificationId: row.verification_id,
     role: row.role,
     avatarUrl: row.avatar_url || undefined,
@@ -72,6 +75,7 @@ export async function addSavedAccount(
     profile_id: account.profileId,
     role: account.role,
     full_name: account.fullName,
+    login_id: account.loginId || account.username || account.verificationId,
     verification_id: account.verificationId,
     avatar_url: account.avatarUrl || null,
     pin_verified: account.pinVerified,

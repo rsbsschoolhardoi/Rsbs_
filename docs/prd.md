@@ -2,8 +2,8 @@
 
 ## 1. Application Overview
 
-- **Application Name:** RSBS School ERP - Student Portal Identity Enhancement + Mobile Account & Settings Optimization + Study AI Response Speed Fix + Study AI Mobile UI Enhancement
-- **Description:** Enhancement to existing RSBS School ERP Student Portal and Study AI module. Updates include: (1) Student account identity display showing real student name and Login ID instead of generic Student label in Account & Settings, account picker, and account switcher; (2) Mobile-optimized Account & Settings screen respecting safe areas and bottom navigation; (3) Study AI response speed optimization removing artificial delays and excessive animation durations; (4) Study AI mobile UI enhancement with native app experience, fixed layout, collapsible history sidebar, long-press message actions, and permanently fixed bottom composer. All changes maintain existing authentication, database, permissions, navigation, design system, AI backend, daily message limits, and other Student Portal functionality. Application location: /workspace/app-aho9bv0iqbr5.
+- **Application Name:** RSBS School ERP - Student Portal Account Switcher UI Polish + Saved Account Authentication Flow Fix
+- **Description:** Enhancement to existing RSBS School ERP Student Portal. Updates include: (1) Premium native mobile account switcher UI for Account Picker and Account Switcher, displaying individual rounded cards with student profile photo, full name as primary text, and Login ID as secondary text; (2) Fixed saved-account authentication flow ensuring trusted saved accounts restore directly to Student Dashboard without re-authentication, while preserving first-login flow (Login ID + Password → Verify PIN → Dashboard) and explicit Logout revocation. All changes maintain existing authentication architecture, Supabase Auth, Edge Functions, session management, and other Student Portal functionality. Application location: /workspace/app-aho9bv0iqbr5. Technology stack: React + Vite + TypeScript + shadcn/ui + Supabase Auth + Edge Functions.
 
 ---
 
@@ -11,20 +11,18 @@
 
 ### 2.1 Target Users
 
-- **Students:** View personalized account identity (real name + Login ID) in Account & Settings, account picker, and account switcher. Use mobile-optimized Account & Settings screen. Experience faster Study AI responses without artificial delays. Interact with Study AI through polished native mobile interface with fixed header, collapsible history sidebar, long-press message actions, and permanently fixed bottom composer.
+- **Students:** View premium native mobile account switcher UI with individual rounded cards showing profile photo, full name, and Login ID. Select saved trusted account and restore directly to Student Dashboard without re-authentication. Complete first-login flow with Login ID + Password → Verify PIN. Explicitly logout to revoke trusted session.
 
 ### 2.2 Core Use Cases
 
-- **Student views Account & Settings:** See account card displaying profile photo, full name as primary text, Login ID below in smaller text.
-- **Student opens account picker:** See all saved accounts with profile photo, full name, Login ID, and clear indicator for currently active account.
-- **Student opens account switcher:** Long-press profile avatar, see bottom sheet with all saved accounts showing profile photo, full name, Login ID, and current account indicator.
-- **Student uses mobile Account & Settings:** Access Account & Settings on mobile device, see optimized layout respecting safe areas and bottom navigation.
-- **Student sends Study AI message:** Send message, see model response begin rendering/streaming immediately without artificial delays.
-- **Student views Study AI response:** See response appear progressively with subtle smooth animation, animation does not delay actual model response.
-- **Student uses Study AI on mobile:** Access Study AI with fixed top header, collapsible history sidebar (closed by default), scrollable message area, fixed bottom composer.
-- **Student opens Study AI history:** Tap menu button, see history sidebar slide in smoothly, view conversation history, create new chat, close sidebar.
-- **Student interacts with Study AI messages:** Long-press message to see actions (Copy, Edit for latest user message only, Regenerate), actions not permanently visible.
-- **Student types Study AI message on mobile:** Use bottom composer permanently fixed at bottom, composer moves above keyboard when keyboard appears, never scrolls away or gets hidden.
+- **Student opens Account Picker:** See all saved accounts as individual premium rounded cards, each displaying profile photo, full name as primary text, Login ID as secondary text.
+- **Student opens Account Switcher:** Long-press profile avatar, see bottom sheet with all saved accounts as individual premium rounded cards.
+- **Student taps saved trusted account:** See selected/pressed state immediately, see short smooth loading/restoring animation, restore account, open Student Dashboard directly without password or PIN prompt.
+- **Student performs first login:** Enter Login ID + Password, verify PIN, reach Student Dashboard, choose Save & Exit to preserve trusted session.
+- **Student chooses Save & Exit:** Account saved on device with trusted session state preserved.
+- **Student explicitly logs out:** Trusted session revoked for that account, next login requires full Login ID + Password → Verify PIN flow.
+- **Student switches between multiple saved accounts:** Each account maintains independent session state, authentication state, profile photo, name, and Login ID.
+- **App startup/refresh/reload:** Valid saved session restored automatically, show Restoring your session message only during genuine session restoration, open Student Dashboard if valid.
 
 ---
 
@@ -35,193 +33,222 @@
 ```
 RSBS School ERP
 ├── Student Portal (Enhanced)
-│   ├── Account & Settings (Enhanced)
-│   │   ├── Account Card (Enhanced Identity Display)
-│   │   ├── Settings Section
-│   │   ├── Notifications Section
-│   │   ├── Help & Support Section
-│   │   └── Privacy Policy Section
-│   ├── Account Picker (Enhanced Identity Display)
-│   ├── Account Switcher Bottom Sheet (Enhanced Identity Display)
-│   ├── Study AI Module (Enhanced)
-│   │   ├── Fixed Top Header (Enhanced)
-│   │   ├── History Sidebar (Enhanced Mobile Behavior)
-│   │   ├── Chat Area (Enhanced Mobile Layout)
-│   │   ├── Message Display (Enhanced Actions)
-│   │   └── Bottom Composer (Enhanced Mobile Behavior)
+│   ├── Account Picker (Enhanced UI)
+│   ├── Account Switcher Bottom Sheet (Enhanced UI)
+│   ├── First Login Flow (Unchanged)
+│   │   ├── Login Screen (Login ID + Password)
+│   │   ├── PIN Verification Screen
+│   │   └── Student Dashboard
+│   ├── Saved Account Restoration Flow (Enhanced)
+│   │   ├── Account Picker/Switcher
+│   │   ├── Loading/Restoring Animation
+│   │   └── Student Dashboard (Direct)
+│   ├── Session Restoration Flow (Enhanced)
+│   │   ├── App Startup/Refresh/Reload
+│   │   ├── Restoring Session Message
+│   │   └── Student Dashboard (if valid)
+│   ├── Logout Flow (Unchanged)
 │   └── Other Student Portal Pages (Unchanged)
 └── Other Panels (Unchanged)
 ```
 
-### 3.2 Account & Settings - Account Card (Enhanced Identity Display)
+### 3.2 Account Picker (Enhanced UI)
 
-#### 3.2.1 Account Identity Display
+#### 3.2.1 Premium Rounded Card Design
 
-- **Profile Photo:** Display student's profile photo from existing student profile data.
+- **Individual Cards:** Each saved account displayed as individual premium rounded card.
+- **Profile Photo:** Display student's actual profile photo from authenticated student record.
 - **Primary Text:** Display student's full name as primary text (large, prominent font).
-- **Secondary Text:** Display Login ID below full name in smaller, subtle text.
-- **No Generic Label:** Never display generic word Student as primary identity.
-- **Data Source:** Use authenticated student profile data from existing database.
-- **Consistent Design:** Use same premium visual language as existing Student Portal.
+- **Secondary Text:** Display student's Login ID underneath full name in small, subtle secondary text.
+- **Example Layout:**
+  ```
+  [Profile Photo]  Azad
+                   RSBS7991
+  ```
+- **Prohibited Information:** Must NOT display Verification ID, Verification code, Password, Login ID: label, or any other unnecessary identifier.
+- **Card Styling:** Premium rounded corners, subtle highlighted blue border for selected account, soft elevation/shadow, clean spacing between cards.
+- **Touch Area:** Proper mobile touch area (minimum 48px height).
+- **Animation:** Smooth pressed/selected animation on tap.
+- **Design Language:** Elegant, professional, premium native mobile appearance.
+- **Data Consistency:** Profile photo, name, and Login ID always belong to selected account from authenticated student record.
 
-#### 3.2.2 Mobile Optimization (New)
+#### 3.2.2 Account Selection Interaction
 
-- **Safe Area Respect:** Account & Settings screen respects mobile safe areas (notch, home indicator, navigation bar).
-- **Bottom Navigation Clearance:** Content never hidden behind fixed bottom navigation.
-- **Clean Layout:** Sections visually clean and compact on mobile.
-- **Scrollable Content:** Account & Settings content scrollable if lengthy.
-- **Touch-Friendly:** All interactive elements touch-friendly with appropriate sizes.
-- **Premium Design:** Preserve existing premium visual language.
+- **Tap Behavior:** On tap, immediately show selected/pressed state.
+- **Loading Animation:** Show short smooth circular loading/restoring animation if required.
+- **Direct Navigation:** Restore account and open Student Dashboard directly without password or PIN prompt.
+- **No Re-authentication:** Do not ask for password, PIN, confirm password, or any login credentials for trusted saved accounts.
 
-### 3.3 Account Picker (Enhanced Identity Display)
+### 3.3 Account Switcher Bottom Sheet (Enhanced UI)
 
-#### 3.3.1 Account List Display
+#### 3.3.1 Premium Rounded Card Design
 
-- **Profile Photo:** Each account displays student's profile photo.
+- **Individual Cards:** Each saved account displayed as individual premium rounded card.
+- **Profile Photo:** Display student's actual profile photo from authenticated student record.
 - **Primary Text:** Display student's full name as primary text.
-- **Secondary Text:** Display Login ID below full name in smaller, subtle text.
-- **Current Account Indicator:** Clear visual indicator for currently active account (e.g., checkmark, highlight, border).
-- **Data Consistency:** Use same authenticated student profile data as Account & Settings.
-- **No Mismatched Information:** Ensure profile photo, name, and Login ID match across all areas.
+- **Secondary Text:** Display student's Login ID underneath full name in small, subtle secondary text.
+- **Example Layout:** Same as Account Picker.
+- **Prohibited Information:** Same as Account Picker.
+- **Card Styling:** Same premium design as Account Picker.
+- **Touch Area:** Same as Account Picker.
+- **Animation:** Same as Account Picker.
+- **Design Language:** Same as Account Picker.
+- **Data Consistency:** Same as Account Picker.
 
-### 3.4 Account Switcher Bottom Sheet (Enhanced Identity Display)
+#### 3.3.2 Account Selection Interaction
 
-#### 3.4.1 Bottom Sheet Account Display
+- **Tap Behavior:** Same as Account Picker.
+- **Loading Animation:** Same as Account Picker.
+- **Direct Navigation:** Same as Account Picker.
+- **No Re-authentication:** Same as Account Picker.
 
-- **Profile Photo:** Each saved account displays student's profile photo.
-- **Primary Text:** Display student's full name as primary text.
-- **Secondary Text:** Display Login ID below full name in smaller, subtle text.
-- **Current Account Indicator:** Clear visual indicator for currently active account.
-- **Data Consistency:** Use same authenticated student profile data as Account & Settings and account picker.
-- **No Mismatched Information:** Ensure profile photo, name, and Login ID match across all areas.
-- **Add Another Account:** Display Add another account option at bottom of list.
-- **Smooth Animation:** Bottom sheet slides smoothly upward when opening, downward when closing.
-- **Easy Close:** Close via backdrop tap, swipe down, or close button.
+### 3.4 First Login Flow (Unchanged)
 
-### 3.5 Study AI Module - Response Speed (Enhanced)
+#### 3.4.1 Login Screen
 
-#### 3.5.1 Response Animation Optimization (New)
+- **Input Fields:** Login ID + Password.
+- **Submit:** Proceed to PIN Verification Screen.
 
-- **Immediate Rendering:** When user sends message, model response begins rendering/streaming immediately.
-- **No Artificial Delays:** Remove all artificial delays before response starts appearing.
-- **Progressive Display:** Response appears progressively as model generates content.
-- **Subtle Animation:** Use subtle, smooth animation for response appearance.
-- **Animation Does Not Block:** Animation never delays actual model response content.
-- **Fast Perceived Response:** Prioritize fast perceived response time.
-- **Natural Streaming:** Response streaming feels natural, similar to modern AI chat applications.
-- **No Excessive Duration:** Remove excessive animation durations that slow down response display.
+#### 3.4.2 PIN Verification Screen
 
-### 3.6 Study AI Module - Mobile UI (Enhanced)
+- **Input Field:** Verify PIN.
+- **Submit:** Proceed to Student Dashboard.
 
-#### 3.6.1 Fixed Top Header (Enhanced)
+#### 3.4.3 Save & Exit
 
-- **Fixed Position:** Header remains fixed at top, never scrolls.
-- **Back/Navigation Control:** Display back button or navigation control.
-- **Study AI Identity:** Display Study AI branding or title.
-- **Relevant Actions:** Display relevant action buttons (e.g., menu button for history sidebar).
-- **Premium Design:** Use premium, polished design consistent with Student Portal.
+- **Action:** Securely preserve trusted saved-account/session state.
+- **Result:** Account remains saved on device with trusted session.
 
-#### 3.6.2 History Sidebar (Enhanced Mobile Behavior)
+### 3.5 Saved Account Restoration Flow (Enhanced)
 
-- **Default State:** History sidebar closed by default on mobile.
-- **Open Trigger:** Opens via menu button in header.
-- **Smooth Animation:** Smooth slide-in animation when opening, slide-out when closing.
-- **Conversation History:** Display clean conversation history list.
-- **New Chat Option:** Display New Chat button.
-- **Never Permanently Open:** Sidebar never permanently remains open on mobile.
-- **Easy Close:** Close via close button, backdrop tap, or swipe gesture.
-- **Mobile Overlay:** Sidebar appears as overlay with backdrop on mobile.
+#### 3.5.1 Account Selection
 
-#### 3.6.3 Chat Area (Enhanced Mobile Layout)
+- **Trigger:** Student taps saved account in Account Picker or Account Switcher.
+- **Immediate Feedback:** Show selected/pressed state immediately.
 
-- **Scrollable Message Area:** Only message area scrolls, header and composer remain fixed.
-- **Fixed Header:** Header fixed at top.
-- **Fixed Bottom Composer:** Composer fixed at bottom.
-- **No Hidden Messages:** Messages never hidden behind composer or bottom navigation.
-- **Safe Area Handling:** Proper mobile safe-area handling (notch, home indicator, navigation bar).
-- **Layout Structure:** Fixed Header + Scrollable Message Area + Fixed Bottom Composer.
+#### 3.5.2 Loading/Restoring Animation
 
-#### 3.6.4 Message Actions (Enhanced)
+- **Display:** Show short smooth circular loading/restoring animation.
+- **Duration:** Brief, non-blocking.
 
-- **Long-Press Trigger:** Message actions appear only after long-pressing message on mobile.
-- **No Permanent Controls:** Do not permanently show copy/edit/delete controls under every message.
-- **Available Actions:** Copy, Edit (for latest user message only), Regenerate.
-- **Edit Restrictions:** Edit only available for latest user message, only when daily limit not reached.
-- **Context Menu:** Actions appear in context menu or action sheet.
-- **Desktop Interaction:** On desktop, actions appear via right-click or hover menu.
+#### 3.5.3 Direct Dashboard Navigation
 
-#### 3.6.5 Bottom Composer (Enhanced Mobile Behavior)
+- **Action:** Restore account session.
+- **Navigation:** Open Student Dashboard directly.
+- **No Re-authentication:** Skip password, PIN, confirm password, or any login credential prompts.
+- **Removed Screen:** Completely skip current Confirm your password screen that appears after selecting trusted saved account.
 
-- **Permanently Fixed:** Composer permanently fixed at bottom of viewport.
-- **Keyboard Behavior:** Composer moves above mobile keyboard when keyboard appears.
-- **Never Scrolls Away:** Composer never scrolls away with message area.
-- **Never Below Responses:** Composer never gets placed underneath response area.
-- **Safe Area Respect:** Respects Android/iOS safe areas (home indicator, navigation bar).
-- **Premium Appearance:** Maintains premium, minimal appearance.
-- **Always Accessible:** Composer always accessible and visible at bottom.
+### 3.6 Session Restoration Flow (Enhanced)
 
-### 3.7 Existing Features (Unchanged)
+#### 3.6.1 Trigger Conditions
+
+- **App Startup:** Actual app startup.
+- **Refresh:** Browser refresh.
+- **WebView Reload:** WebView reload.
+- **Unexpected Navigation:** Unexpected navigation events.
+
+#### 3.6.2 Session Validation
+
+- **Check:** Validate saved session state.
+- **Valid Session:** Restore account and open Student Dashboard.
+- **Invalid Session:** Redirect to Login Screen.
+
+#### 3.6.3 Restoring Session Message
+
+- **Display Condition:** Show Restoring your session message only during genuine session restoration (app startup, refresh, reload).
+- **Not Displayed:** Do not show during normal account selection from Account Picker or Account Switcher.
+
+### 3.7 Logout Flow (Unchanged)
+
+#### 3.7.1 Explicit Logout
+
+- **Action:** Student explicitly logs out.
+- **Result:** Revoke trusted session for that account.
+- **Next Login:** Require full Login ID + Password → Verify PIN → Student Dashboard flow.
+
+### 3.8 Multiple Accounts Management (Enhanced)
+
+#### 3.8.1 Independent Session State
+
+- **Per Account:** Each saved account maintains independent session state.
+- **Authentication State:** Each account maintains independent authentication state.
+- **Profile Data:** Each account maintains independent profile photo, student name, and Login ID.
+
+#### 3.8.2 Account Switching
+
+- **No Data Mixing:** Switching between saved accounts must never mix data.
+- **No Invalidation:** Switching must never invalidate another account's session.
+
+### 3.9 Implementation Approach (Enhanced)
+
+#### 3.9.1 Routing and State Logic Fix
+
+- **No CSS Hiding:** Do not simply hide auth screens with CSS.
+- **Fix Underlying Logic:** Fix routing, session persistence, and authentication state logic.
+- **Integration:** Integrate with existing Login, PIN, Save & Exit, Logout, account picker, and session architecture.
+- **No Second System:** Do not create a second authentication system.
+
+#### 3.9.2 Preservation of Existing Functionality
+
+- **Working Features:** Preserve all existing working functionality.
+- **Premium UI:** Preserve current premium mobile UI.
+- **Supabase Auth:** Maintain existing Supabase Auth integration.
+- **Edge Functions:** Maintain existing Edge Functions for trusted-device saved-account management.
+
+### 3.10 Existing Features (Unchanged)
 
 - All existing Student Portal functionality not mentioned in enhancements remains unchanged.
-- All existing Study AI backend, AI model, daily message limits, authentication, database, permissions, navigation remain unchanged.
-- All existing Admin Panel, quiz management, other panels remain unchanged.
+- All existing Study AI module, Account & Settings, quiz management, Admin Panel, other panels remain unchanged.
+- All existing authentication architecture, database, permissions, navigation remain unchanged.
 
 ---
 
 ## 4. Business Rules and Logic
 
-### 4.1 Student Account Identity Display Rules (New)
+### 4.1 Account Picker and Account Switcher UI Rules (Enhanced)
 
-1. **Profile Photo Source:** Profile photo is fetched from existing student profile data in database.
-2. **Full Name Display:** Student's full name is displayed as primary text in account card, account picker, and account switcher.
-3. **Login ID Display:** Login ID is displayed below full name in smaller, subtle text.
-4. **No Generic Label:** Generic word Student never used as primary identity.
-5. **Data Consistency:** Same authenticated student profile data used across Account & Settings, account picker, and account switcher.
-6. **No Mismatched Information:** Profile photo, full name, and Login ID always match across all areas.
-7. **Current Account Indicator:** Currently active account clearly indicated in account picker and account switcher.
+1. **Individual Card Display:** Each saved account displayed as individual premium rounded card.
+2. **Profile Photo Source:** Profile photo fetched from authenticated student record in database.
+3. **Full Name Display:** Student's full name displayed as primary text (large, prominent font).
+4. **Login ID Display:** Student's Login ID displayed underneath full name in small, subtle secondary text.
+5. **Example Layout:** [Profile Photo] Azad / RSBS7991 (two lines).
+6. **Prohibited Information:** Must NOT display Verification ID, Verification code, Password, Login ID: label, or any other unnecessary identifier.
+7. **Card Styling:** Premium rounded corners, subtle highlighted blue border for selected account, soft elevation/shadow, clean spacing.
+8. **Touch Area:** Minimum 48px height for proper mobile touch area.
+9. **Pressed Animation:** Smooth pressed/selected animation on tap.
+10. **Design Consistency:** Same premium design applied to both Account Picker and Account Switcher.
+11. **Data Consistency:** Profile photo, name, and Login ID always belong to selected account from authenticated student record.
 
-### 4.2 Mobile Account & Settings Rules (New)
+### 4.2 Saved Account Authentication Flow Rules (Enhanced)
 
-8. **Safe Area Respect:** Account & Settings screen respects mobile safe areas on all devices.
-9. **Bottom Navigation Clearance:** Content positioned to avoid being hidden behind fixed bottom navigation.
-10. **Clean Layout:** Sections visually clean and compact on mobile screens.
-11. **Scrollable Content:** Account & Settings content scrollable if lengthy.
-12. **Touch-Friendly Elements:** All interactive elements touch-friendly with appropriate sizes.
-13. **Premium Design Preservation:** Existing premium visual language preserved.
-14. **No Unrelated Changes:** Other Student Portal pages not redesigned.
+12. **First Login Flow:** Login ID + Password → Verify PIN → Student Dashboard.
+13. **Save & Exit:** After successful first authentication and PIN verification, securely preserve trusted saved-account/session state when student chooses Save & Exit.
+14. **Saved Account Persistence:** Account remains saved on device with trusted session state.
+15. **Saved Account Selection:** Selecting saved account goes: Account Picker → tap saved account → short circular loading/restoring animation → Student Dashboard.
+16. **No Re-authentication:** Do NOT ask for password, PIN, confirm password, or any login credentials when selecting trusted saved account.
+17. **Skip Confirm Password Screen:** Current Confirm your password screen that appears after selecting trusted saved account must be completely skipped.
+18. **Explicit Logout:** Explicit Logout must revoke trusted session for that account.
+19. **Post-Logout Flow:** Next login after Logout requires full Login ID + Password → Verify PIN → Student Dashboard flow.
+20. **Multiple Accounts:** Each saved account maintains independent session state, authentication state, profile photo, student name, and Login ID.
+21. **No Data Mixing:** Switching between saved accounts must never mix data or invalidate another account.
+22. **Session Restoration Trigger:** On actual app startup, refresh, WebView reload, or unexpected navigation, restore valid saved session.
+23. **Restoring Session Message:** Show Restoring your session message only during genuine session restoration, not during normal account selection.
+24. **Valid Session Restoration:** If valid, restore account and open Student Dashboard.
+25. **Invalid Session Handling:** If invalid, redirect to Login Screen.
+26. **No CSS Hiding:** Do not simply hide auth screens with CSS; fix underlying routing, session persistence, and authentication state logic.
+27. **Integration Requirement:** Integrate with existing Login, PIN, Save & Exit, Logout, account picker, and session architecture.
+28. **No Second System:** Do not create a second authentication system.
 
-### 4.3 Study AI Response Speed Rules (New)
+### 4.3 Account Selection Interaction Rules (Enhanced)
 
-15. **Immediate Response Start:** Model response begins rendering/streaming immediately after user sends message.
-16. **No Artificial Delays:** All artificial delays before response starts are removed.
-17. **Progressive Rendering:** Response content appears progressively as model generates.
-18. **Subtle Animation:** Response appearance uses subtle, smooth animation.
-19. **Animation Non-Blocking:** Animation never delays actual model response content.
-20. **Fast Perception:** Response feels fast and immediate to user.
-21. **Natural Streaming:** Response streaming feels natural and smooth.
-22. **No Excessive Duration:** Excessive animation durations removed.
+29. **Immediate Feedback:** On tap, immediately show selected/pressed state.
+30. **Loading Animation Display:** Show short smooth circular loading/restoring animation if required.
+31. **Direct Navigation:** Restore account and open Student Dashboard directly.
+32. **No Intermediate Screens:** Do not show password, PIN, or confirm password screens for trusted saved accounts.
 
-### 4.4 Study AI Mobile UI Rules (New)
+### 4.4 Existing Rules (Unchanged)
 
-23. **Fixed Header:** Header remains fixed at top, never scrolls with messages.
-24. **History Sidebar Default:** History sidebar closed by default on mobile.
-25. **History Sidebar Trigger:** History sidebar opens only via menu button.
-26. **History Sidebar Animation:** Smooth slide-in/slide-out animation.
-27. **History Sidebar Never Permanent:** Sidebar never permanently remains open on mobile.
-28. **Scrollable Message Area:** Only message area scrolls, header and composer fixed.
-29. **Fixed Bottom Composer:** Composer permanently fixed at bottom.
-30. **Composer Keyboard Behavior:** Composer moves above keyboard when keyboard appears.
-31. **Composer Never Scrolls:** Composer never scrolls away with message area.
-32. **Composer Never Below Responses:** Composer never placed underneath response area.
-33. **Safe Area Handling:** Proper safe-area handling for notch, home indicator, navigation bar.
-34. **Message Actions Trigger:** Message actions appear only after long-pressing message.
-35. **No Permanent Action Controls:** Action controls not permanently visible under messages.
-36. **Edit Restrictions:** Edit only available for latest user message, only when daily limit not reached.
-37. **Premium Composer Design:** Composer maintains premium, minimal appearance.
-
-### 4.5 Existing Rules (Unchanged)
-
-38. All existing authentication, session management, account switching, quiz management, Study AI backend, daily message limits, and other business rules remain unchanged.
+33. All existing authentication, session management, quiz management, Study AI backend, daily message limits, and other business rules remain unchanged.
 
 ---
 
@@ -233,118 +260,81 @@ RSBS School ERP
 | Student full name not available | Display Login ID as primary text, show warning in logs. |
 | Login ID not available | Display only full name, show warning in logs. |
 | Profile data fetch fails | Display cached data if available, otherwise show placeholder with retry option. |
-| Account & Settings content overflows on mobile | Enable scrolling, ensure all content accessible. |
-| Bottom navigation overlaps Account & Settings content | Add appropriate padding/margin to prevent overlap. |
-| Mobile safe areas not detected | Use fallback safe-area values, ensure content not clipped. |
-| Study AI response streaming fails | Display error message, provide retry option. |
-| Study AI response animation lags | Reduce animation complexity, prioritize response content display. |
-| Model response very slow | Show loading indicator, do not add artificial delays. |
-| History sidebar fails to open | Display error message, provide retry option. |
-| History sidebar animation stutters | Reduce animation complexity, ensure smooth performance. |
-| Long-press gesture not detected | Provide alternative action trigger (e.g., tap-and-hold, context menu button). |
-| Message actions fail to appear | Display error message, provide retry option. |
-| Bottom composer hidden behind keyboard | Adjust composer position, ensure always visible above keyboard. |
-| Bottom composer overlaps with messages | Adjust message area padding, ensure messages not hidden. |
-| Safe area insets not applied | Use fallback values, ensure composer not clipped. |
-| Composer input field not accessible | Adjust layout, ensure input field always accessible. |
+| Saved account session invalid | Redirect to Login Screen, require full Login ID + Password → Verify PIN flow. |
+| Saved account session expired | Redirect to Login Screen, require full Login ID + Password → Verify PIN flow. |
+| Session restoration fails | Redirect to Login Screen, show error message. |
 | Multiple accounts have same name | Display Login ID prominently to differentiate. |
-| Account switcher fails to load accounts | Display error message, provide retry option. |
-| Current account indicator not visible | Increase indicator prominence, use multiple visual cues. |
-| Profile photo fails to load in account switcher | Display default avatar or initials. |
-| Account picker shows mismatched data | Refresh profile data, ensure consistency across all areas. |
-| Mobile device rotates during Study AI chat | Layout adapts to new orientation, maintains fixed header and composer. |
-| Mobile browser navigation bar appears/disappears | Composer adjusts position, respects safe-area insets. |
-| Student switches accounts during Study AI chat | Save current conversation, load new account's conversations. |
-| Network error during response streaming | Display error message, provide retry option, do not add delays. |
-| Study AI backend slow | Display loading indicator, do not add artificial delays on frontend. |
-| Message area scrolling lags | Optimize rendering, reduce animation complexity. |
-| History sidebar overlaps with message area on small screens | Sidebar appears as full-screen overlay on very small screens. |
-| Composer input field too small on mobile | Increase input field size, ensure comfortable typing. |
-| Long message overflows composer | Enable multi-line input, adjust composer height dynamically. |
-| Send button not accessible on mobile | Ensure send button always visible and touch-friendly. |
-| Daily limit reached during message edit | Disable edit action, show limit reached message. |
-| Student tries to edit older message | Edit action not available, only latest user message editable. |
-| Student long-presses AI response message | Show Copy and Regenerate actions, Edit not available for AI messages. |
+| Account Picker fails to load accounts | Display error message, provide retry option. |
+| Account Switcher fails to load accounts | Display error message, provide retry option. |
+| Profile photo fails to load | Display default avatar or initials. |
+| Account selection animation lags | Reduce animation complexity, ensure smooth performance. |
+| Loading/restoring animation stutters | Reduce animation complexity, prioritize session restoration. |
+| Student taps account during loading | Ignore additional taps until current restoration completes. |
+| Network error during session restoration | Display error message, provide retry option, redirect to Login Screen if retry fails. |
+| Supabase Auth error during restoration | Display error message, redirect to Login Screen. |
+| Edge Function error during restoration | Display error message, redirect to Login Screen. |
+| Student switches accounts rapidly | Queue account switches, process one at a time. |
+| Student logs out during account switch | Cancel account switch, complete logout, redirect to Login Screen. |
+| App crashes during session restoration | On restart, attempt session restoration again. |
+| Browser clears storage | All saved accounts lost, redirect to Login Screen. |
+| Student manually clears browser data | All saved accounts lost, redirect to Login Screen. |
+| Saved account data corrupted | Remove corrupted account, redirect to Login Screen. |
+| Multiple devices with same saved account | Each device maintains independent session state. |
+| Student changes password on another device | Saved session on current device becomes invalid, redirect to Login Screen on next use. |
+| Student changes PIN on another device | Saved session on current device remains valid (PIN not required for saved account restoration). |
+| Confirm your password screen still appears | Fix routing and authentication state logic to completely skip this screen. |
+| Account Picker shows mismatched data | Refresh profile data from authenticated student record, ensure consistency. |
+| Account Switcher shows mismatched data | Refresh profile data from authenticated student record, ensure consistency. |
+| Touch area too small on mobile | Ensure minimum 48px height for all account cards. |
+| Card styling inconsistent | Apply same premium design to all account cards in both Account Picker and Account Switcher. |
+| Selected/pressed state not visible | Increase visual prominence of selected state. |
+| Loading animation too long | Reduce animation duration, prioritize session restoration speed. |
+| Student Dashboard fails to load after restoration | Display error message, provide retry option, redirect to Login Screen if retry fails. |
 
 ---
 
 ## 6. Acceptance Criteria
 
-### 6.1 Student Account Identity Display
-
-1. Account & Settings account card displays student's profile photo.
-2. Account & Settings account card displays student's full name as primary text (large, prominent font).
-3. Account & Settings account card displays Login ID below full name in smaller, subtle text.
-4. Account & Settings account card never displays generic word Student as primary identity.
-5. Account picker displays all saved accounts with profile photo, full name, and Login ID.
-6. Account picker displays Login ID below full name in smaller, subtle text.
-7. Account picker shows clear visual indicator for currently active account.
-8. Account switcher bottom sheet displays all saved accounts with profile photo, full name, and Login ID.
-9. Account switcher bottom sheet displays Login ID below full name in smaller, subtle text.
-10. Account switcher bottom sheet shows clear visual indicator for currently active account.
-11. Profile photo, full name, and Login ID are consistent across Account & Settings, account picker, and account switcher.
-12. All account identity displays use same authenticated student profile data from database.
-13. No mismatched information appears across different areas.
-
-### 6.2 Mobile Account & Settings Optimization
-
-14. Account & Settings screen respects mobile safe areas (notch, home indicator, navigation bar).
-15. Account & Settings content never hidden behind fixed bottom navigation.
-16. Account & Settings sections visually clean and compact on mobile.
-17. Account & Settings content scrollable if lengthy.
-18. All interactive elements in Account & Settings touch-friendly on mobile.
-19. Account & Settings preserves existing premium visual language.
-20. Other Student Portal pages not redesigned or affected.
-
-### 6.3 Study AI Response Speed Optimization
-
-21. When user sends Study AI message, model response begins rendering/streaming immediately.
-22. No artificial delays before response starts appearing.
-23. Response content appears progressively as model generates.
-24. Response appearance uses subtle, smooth animation.
-25. Animation never delays actual model response content.
-26. Response feels fast and immediate to user.
-27. Response streaming feels natural and smooth.
-28. Excessive animation durations removed.
-
-### 6.4 Study AI Mobile UI Enhancement
-
-29. Study AI header fixed at top, never scrolls.
-30. Study AI header displays back/navigation control, Study AI identity, and relevant actions.
-31. History sidebar closed by default on mobile.
-32. History sidebar opens via menu button in header.
-33. History sidebar has smooth slide-in animation when opening.
-34. History sidebar has smooth slide-out animation when closing.
-35. History sidebar displays clean conversation history list.
-36. History sidebar displays New Chat button.
-37. History sidebar never permanently remains open on mobile.
-38. History sidebar can be closed via close button, backdrop tap, or swipe gesture.
-39. History sidebar appears as overlay with backdrop on mobile.
-40. Only Study AI message area scrolls, header and composer remain fixed.
-41. Study AI messages never hidden behind composer or bottom navigation.
-42. Study AI layout properly handles mobile safe areas.
-43. Message actions appear only after long-pressing message on mobile.
-44. Message actions not permanently visible under messages.
-45. Available message actions are Copy, Edit (for latest user message only), Regenerate.
-46. Edit action only available for latest user message.
-47. Edit action only available when daily limit not reached.
-48. Message actions appear in context menu or action sheet.
-49. On desktop, message actions appear via right-click or hover menu.
-50. Bottom composer permanently fixed at bottom of viewport.
-51. Bottom composer moves above mobile keyboard when keyboard appears.
-52. Bottom composer never scrolls away with message area.
-53. Bottom composer never placed underneath response area.
-54. Bottom composer respects Android/iOS safe areas.
-55. Bottom composer maintains premium, minimal appearance.
-56. Bottom composer always accessible and visible at bottom.
-
-### 6.5 Existing Functionality Preservation
-
-57. All existing Student Portal functionality not mentioned in enhancements remains unchanged.
-58. All existing Study AI backend, AI model, daily message limits remain unchanged.
-59. All existing authentication, session management, account switching remain unchanged.
-60. All existing quiz management, Admin Panel, other panels remain unchanged.
-61. All existing database schema, permissions, navigation remain unchanged.
+1. Account Picker displays all saved accounts as individual premium rounded cards.
+2. Each account card in Account Picker displays student's actual profile photo from authenticated student record.
+3. Each account card in Account Picker displays student's full name as primary text (large, prominent font).
+4. Each account card in Account Picker displays student's Login ID underneath full name in small, subtle secondary text.
+5. Account Picker cards use example layout: [Profile Photo] Azad / RSBS7991.
+6. Account Picker cards do NOT display Verification ID, Verification code, Password, Login ID: label, or any other unnecessary identifier.
+7. Account Picker cards use premium rounded corners, subtle highlighted blue border for selected account, soft elevation/shadow, clean spacing.
+8. Account Picker cards have minimum 48px height for proper mobile touch area.
+9. Account Picker cards show smooth pressed/selected animation on tap.
+10. Account Switcher bottom sheet displays all saved accounts as individual premium rounded cards with same design as Account Picker.
+11. Account Switcher cards display same profile photo, full name, and Login ID as Account Picker.
+12. Account Switcher cards use same premium design, touch area, and animation as Account Picker.
+13. Profile photo, full name, and Login ID are consistent across Account Picker and Account Switcher.
+14. Profile photo, full name, and Login ID always belong to selected account from authenticated student record.
+15. First login flow: Login ID + Password → Verify PIN → Student Dashboard.
+16. After successful first authentication and PIN verification, Save & Exit securely preserves trusted saved-account/session state.
+17. Saved account remains on device with trusted session state after Save & Exit.
+18. Selecting saved trusted account goes: Account Picker → tap saved account → short circular loading/restoring animation → Student Dashboard.
+19. Selecting saved trusted account does NOT ask for password, PIN, confirm password, or any login credentials.
+20. Current Confirm your password screen that appears after selecting trusted saved account is completely skipped.
+21. Explicit Logout revokes trusted session for that account.
+22. Next login after Logout requires full Login ID + Password → Verify PIN → Student Dashboard flow.
+23. Each saved account maintains independent session state.
+24. Each saved account maintains independent authentication state.
+25. Each saved account maintains independent profile photo, student name, and Login ID.
+26. Switching between saved accounts never mixes data.
+27. Switching between saved accounts never invalidates another account.
+28. On app startup, refresh, WebView reload, or unexpected navigation, valid saved session is restored.
+29. Restoring your session message shown only during genuine session restoration (app startup, refresh, reload).
+30. Restoring your session message NOT shown during normal account selection from Account Picker or Account Switcher.
+31. Valid saved session restoration opens Student Dashboard directly.
+32. Invalid saved session redirects to Login Screen.
+33. Routing and authentication state logic fixed to skip Confirm your password screen, not simply hidden with CSS.
+34. Implementation integrates with existing Login, PIN, Save & Exit, Logout, account picker, and session architecture.
+35. Implementation does not create a second authentication system.
+36. All existing working functionality preserved.
+37. Current premium mobile UI preserved.
+38. Existing Supabase Auth integration maintained.
+39. Existing Edge Functions for trusted-device saved-account management maintained.
+40. All existing Student Portal functionality not mentioned in enhancements remains unchanged.
 
 ---
 
@@ -353,129 +343,98 @@ RSBS School ERP
 - Profile photo upload or editing functionality.
 - Custom avatar or profile picture selection.
 - Profile photo cropping or resizing.
-- Profile photo filters or effects.
-- Full name editing from Account & Settings.
+- Full name editing from Account Picker or Account Switcher.
 - Login ID editing or changing.
 - Account identity customization options.
 - Multiple profile photos per account.
-- Profile photo history or versioning.
-- Account & Settings theme customization.
-- Account & Settings layout customization.
-- Account & Settings section reordering.
-- Account & Settings export or backup.
-- Account & Settings import from file.
-- Study AI response speed analytics.
-- Study AI response time monitoring.
-- Study AI animation customization options.
-- Study AI animation disable option.
-- Study AI response caching or prefetching.
-- Study AI response prediction.
-- Study AI typing indicators.
-- Study AI read receipts.
-- Study AI message reactions.
-- Study AI message threading.
-- Study AI conversation branching.
-- Study AI multi-turn context beyond current session.
-- Study AI conversation summarization.
-- Study AI conversation export.
-- Study AI conversation sharing.
-- Study AI conversation analytics.
-- Study AI mobile app version.
-- Study AI desktop app version.
-- Study AI browser extension.
-- Study AI voice input.
-- Study AI voice output.
-- Study AI image/file upload.
-- Study AI code syntax highlighting.
-- Study AI markdown rendering.
-- Study AI LaTeX rendering.
-- Study AI message formatting toolbar.
-- Study AI message search.
-- Study AI message bookmarking.
-- Study AI message pinning.
-- Study AI message archiving.
-- Study AI message deletion.
-- Study AI conversation folders.
-- Study AI conversation tags.
-- Study AI conversation filters.
-- Study AI conversation sorting.
-- Study AI conversation templates.
-- Study AI quick replies.
-- Study AI suggested prompts.
-- Study AI conversation starters.
-- Study AI AI personality customization.
-- Study AI AI model selection.
-- Study AI response regeneration with parameters.
-- Study AI response editing.
-- Study AI collaborative conversations.
-- Study AI teacher monitoring.
-- Study AI parent access.
-- Study AI content filtering.
-- Study AI usage limits per subject.
-- Study AI integration with LMS.
-- Study AI API for third-party integrations.
-- History sidebar search functionality.
-- History sidebar filters.
-- History sidebar sorting options.
-- History sidebar conversation preview.
-- History sidebar conversation thumbnails.
-- History sidebar conversation metadata.
-- History sidebar bulk actions.
-- History sidebar conversation export.
-- History sidebar conversation import.
-- Message actions customization.
-- Message actions keyboard shortcuts.
-- Message actions accessibility enhancements.
-- Message actions analytics.
-- Bottom composer rich text editing.
-- Bottom composer emoji picker.
-- Bottom composer GIF picker.
-- Bottom composer sticker picker.
-- Bottom composer file attachment.
-- Bottom composer voice recording.
-- Bottom composer video recording.
-- Bottom composer screen recording.
-- Bottom composer drawing or sketching.
-- Bottom composer message templates.
-- Bottom composer auto-complete.
-- Bottom composer spell check.
-- Bottom composer grammar check.
-- Bottom composer translation.
-- Bottom composer message scheduling.
-- Bottom composer message drafts.
-- Bottom composer message history.
-- Account picker search functionality.
-- Account picker filters.
-- Account picker sorting options.
-- Account picker bulk actions.
-- Account picker account grouping.
-- Account picker account labels.
-- Account picker account tags.
-- Account picker account notes.
-- Account picker account statistics.
-- Account switcher search functionality.
-- Account switcher filters.
-- Account switcher sorting options.
-- Account switcher recent accounts section.
-- Account switcher frequently used accounts section.
-- Account switcher account grouping.
-- Account switcher account labels.
-- Account switcher account customization.
-- Account switcher account statistics.
-- Mobile Account & Settings dark mode.
-- Mobile Account & Settings theme customization.
-- Mobile Account & Settings font size adjustment.
-- Mobile Account & Settings accessibility enhancements beyond responsive design.
-- Mobile Account & Settings offline mode.
-- Mobile Account & Settings data caching.
-- Mobile Account & Settings performance monitoring.
-- Mobile Account & Settings analytics.
-- Mobile Account & Settings A/B testing.
-- Mobile Account & Settings user feedback mechanism.
-- Mobile Account & Settings help or tutorial.
-- Mobile Account & Settings onboarding.
-- Mobile Account & Settings tips or hints.
-- Mobile Account & Settings notifications.
-- Mobile Account & Settings push notifications.
-- Mobile Account & Settings email notifications.
-- Mobile Account & Settings SMS notifications.
+- Account card theme customization.
+- Account card layout customization.
+- Account Picker search functionality.
+- Account Picker filters.
+- Account Picker sorting options.
+- Account Picker bulk actions.
+- Account Picker account grouping.
+- Account Switcher search functionality.
+- Account Switcher filters.
+- Account Switcher sorting options.
+- Account Switcher recent accounts section.
+- Account Switcher frequently used accounts section.
+- Biometric authentication (fingerprint, face recognition).
+- Two-factor authentication (2FA).
+- Single sign-on (SSO).
+- OAuth integration.
+- Social login (Google, Facebook, etc.).
+- Password recovery from Account Picker.
+- PIN reset from Account Picker.
+- Account deletion from Account Picker.
+- Account export or backup.
+- Account import from file.
+- Session timeout customization.
+- Session activity monitoring.
+- Session analytics.
+- Device management (view/revoke devices).
+- Login history.
+- Security notifications.
+- Account security settings.
+- Privacy settings from Account Picker.
+- Data encryption options.
+- Offline mode for saved accounts.
+- Account synchronization across devices.
+- Cloud backup of saved accounts.
+- Account migration tools.
+- Account merging.
+- Account linking.
+- Guest mode.
+- Demo account.
+- Test account.
+- Admin account management from Account Picker.
+- Bulk account operations.
+- Account provisioning.
+- Account deprovisioning.
+- Account lifecycle management.
+- Compliance reporting.
+- Audit logs.
+- Role-based access control (RBAC) from Account Picker.
+- Permission management from Account Picker.
+- API access for account management.
+- Webhooks for account events.
+- Third-party integrations for account management.
+- Custom authentication flows.
+- Passwordless authentication.
+- Magic link authentication.
+- QR code authentication.
+- NFC authentication.
+- Smart card authentication.
+- Certificate-based authentication.
+- Kerberos authentication.
+- LDAP integration.
+- Active Directory integration.
+- SAML integration.
+- OpenID Connect integration.
+- Account federation.
+- Identity provider integration.
+- Multi-tenancy support.
+- White-label account management.
+- Custom branding for Account Picker.
+- Localization for Account Picker.
+- Accessibility enhancements beyond responsive design.
+- Dark mode for Account Picker.
+- High contrast mode.
+- Font size adjustment.
+- Screen reader optimization.
+- Keyboard navigation optimization.
+- Voice control.
+- Haptic feedback.
+- Sound effects.
+- Animation customization.
+- Animation disable option.
+- Performance monitoring for Account Picker.
+- A/B testing for Account Picker.
+- User feedback mechanism for Account Picker.
+- Help or tutorial for Account Picker.
+- Onboarding for Account Picker.
+- Tips or hints for Account Picker.
+- Notifications for account events.
+- Push notifications for account events.
+- Email notifications for account events.
+- SMS notifications for account events.

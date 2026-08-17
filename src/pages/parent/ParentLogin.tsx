@@ -107,6 +107,7 @@ const ParentLogin: React.FC = () => {
         onSelectAccount={handlePickerSelect}
         onUseAnother={() => setView('form')}
         onRemoveAccount={removeAccount}
+        isProcessing={isLoading}
       />
     );
   }
@@ -149,7 +150,7 @@ const ParentLogin: React.FC = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-foreground truncate">{reauthAccount.fullName}</p>
-                <p className="text-xs font-mono text-primary truncate">{reauthAccount.verificationId}</p>
+                <p className="text-xs font-mono text-primary truncate">{reauthAccount.loginId}</p>
               </div>
             </div>
             <div className="relative">

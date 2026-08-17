@@ -40,7 +40,7 @@ import { ROUTES } from '@/constants/routes';
 
 export function PortalLayout({ role, title }: PortalLayoutProps) {
   const location = useLocation();
-  const { profile, loading, signOut, switchAccount } = useAuth();
+  const { profile, loading, signOut, switchAccount, trustDevice, untrustDevice } = useAuth();
   const isMobile = useMediaQuery('(max-width: 767px)');
   const isStudyAI = location.pathname === ROUTES.STUDENT.STUDY_AI;
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
@@ -48,7 +48,7 @@ export function PortalLayout({ role, title }: PortalLayoutProps) {
 
   // Account picker is only relevant for non-admin roles
   const pickerRole = (role !== 'admin' ? role : null) as SavedAccountRole | null;
-  const { accounts: savedAccounts } = useAccountPicker(pickerRole ?? undefined);
+  const { accounts: savedAccounts, saveAccount } = useAccountPicker(pickerRole ?? undefined);
 
   if (loading) return (
     <div className="flex items-center justify-center min-h-screen">
@@ -90,12 +90,40 @@ export function PortalLayout({ role, title }: PortalLayoutProps) {
     const loginPath = role === 'teacher' ? ROUTES.AUTH.TEACHER_LOGIN :
                       role === 'parent' ? ROUTES.AUTH.PARENT_LOGIN :
                       ROUTES.AUTH.STUDENT_LOGIN;
+
+    // Ensure the current account is recorded as trusted so the student can
+    // return directly from the account picker without re-entering credentials.
+    if (profile && !savedAccounts.some(a => a.profileId === profile.id)) {
+      try {
+        await saveAccount({
+          profileId: profile.id,
+          username: profile.login_id || profile.username || '',
+          fullName: profile.student_name || profile.teacher_name || profile.parent_name || profile.username || '',
+          loginId: profile.login_id || profile.username || '',
+          verificationId: profile.verification_id || profile.username || '',
+          role: role as SavedAccountRole,
+          avatarUrl: profile.avatar_url || undefined,
+          pinVerified: true,
+          otpVerified: true,
+        });
+      } catch (err) {
+        console.warn('Failed to save account on exit:', err);
+      }
+    }
+
     await signOut(loginPath);
   };
 
-  /** Logout: end the active session while keeping the saved account on the device. */
+  /** Logout: revoke the trusted session for this account and end the session. */
   const handleLogout = async () => {
     setSaveDialogOpen(false);
+    if (profile?.id) {
+      try {
+        await untrustDevice(profile.id);
+      } catch (err) {
+        console.warn('Failed to revoke trusted account on logout:', err);
+      }
+    }
     await signOut();
   };
 
@@ -241,7 +269,7 @@ export function PortalLayout({ role, title }: PortalLayoutProps) {
         <SaveLoginDialog
           open={saveDialogOpen}
           displayName={profile.student_name || profile.teacher_name || profile.parent_name || profile.username}
-          verificationId={profile.verification_id || ''}
+          loginId={profile.login_id || profile.username || ''}
           onSaveAndExit={handleSaveAndExit}
           onLogout={handleLogout}
           onCancel={() => setSaveDialogOpen(false)}
@@ -352,7 +380,7 @@ export function PortalLayout({ role, title }: PortalLayoutProps) {
       <SaveLoginDialog
         open={saveDialogOpen}
         displayName={(profile as any)?.student_name || (profile as any)?.teacher_name || (profile as any)?.parent_name || profile.username}
-        verificationId={(profile as any)?.verification_id || ''}
+        loginId={profile.login_id || profile.username || ''}
         onSaveAndExit={handleSaveAndExit}
         onLogout={handleLogout}
         onCancel={() => setSaveDialogOpen(false)}

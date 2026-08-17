@@ -3,7 +3,7 @@
  * ────────────────
  * Shown when the user triggers logout from within a portal.
  * Lets them save account identity to localStorage (no sensitive data).
- * Displays full name + verification ID — NEVER the login ID.
+ * Displays full name + login ID — NEVER the verification ID or password.
  */
 import React from 'react';
 import {
@@ -20,7 +20,7 @@ import { Save, LogOut, X } from 'lucide-react';
 interface SaveLoginDialogProps {
   open: boolean;
   displayName: string;
-  verificationId: string;
+  loginId: string;
   onSaveAndExit: () => void;
   onLogout: () => void;
   onCancel: () => void;
@@ -29,7 +29,7 @@ interface SaveLoginDialogProps {
 export const SaveLoginDialog: React.FC<SaveLoginDialogProps> = ({
   open,
   displayName,
-  verificationId,
+  loginId,
   onSaveAndExit,
   onLogout,
   onCancel,
@@ -42,8 +42,8 @@ export const SaveLoginDialog: React.FC<SaveLoginDialogProps> = ({
         </AlertDialogTitle>
         <AlertDialogDescription className="text-sm text-muted-foreground leading-relaxed">
           <span className="font-semibold text-foreground">{displayName}</span>
-          {verificationId && (
-            <> <span className="font-mono text-primary">({verificationId})</span></>
+          {loginId && (
+            <> <span className="font-mono text-primary">{loginId}</span></>
           )}
           <br />
           <span className="text-[11px] mt-1 block text-muted-foreground/80">

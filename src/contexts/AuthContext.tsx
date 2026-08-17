@@ -200,13 +200,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await addSavedAccount({
         profileId: userId,
-        username: profileData?.verification_id || profileData?.username || '',
+        username: profileData?.login_id || profileData?.username || '',
         fullName:
           profileData?.student_name ||
           profileData?.teacher_name ||
           profileData?.parent_name ||
           profileData?.username ||
           '',
+        loginId: profileData?.login_id || profileData?.username || '',
         verificationId: profileData?.verification_id || profileData?.username || '',
         role: profileData?.role as SavedAccount['role'] || 'student',
         avatarUrl: profileData?.avatar_url || undefined,
@@ -747,7 +748,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [currentSessionId, profile, user]);
 
   const trustDevice = useCallback(async (account: Omit<SavedAccount, 'savedAt'>) => {
-    await addSavedAccount(account);
+    const enriched: Omit<SavedAccount, 'savedAt'> = {
+      ...account,
+      loginId: account.loginId || account.username || account.verificationId,
+      username: account.username || account.loginId || account.verificationId,
+    };
+    await addSavedAccount(enriched);
   }, []);
 
   const untrustDevice = useCallback(async (profileId?: string) => {

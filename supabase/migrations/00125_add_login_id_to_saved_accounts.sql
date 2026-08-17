@@ -1,0 +1,1 @@
+ALTER TABLE public.saved_accounts ADD COLUMN login_id text NOT NULL DEFAULT '';

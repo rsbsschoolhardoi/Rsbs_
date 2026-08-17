@@ -8,6 +8,7 @@ interface SavedAccountRow {
   profile_id: string;
   role: string;
   full_name: string;
+  login_id: string;
   verification_id: string;
   avatar_url: string | null;
   pin_verified: boolean;
@@ -84,7 +85,7 @@ Deno.serve(async (req) => {
     if (action === 'list') {
       const { data, error } = await supabase
         .from('saved_accounts')
-        .select('profile_id, role, full_name, verification_id, avatar_url, pin_verified, otp_verified, updated_at')
+        .select('profile_id, role, full_name, login_id, verification_id, avatar_url, pin_verified, otp_verified, updated_at')
         .eq('device_id', deviceId)
         .order('updated_at', { ascending: false });
 
@@ -97,6 +98,7 @@ Deno.serve(async (req) => {
         profile_id,
         role,
         full_name,
+        login_id,
         verification_id,
         avatar_url,
         pin_verified = false,
@@ -114,13 +116,14 @@ Deno.serve(async (req) => {
           profile_id,
           role,
           full_name,
+          login_id: login_id || verification_id,
           verification_id,
           avatar_url,
           pin_verified,
           otp_verified,
           updated_at: new Date().toISOString(),
         }, { onConflict: 'device_id, profile_id' })
-        .select('profile_id, role, full_name, verification_id, avatar_url, pin_verified, otp_verified, updated_at')
+        .select('profile_id, role, full_name, login_id, verification_id, avatar_url, pin_verified, otp_verified, updated_at')
         .single();
 
       if (error) throw error;
