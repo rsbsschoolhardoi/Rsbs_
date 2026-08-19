@@ -124,7 +124,7 @@ export default function Templates() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl md:text-4xl font-black text-primary uppercase tracking-tighter flex items-center gap-3">
+          <h1 className="text-3xl md:text-4xl font-semibold text-primary uppercase tracking-tighter flex items-center gap-3">
             <Wand2 className="w-9 h-9" />
             Template Studio
           </h1>
@@ -134,7 +134,7 @@ export default function Templates() {
         </div>
         <Button
           onClick={handleCreate}
-          className="h-12 px-8 font-black bg-primary hover:bg-primary/90 shadow-xl shadow-primary/20 rounded-2xl transition-all active:scale-95"
+          className="h-12 px-8 font-semibold bg-primary hover:bg-primary/90 shadow-xl shadow-primary/20 rounded-2xl transition-all active:scale-95"
         >
           <Plus className="w-5 h-5 mr-2" />
           New Template
@@ -156,7 +156,7 @@ export default function Templates() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-64 rounded-[2rem] bg-muted/20 animate-pulse border-2 border-dashed border-muted" />
+            <div key={i} className="h-64 rounded-2xl bg-muted/20 animate-pulse border-2 border-dashed border-muted" />
           ))}
         </div>
       ) : filteredTemplates.length === 0 ? (
@@ -166,7 +166,7 @@ export default function Templates() {
               <FileText className="w-10 h-10 text-muted-foreground" />
             </div>
             <div className="space-y-1">
-              <p className="text-xl font-black text-muted-foreground uppercase tracking-tight">No Templates Found</p>
+              <p className="text-xl font-semibold text-muted-foreground uppercase tracking-tight">No Templates Found</p>
               <p className="text-sm text-muted-foreground italic font-medium">
                 Start by creating a new template in the studio.
               </p>
@@ -187,7 +187,7 @@ export default function Templates() {
             return (
               <Card
                 key={template.id}
-                className="group border-none shadow-xl hover:shadow-2xl transition-all duration-300 rounded-[2rem] overflow-hidden flex flex-col hover:-translate-y-1 bg-background"
+                className="group border-none shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl overflow-hidden flex flex-col hover:-translate-y-1 bg-background"
               >
                 {/* Colour bar */}
                 <div className={`h-3 bg-gradient-to-r ${
@@ -203,11 +203,11 @@ export default function Templates() {
                     <div className="space-y-1 flex-1 min-w-0">
                       <Badge
                         variant="outline"
-                        className="mb-2 rounded-lg font-black uppercase tracking-widest text-[10px] bg-muted/50 text-muted-foreground border-none"
+                        className="mb-2 rounded-lg font-semibold text-xs bg-muted/50 text-muted-foreground border-none"
                       >
                         {template.type}
                       </Badge>
-                      <CardTitle className="text-xl font-black text-primary leading-tight group-hover:text-primary/80 transition-colors truncate">
+                      <CardTitle className="text-xl font-semibold text-primary leading-tight group-hover:text-primary/80 transition-colors truncate">
                         {template.name}
                       </CardTitle>
                     </div>
@@ -227,7 +227,7 @@ export default function Templates() {
                     ].map(({ label, enabled }) => (
                       <div
                         key={label}
-                        className={`flex items-center gap-1 px-2.5 py-1 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
+                        className={`flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold font-medium transition-all ${
                           enabled
                             ? 'bg-primary/8 text-primary border border-primary/20'
                             : 'bg-muted/30 text-muted-foreground/50 border border-muted'
@@ -242,7 +242,7 @@ export default function Templates() {
                   </div>
 
                   <div className="mt-4 p-3 bg-muted/20 rounded-xl flex items-center justify-between">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Elements</span>
+                    <span className="text-xs font-semibold text-muted-foreground">Elements</span>
                     <span className="text-xs font-bold font-mono">{elementCount} Items</span>
                   </div>
                 </CardContent>
@@ -271,9 +271,9 @@ export default function Templates() {
 
       {/* Delete confirmation */}
       <AlertDialog open={!!deleteId} onOpenChange={open => !open && setDeleteId(null)}>
-        <AlertDialogContent className="max-w-[calc(100%-2rem)] md:max-w-lg rounded-[2rem] border-none shadow-2xl">
+        <AlertDialogContent className="max-w-[calc(100%-2rem)] md:max-w-lg rounded-2xl border-none shadow-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-2xl font-black text-destructive uppercase tracking-tighter">
+            <AlertDialogTitle className="text-2xl font-semibold text-destructive uppercase tracking-tighter">
               Are you absolutely sure?
             </AlertDialogTitle>
             <AlertDialogDescription className="text-muted-foreground font-medium italic">
@@ -286,7 +286,7 @@ export default function Templates() {
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
-              className="rounded-xl font-black bg-destructive hover:bg-destructive/90 shadow-lg shadow-destructive/20"
+              className="rounded-xl font-semibold bg-destructive hover:bg-destructive/90 shadow-lg shadow-destructive/20"
             >
               Delete Forever
             </AlertDialogAction>

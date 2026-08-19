@@ -136,7 +136,7 @@ export default function MasterFeesPanel({ currentSession }: MasterFeesPanelProps
         <Card>
           <CardContent className="p-4">
             <p className="text-xs text-muted-foreground mb-1">Classes Pending</p>
-            <p className="font-bold text-lg text-amber-600">{unsetClasses.length}</p>
+            <p className="font-bold text-lg text-warning">{unsetClasses.length}</p>
           </CardContent>
         </Card>
         <Card>
@@ -214,7 +214,7 @@ export default function MasterFeesPanel({ currentSession }: MasterFeesPanelProps
                           )}
                         </TableCell>
                         <TableCell>
-                          <Badge variant="secondary" className="bg-green-100 text-green-700 border-0 text-xs">
+                          <Badge variant="secondary" className="bg-success/10 text-success border-0 text-xs">
                             Configured
                           </Badge>
                         </TableCell>
@@ -266,7 +266,7 @@ export default function MasterFeesPanel({ currentSession }: MasterFeesPanelProps
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="text-xs text-amber-600 border-amber-300">New</Badge>
+                          <Badge variant="outline" className="text-xs text-warning border-amber-300">New</Badge>
                         </TableCell>
                         <TableCell className="text-right pr-4">
                           <div className="flex items-center justify-end gap-1">
@@ -288,13 +288,13 @@ export default function MasterFeesPanel({ currentSession }: MasterFeesPanelProps
 
           {/* Unconfigured classes warning */}
           {unsetClasses.length > 0 && !loading && (
-            <div className="mx-4 mb-4 mt-2 p-3 rounded-lg bg-amber-50 border border-amber-200">
-              <p className="text-xs font-medium text-amber-700 mb-1">
+            <div className="mx-4 mb-4 mt-2 p-3 rounded-lg bg-warning/10 border border-amber-200">
+              <p className="text-xs font-medium text-warning mb-1">
                 Classes not yet configured for {session}:
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {unsetClasses.map(c => (
-                  <Badge key={c} variant="outline" className="text-xs border-amber-300 text-amber-700 cursor-pointer hover:bg-amber-100"
+                  <Badge key={c} variant="outline" className="text-xs border-amber-300 text-warning cursor-pointer hover:bg-warning/10"
                     onClick={() => { setAddingNew(true); setNewClass(c); }}>
                     {c}
                   </Badge>

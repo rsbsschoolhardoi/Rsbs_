@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { StudentSwitcher } from '@/components/parent/StudentSwitcher';
 import { toast } from 'sonner';
+import { formatPeriodMonths, periodTypeLabel } from '@/lib/feePeriods';
 
 const ParentFees: React.FC = () => {
   const { profile } = useAuth();
@@ -25,7 +26,7 @@ const ParentFees: React.FC = () => {
   const fetchReceipts = useCallback(async () => {
     if (!profile?.id) return;
     setReceiptsLoading(true);
-    const { data } = await api.getFeeReceiptsForParent(profile.id);
+    const { data } = await api.getVisibleFeeReceiptsForParent(profile.id);
     setReceipts(data || []);
     setReceiptsLoading(false);
   }, [profile?.id]);
@@ -45,6 +46,12 @@ const ParentFees: React.FC = () => {
   const handlePrint = (receipt: any) => {
     if (!receipt.pdf_url) { toast.info('PDF not available for this receipt.'); return; }
     window.open(receipt.pdf_url, '_blank')?.print();
+  };
+
+  const formatExpires = (d: string) => {
+    if (!d) return '—';
+    const date = new Date(d);
+    return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
   };
 
   const getStatusStyle = (status: string) => {
@@ -80,10 +87,13 @@ const ParentFees: React.FC = () => {
 
   const filteredReceipts = studentReceipts.filter((r) => {
     const q = receiptSearch.toLowerCase();
+    const periodText = formatPeriodMonths(r.period_months, r.period_type).toLowerCase();
     return (
       r.receipt_number?.toLowerCase().includes(q) ||
       r.payment_method?.toLowerCase().includes(q) ||
-      r.students?.name?.toLowerCase().includes(q)
+      r.students?.name?.toLowerCase().includes(q) ||
+      r.period_value?.toLowerCase().includes(q) ||
+      periodText.includes(q)
     );
   });
 
@@ -238,8 +248,9 @@ const ParentFees: React.FC = () => {
                     <TableHead className="whitespace-nowrap">Student</TableHead>
                     <TableHead className="whitespace-nowrap">Date</TableHead>
                     <TableHead className="whitespace-nowrap">Method</TableHead>
-                    <TableHead className="whitespace-nowrap">Items</TableHead>
+                    <TableHead className="whitespace-nowrap">Period</TableHead>
                     <TableHead className="whitespace-nowrap">Amount</TableHead>
+                    <TableHead className="whitespace-nowrap">Visible Until</TableHead>
                     <TableHead className="text-right whitespace-nowrap">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -260,11 +271,18 @@ const ParentFees: React.FC = () => {
                       </TableCell>
                       <TableCell className="whitespace-nowrap text-sm">{r.payment_method}</TableCell>
                       <TableCell className="whitespace-nowrap text-sm">
-                        {Array.isArray(r.items) ? r.items.length : 0} item(s)
+                        <div className="flex flex-col">
+                          <span>{r.period_value || '—'}</span>
+                          {r.period_type && (
+                            <span className="text-xs text-muted-foreground">({periodTypeLabel(r.period_type)})</span>
+                          )}
+                          <span className="text-xs text-muted-foreground">{formatPeriodMonths(r.period_months, r.period_type)}</span>
+                        </div>
                       </TableCell>
                       <TableCell className="whitespace-nowrap font-semibold text-primary">
                         ₹{Number(r.total_amount).toLocaleString('en-IN')}
                       </TableCell>
+                      <TableCell className="whitespace-nowrap text-sm">{formatExpires(r.expires_at)}</TableCell>
                       <TableCell className="text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-2">
                           <Button

@@ -256,7 +256,7 @@ export default function Alumni() {
                             <div className="flex items-center gap-3">
                               <Avatar className="h-8 w-8 border border-primary/10">
                                 <AvatarImage src={student.profile_picture_url || ''} />
-                                <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-bold">
+                                <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">
                                   {student.name.charAt(0)}
                                 </AvatarFallback>
                               </Avatar>
@@ -289,8 +289,8 @@ export default function Alumni() {
 
         {/* Tab 2: Pass-Out Records */}
         <TabsContent value="records" className="flex-1 flex flex-col space-y-4 mt-0">
-          <div className="bg-amber-50/50 dark:bg-amber-950/20 p-4 rounded-2xl border border-amber-500/10">
-            <h3 className="text-sm font-bold text-amber-700 dark:text-amber-400 mb-3">Search & Filter Records</h3>
+          <div className="bg-warning/10/50 dark:bg-amber-950/20 p-4 rounded-2xl border border-amber-500/10">
+            <h3 className="text-sm font-bold text-warning dark:text-amber-400 mb-3">Search & Filter Records</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -363,7 +363,7 @@ export default function Alumni() {
                           <div className="flex items-center gap-3">
                             <Avatar className="h-8 w-8 border border-primary/10">
                               <AvatarImage src={record.profile_picture_url || ''} />
-                              <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-bold">
+                              <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">
                                 {record.name.charAt(0)}
                               </AvatarFallback>
                             </Avatar>
@@ -373,7 +373,7 @@ export default function Alumni() {
                         <TableCell className="font-medium">{record.class}</TableCell>
                         <TableCell className="font-medium text-muted-foreground">{record.session_info}</TableCell>
                         <TableCell className="text-center">
-                          <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 uppercase text-[10px] font-black">
+                          <Badge variant="outline" className="bg-warning/10 text-warning border-amber-200 uppercase text-xs font-semibold">
                             Pass-Out
                           </Badge>
                         </TableCell>
@@ -402,11 +402,11 @@ export default function Alumni() {
 
       {/* Confirmation Dialog */}
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <AlertDialogContent className="rounded-3xl border-none shadow-2xl">
+        <AlertDialogContent className="rounded-2xl border-none shadow-2xl">
           <AlertDialogHeader>
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 rounded-full bg-amber-100 dark:bg-amber-950">
-                <AlertTriangle className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+              <div className="p-2 rounded-full bg-warning/10 dark:bg-amber-950">
+                <AlertTriangle className="w-6 h-6 text-warning dark:text-amber-400" />
               </div>
               <AlertDialogTitle className="text-xl font-bold">Confirm Pass-Out Action</AlertDialogTitle>
             </div>
@@ -429,17 +429,17 @@ export default function Alumni() {
 
       {/* View Full Profile Dialog */}
       <Dialog open={!!viewingRecord} onOpenChange={(open) => !open && setViewingRecord(null)}>
-        <DialogContent className="rounded-3xl border-none shadow-2xl max-w-md overflow-hidden p-0">
-          <div className="bg-amber-50/50 dark:bg-amber-950/20 p-6 flex flex-col items-center gap-4 border-b border-amber-500/10">
+        <DialogContent className="rounded-2xl border-none shadow-2xl max-w-md overflow-hidden p-0">
+          <div className="bg-warning/10/50 dark:bg-amber-950/20 p-6 flex flex-col items-center gap-4 border-b border-amber-500/10">
             <Avatar className="h-20 w-20 border-4 border-background shadow-xl">
               <AvatarImage src={viewingRecord?.profile_picture_url || ''} />
-              <AvatarFallback className="bg-amber-100 text-amber-700 text-2xl font-black">
+              <AvatarFallback className="bg-warning/10 text-warning text-2xl font-semibold">
                 {viewingRecord?.name?.charAt(0)}
               </AvatarFallback>
             </Avatar>
             <div className="text-center">
               <h2 className="text-xl font-bold text-primary">{viewingRecord?.name}</h2>
-              <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 uppercase text-[10px] font-black mt-1 px-3">
+              <Badge variant="outline" className="bg-warning/10 text-warning border-amber-200 uppercase text-xs font-semibold mt-1 px-3">
                 Pass-Out
               </Badge>
             </div>
@@ -448,45 +448,45 @@ export default function Alumni() {
             <div className="grid grid-cols-2 gap-4">
               {viewingRecord?.class && (
                 <div className="space-y-1">
-                  <p className="text-[10px] uppercase font-black text-muted-foreground tracking-widest">Class</p>
+                  <p className="text-xs uppercase font-semibold text-muted-foreground tracking-widest">Class</p>
                   <p className="text-sm font-bold">{viewingRecord.class}</p>
                 </div>
               )}
               {viewingRecord?.section && (
                 <div className="space-y-1 text-right">
-                  <p className="text-[10px] uppercase font-black text-muted-foreground tracking-widest">Section</p>
+                  <p className="text-xs uppercase font-semibold text-muted-foreground tracking-widest">Section</p>
                   <p className="text-sm font-bold">{viewingRecord.section}</p>
                 </div>
               )}
               {viewingRecord?.session_info && (
                 <div className="space-y-1">
-                  <p className="text-[10px] uppercase font-black text-muted-foreground tracking-widest">Session</p>
+                  <p className="text-xs uppercase font-semibold text-muted-foreground tracking-widest">Session</p>
                   <p className="text-sm font-bold">{viewingRecord.session_info}</p>
                 </div>
               )}
               {viewingRecord?.passout_date && (
                 <div className="space-y-1 text-right">
-                  <p className="text-[10px] uppercase font-black text-muted-foreground tracking-widest">Pass-Out Date</p>
-                  <p className="text-sm font-bold text-amber-600">
+                  <p className="text-xs uppercase font-semibold text-muted-foreground tracking-widest">Pass-Out Date</p>
+                  <p className="text-sm font-bold text-warning">
                     {new Date(viewingRecord.passout_date).toLocaleDateString()}
                   </p>
                 </div>
               )}
               {viewingRecord?.dob && (
                 <div className="space-y-1">
-                  <p className="text-[10px] uppercase font-black text-muted-foreground tracking-widest">Date of Birth</p>
+                  <p className="text-xs uppercase font-semibold text-muted-foreground tracking-widest">Date of Birth</p>
                   <p className="text-sm font-bold">{viewingRecord.dob}</p>
                 </div>
               )}
               {viewingRecord?.contact && (
                 <div className="space-y-1 col-span-2">
-                  <p className="text-[10px] uppercase font-black text-muted-foreground tracking-widest">Contact</p>
+                  <p className="text-xs uppercase font-semibold text-muted-foreground tracking-widest">Contact</p>
                   <p className="text-sm font-bold">{viewingRecord.contact}</p>
                 </div>
               )}
               {viewingRecord?.email && (
                 <div className="space-y-1 col-span-2">
-                  <p className="text-[10px] uppercase font-black text-muted-foreground tracking-widest">Email</p>
+                  <p className="text-xs uppercase font-semibold text-muted-foreground tracking-widest">Email</p>
                   <p className="text-sm font-bold">{viewingRecord.email}</p>
                 </div>
               )}

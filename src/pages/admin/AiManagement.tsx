@@ -240,7 +240,7 @@ function ManageControlSection({ settings }: { settings: AiSettings | null }) {
                   Save
                 </Button>
               </div>
-              <p className="text-[10px] text-muted-foreground italic">
+              <p className="text-xs text-muted-foreground italic">
                 Automatically trims oldest messages (FIFO) when limit is reached.
               </p>
             </div>
@@ -322,7 +322,7 @@ function ManageControlSection({ settings }: { settings: AiSettings | null }) {
                 />
               </div>
             </div>
-            <p className="text-[10px] text-muted-foreground italic">
+            <p className="text-xs text-muted-foreground italic">
               Strictly follow granular permissions. Sensitive data (DOB, Phone, etc.) is permanently prohibited.
             </p>
           </div>
@@ -341,7 +341,7 @@ function ManageControlSection({ settings }: { settings: AiSettings | null }) {
               <Card key={c.id} className="p-4 flex items-center justify-between border-muted">
                 <div>
                   <p className="font-bold">{c.name}</p>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
+                  <p className="text-xs text-muted-foreground font-medium">
                     {isEnabled ? 'Access Granted' : 'Access Restricted'}
                   </p>
                 </div>
@@ -398,18 +398,18 @@ function ManageControlSection({ settings }: { settings: AiSettings | null }) {
                   <TableRow key={s.id} className="hover:bg-muted/30 transition-colors">
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary text-[10px]">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary text-xs">
                           {s.name[0].toUpperCase()}
                         </div>
                         <div>
                           <p className="font-bold text-sm">{s.name}</p>
-                          <p className="text-[10px] text-muted-foreground">{s.login_id}</p>
+                          <p className="text-xs text-muted-foreground">{s.login_id}</p>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell className="text-center text-sm font-medium">{s.class}</TableCell>
                     <TableCell className="text-center">
-                      <Badge variant={isEnabled ? "default" : "destructive"} className="text-[9px] uppercase font-bold tracking-tighter">
+                      <Badge variant={isEnabled ? "default" : "destructive"} className="text-xs uppercase font-bold tracking-tighter">
                         {isEnabled ? 'Active' : 'Disabled'}
                       </Badge>
                     </TableCell>
@@ -495,7 +495,7 @@ function SetLimitSection({ settings, onUpdate }: { settings: AiSettings | null, 
           </CardContent>
         </Card>
 
-        <Card className="border-amber-200 bg-amber-50 dark:bg-amber-950/20">
+        <Card className="border-amber-200 bg-warning/10 dark:bg-amber-950/20">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <ShieldAlert className="w-5 h-5 text-amber-500" /> Usage Policy Note
@@ -520,7 +520,7 @@ function SetLimitSection({ settings, onUpdate }: { settings: AiSettings | null, 
               <Card key={c.id} className="p-4 space-y-3 border-muted">
                 <div className="flex justify-between items-center">
                   <p className="font-bold">{c.name}</p>
-                  <Badge variant={limit !== undefined ? "secondary" : "outline"} className="text-[8px]">
+                  <Badge variant={limit !== undefined ? "secondary" : "outline"} className="text-xs">
                     {limit !== undefined ? 'Custom' : 'Inherited'}
                   </Badge>
                 </div>

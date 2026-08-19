@@ -37,7 +37,7 @@ export const SaveLoginDialog: React.FC<SaveLoginDialogProps> = ({
   <AlertDialog open={open} onOpenChange={v => { if (!v) onCancel(); }}>
     <AlertDialogContent className="max-w-[calc(100%-2rem)] md:max-w-sm rounded-2xl p-6">
       <AlertDialogHeader className="text-left gap-1.5">
-        <AlertDialogTitle className="text-lg font-black tracking-tight">
+        <AlertDialogTitle className="text-lg font-semibold tracking-tight">
           Exit session?
         </AlertDialogTitle>
         <AlertDialogDescription className="text-sm text-muted-foreground leading-relaxed">

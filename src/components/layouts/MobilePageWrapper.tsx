@@ -67,7 +67,7 @@ export function MobilePageWrapper({ children, className, noPadding }: MobilePage
           '[&_table]:min-w-full',
           '[&_.table-container]:overflow-x-auto [&_.table-container]:-mx-3 [&_.table-container]:px-3',
           // Clamp large stat numbers inside cards
-          '[&_.stat-value]:text-xl [&_.stat-value]:font-black',
+          '[&_.stat-value]:text-xl [&_.stat-value]:font-semibold',
           // Force all cards to be full-width on mobile, two columns on desktop
           '[&_.card-grid]:grid-cols-1 md:[&_.card-grid]:grid-cols-2',
           // Tighter card header rows
@@ -87,7 +87,7 @@ export function MobilePageWrapper({ children, className, noPadding }: MobilePage
           '[&_[class*="px-4"]]:px-3',
           '[&_[class*="py-2"]]:py-1.5',
           // Compact badges
-          '[&_[class*="badge"]]:text-[10px] [&_[class*="badge"]]:px-1.5 [&_[class*="badge"]]:py-0',
+          '[&_[class*="badge"]]:text-xs [&_[class*="badge"]]:px-1.5 [&_[class*="badge"]]:py-0',
         )}
       >
         {children}

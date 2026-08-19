@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { Student, Attendance, Exam, Notice, GalleryItem, Profile, SchoolInfo, Leadership, StudentQuery, TeacherQuery, Module, ModuleSetting, Appointment, Admission, StudentSession, SocialMediaLink, Teacher, ClassTeacherAssignment, AttendanceConfig, BrandingSettings, Certificate, Subject, TimetableSession, TimetableEntry, Parent, DocumentTemplate, AiSettings, AiStudentConfig, AiClassConfig, AiUsage, AiChatSession, AiChatMessage, EarlyLeave, ApiKey, ApiEndpoint, ApiLog, ModuleApi, ApiConfig, Chatbot, MasterFee, ExtraFee, FeePayment, Quiz, Question, QuestionOption, QuizAssignment, QuizAttempt, AttemptAnswer, QuizAiInteraction, QuizPlayerData, QuizResultReview, QuizAnalytics, QuestionWiseAnalytics, StudentPanelSetting, StudentPanelNotification, StudentPanelHelpSupport, StudentPanelPrivacyPolicy } from '@/types';
+import { Student, Attendance, Exam, Notice, GalleryItem, Profile, SchoolInfo, Leadership, StudentQuery, TeacherQuery, Module, ModuleSetting, Appointment, Admission, StudentSession, SocialMediaLink, Teacher, ClassTeacherAssignment, AttendanceConfig, BrandingSettings, Certificate, Subject, TimetableSession, TimetableEntry, Parent, DocumentTemplate, AiSettings, AiStudentConfig, AiClassConfig, AiUsage, AiChatSession, AiChatMessage, EarlyLeave, ApiKey, ApiEndpoint, ApiLog, ModuleApi, ApiConfig, Chatbot, MasterFee, ExtraFee, FeePayment, FeeReceipt, Quiz, Question, QuestionOption, QuizAssignment, QuizAttempt, AttemptAnswer, QuizAiInteraction, QuizPlayerData, QuizResultReview, QuizAnalytics, QuestionWiseAnalytics, StudentPanelSetting, StudentPanelNotification, StudentPanelHelpSupport, StudentPanelPrivacyPolicy } from '@/types';
 
 // Columns that belong to the actual quizzes table. Joined/computed fields
 // (e.g. subjects, subject_name, question_count) must never be sent back in
@@ -1141,7 +1141,7 @@ export const api = {
   },
 
   // Student Queries
-  async getQueries(studentId?: string, targetTeacherId?: string) {
+  async getQueries(studentId?: string, targetTeacherId?: string, status?: 'pending' | 'replied') {
     let query = supabase.from('student_queries').select('*').order('created_at', { ascending: false });
     if (studentId) {
       // For student: visible if public OR their own
@@ -1150,6 +1150,7 @@ export const api = {
       // For teacher: visible if targeted to them
       query = query.eq('target_teacher_id', targetTeacherId);
     }
+    if (status) query = query.eq('status', status);
     const { data, error } = await query;
     return { data: (data || []) as StudentQuery[], error };
   },
@@ -2229,21 +2230,128 @@ export const api = {
     return { data: Number(data ?? 0), error };
   },
 
-  async getFeePayments(studentId: string, sessionYear?: string) {
+  async getFeePayments(studentId: string, sessionYear?: string, excludeRevoked = false) {
     let query = supabase
       .from('fee_payments')
-      .select('*')
+      .select('*, fee_receipts(id, receipt_number, pdf_url)')
       .eq('student_id', studentId)
       .order('payment_date', { ascending: false });
     if (sessionYear) query = query.eq('session_year', sessionYear);
+    if (excludeRevoked) query = query.eq('is_revoked', false);
     const { data, error } = await query;
     return { data: (data || []) as FeePayment[], error };
+  },
+
+  async getAllFeePayments(filters?: { startDate?: string; endDate?: string; sessionYear?: string; excludeRevoked?: boolean }) {
+    let query = supabase
+      .from('fee_payments')
+      .select('id, student_id, amount, payment_date, session_year, is_revoked, period_type, payment_period')
+      .order('payment_date', { ascending: false });
+    if (filters?.startDate) query = query.gte('payment_date', filters.startDate);
+    if (filters?.endDate) query = query.lte('payment_date', filters.endDate);
+    if (filters?.sessionYear) query = query.eq('session_year', filters.sessionYear);
+    if (filters?.excludeRevoked) query = query.eq('is_revoked', false);
+    const { data, error } = await query;
+    return { data: (data || []) as FeePayment[], error };
+  },
+
+  async getAllAttendanceForRange(startDate: string, endDate: string) {
+    const { data, error } = await supabase
+      .from('attendance')
+      .select('id, student_id, date, status, created_at')
+      .gte('date', startDate)
+      .lte('date', endDate);
+    return { data: (data || []) as Attendance[], error };
+  },
+
+  async getAllAdmissionsForRange(startDate?: string, endDate?: string) {
+    let query = supabase.from('admissions').select('id, status, created_at').order('created_at', { ascending: false });
+    if (startDate) query = query.gte('created_at', startDate);
+    if (endDate) query = query.lte('created_at', endDate);
+    const { data, error } = await query;
+    return { data: (data || []) as Admission[], error };
+  },
+
+  async getAllStudentsForRange(startDate?: string, endDate?: string) {
+    let query = supabase.from('students').select('id, status, created_at').order('created_at', { ascending: false });
+    if (startDate) query = query.gte('created_at', startDate);
+    if (endDate) query = query.lte('created_at', endDate);
+    const { data, error } = await query;
+    return { data: (data || []) as Student[], error };
+  },
+
+  async getExamsForRange(startDate: string, endDate: string) {
+    const { data, error } = await supabase
+      .from('exams')
+      .select('*')
+      .gte('date', startDate)
+      .lte('date', endDate);
+    return { data: (data || []) as Exam[], error };
+  },
+
+  async checkCorePeriodAvailable(
+    studentId: string,
+    sessionYear: string,
+    periodMonths: string[],
+    feeType: string = 'core',
+  ) {
+    const { data, error } = await supabase.rpc('check_core_period_available', {
+      p_student_id: studentId,
+      p_session_year: sessionYear,
+      p_period_months: periodMonths,
+      p_fee_type: feeType,
+    });
+    return { data: data as boolean | null, error };
+  },
+
+  async registerFeePayment(payment: {
+    student_id: string;
+    session_year: string;
+    payment_period: string;
+    period_type: string;
+    period_months: string[];
+    amount: number;
+    payment_method: string;
+    payment_date: string;
+    transaction_id?: string;
+    notes?: string;
+    collected_by?: string;
+    fee_type?: string;
+  }) {
+    const { data, error } = await supabase.rpc('register_fee_payment', {
+      p_student_id: payment.student_id,
+      p_session_year: payment.session_year,
+      p_period: payment.payment_period,
+      p_period_type: payment.period_type,
+      p_period_months: payment.period_months,
+      p_amount: payment.amount,
+      p_payment_method: payment.payment_method,
+      p_payment_date: payment.payment_date,
+      p_transaction_id: payment.transaction_id ?? null,
+      p_notes: payment.notes ?? null,
+      p_collected_by: payment.collected_by ?? null,
+      p_fee_type: payment.fee_type ?? 'core',
+    });
+    if (error) return { data: null as FeePayment | null, error };
+    return { data: data as FeePayment | null, error };
+  },
+
+  async updateFeePaymentReceiptId(paymentId: string, receiptId: string) {
+    const { data, error } = await supabase
+      .from('fee_payments')
+      .update({ receipt_id: receiptId })
+      .eq('id', paymentId)
+      .select()
+      .maybeSingle();
+    return { data: data as FeePayment | null, error };
   },
 
   async createFeePayment(payment: {
     student_id: string;
     session_year: string;
     payment_period: string;
+    period_type?: string;
+    period_months?: string[];
     amount: number;
     payment_method: string;
     payment_date: string;
@@ -2254,20 +2362,25 @@ export const api = {
   }) {
     const { data, error } = await supabase
       .from('fee_payments')
-      .insert(payment)
+      .insert({
+        ...payment,
+        period_type: payment.period_type ?? 'monthly',
+        period_value: payment.payment_period,
+      })
       .select()
       .maybeSingle();
     return { data: data as FeePayment | null, error };
   },
 
   // ── Extra / Other Fees ────────────────────────────────────────
-  async getExtraFees(studentId?: string, sessionYear?: string) {
+  async getExtraFees(studentId?: string, sessionYear?: string, includeRevoked = false) {
     let query = supabase
       .from('extra_fees')
       .select('*, students(name, login_id, class, section)')
       .order('created_at', { ascending: false });
     if (studentId) query = query.eq('student_id', studentId);
     if (sessionYear) query = query.eq('session_year', sessionYear);
+    if (!includeRevoked) query = query.eq('is_revoked', false);
     const { data, error } = await query;
     return { data: (data || []) as ExtraFee[], error };
   },
@@ -2286,22 +2399,53 @@ export const api = {
   }) {
     const { data, error } = await supabase
       .from('extra_fees')
-      .insert(fee)
+      .insert({ ...fee, revocation_expires_at: new Date(Date.now() + 120_000).toISOString() })
       .select('*, students(name, login_id, class, section)')
       .maybeSingle();
     return { data: data as ExtraFee | null, error };
   },
 
   // ── Fee Receipts ──────────────────────────────────────────────
-  async getFeeReceipts(studentId?: string) {
+  async getFeeReceipts(studentId?: string, includeRevoked = false) {
     let query = supabase
       .from('fee_receipts')
       .select('*, students(name, login_id, class, section, profile_picture_url)')
       .order('created_at', { ascending: false });
 
     if (studentId) query = query.eq('student_id', studentId);
+    if (!includeRevoked) query = query.eq('is_revoked', false);
     const { data, error } = await query;
-    return { data: (data || []) as any[], error };
+    return { data: (data || []) as FeeReceipt[], error };
+  },
+
+  async revokeFeeRegistration(paymentId: string) {
+    const { data, error } = await supabase.rpc('revoke_fee_registration', {
+      p_payment_id: paymentId,
+      p_revoked_by: (await supabase.auth.getSession()).data.session?.user?.id,
+    });
+    return { data: data as boolean | null, error };
+  },
+
+  async revokeExtraFee(extraFeeId: string) {
+    const { data, error } = await supabase.rpc('revoke_extra_fee', {
+      p_extra_fee_id: extraFeeId,
+      p_revoked_by: (await supabase.auth.getSession()).data.session?.user?.id,
+    });
+    return { data: data as boolean | null, error };
+  },
+
+  async getVisibleFeeReceiptsForStudent(studentId: string) {
+    const { data, error } = await supabase.rpc('get_visible_receipts_for_student', {
+      p_student_id: studentId,
+    });
+    return { data: (data || []) as FeeReceipt[], error };
+  },
+
+  async getVisibleFeeReceiptsForParent(parentProfileId: string) {
+    const { data, error } = await supabase.rpc('get_visible_receipts_for_parent', {
+      p_profile_id: parentProfileId,
+    });
+    return { data: (data || []) as FeeReceipt[], error };
   },
 
   async getFeeReceiptById(id: string) {
@@ -2310,7 +2454,7 @@ export const api = {
       .select('*, students(name, login_id, class, section, profile_picture_url)')
       .eq('id', id)
       .maybeSingle();
-    return { data: data as any, error };
+    return { data: data as FeeReceipt, error };
   },
 
   async generateReceiptNumber() {
@@ -2353,6 +2497,9 @@ export const api = {
     generated_by?: string;
     pdf_url?: string;
     receipt_hash?: string;
+    period_type?: string;
+    period_value?: string;
+    period_months?: string[];
   }) {
     const { data, error } = await supabase
       .from('fee_receipts')
@@ -2363,7 +2510,31 @@ export const api = {
       })
       .select('*, students(name, login_id, class, section)')
       .maybeSingle();
-    return { data: data as any, error };
+    return { data: data as FeeReceipt | null, error };
+  },
+
+  async createFeeReceiptVisibility(receiptId: string, visibilityDays = 30) {
+    const { data, error } = await supabase.rpc('create_fee_receipt_visibility', {
+      p_receipt_id: receiptId,
+      p_visibility_days: visibilityDays,
+    });
+    return { data, error };
+  },
+
+  async extendReceiptVisibilityForRole(receiptId: string, role: 'student' | 'parent', visibilityDays = 30) {
+    const { data, error } = await supabase.rpc('extend_receipt_visibility_for_role', {
+      p_receipt_id: receiptId,
+      p_role: role,
+      p_visibility_days: visibilityDays,
+    });
+    return { data, error };
+  },
+
+  async getReceiptVisibilityStatus(receiptId: string) {
+    const { data, error } = await supabase.rpc('get_receipt_visibility_status', {
+      p_receipt_id: receiptId,
+    });
+    return { data: (data || []) as { role: string; expires_at: string; is_extended: boolean }[], error };
   },
 
   async updateFeeReceiptPdfUrl(id: string, pdf_url: string) {
@@ -2372,29 +2543,6 @@ export const api = {
       .update({ pdf_url, updated_at: new Date().toISOString() })
       .eq('id', id)
       .maybeSingle();
-    return { data, error };
-  },
-
-  // Regenerate: bump counter, update pdf_url, keep same receipt_number
-  async regenerateFeeReceipt(id: string, pdf_url: string) {
-    const { data, error } = await supabase
-      .from('fee_receipts')
-      .update({
-        pdf_url,
-        updated_at: new Date().toISOString(),
-        generation_timestamp: new Date().toISOString(),
-        regenerated_count: supabase.rpc as any, // handled via raw increment below
-      })
-      .eq('id', id)
-      .maybeSingle();
-    return { data, error };
-  },
-
-  async incrementRegeneratedCount(id: string, pdf_url: string) {
-    const { data, error } = await supabase.rpc('increment_receipt_regenerated', {
-      p_id: id,
-      p_pdf_url: pdf_url,
-    });
     return { data, error };
   },
 
@@ -2417,20 +2565,12 @@ export const api = {
     return { error };
   },
 
-  // Parent: read receipts for all linked students
+  // Parent: read visible receipts for all linked students
   async getFeeReceiptsForParent(parentProfileId: string) {
-    // Get all linked student IDs first
-    const { data: linked } = await supabase.rpc('get_parent_linked_students', {
+    const { data, error } = await supabase.rpc('get_visible_receipts_for_parent', {
       p_profile_id: parentProfileId,
     });
-    if (!linked || linked.length === 0) return { data: [], error: null };
-    const studentIds = (linked as any[]).map((s) => s.student_id);
-    const { data, error } = await supabase
-      .from('fee_receipts')
-      .select('*, students(name, login_id, class, section)')
-      .in('student_id', studentIds)
-      .order('created_at', { ascending: false });
-    return { data: (data || []) as any[], error };
+    return { data: (data || []) as FeeReceipt[], error };
   },
 
   // ── Quiz Management ────────────────────────────────────────────────────────

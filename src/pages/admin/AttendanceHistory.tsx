@@ -178,7 +178,7 @@ export default function AttendanceHistory() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Start Date</label>
+              <label className="text-xs font-bold text-muted-foreground font-medium">Start Date</label>
               <Input
                 type="date"
                 value={filters.startDate}
@@ -187,7 +187,7 @@ export default function AttendanceHistory() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest">End Date</label>
+              <label className="text-xs font-bold text-muted-foreground font-medium">End Date</label>
               <Input
                 type="date"
                 value={filters.endDate}
@@ -203,29 +203,29 @@ export default function AttendanceHistory() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 shrink-0">
           <Card className="border-none shadow-sm rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
             <CardContent className="p-4">
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Total Records</p>
-              <p className="text-2xl font-black text-foreground mt-1">{stats.total}</p>
+              <p className="text-xs font-bold text-muted-foreground font-medium">Total Records</p>
+              <p className="text-2xl font-semibold text-foreground mt-1">{stats.total}</p>
             </CardContent>
           </Card>
           <Card className="border-none shadow-sm rounded-2xl bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900">
             <CardContent className="p-4">
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Present</p>
-              <p className="text-2xl font-black text-green-700 dark:text-green-300 mt-1">{stats.present}</p>
+              <p className="text-xs font-bold text-muted-foreground font-medium">Present</p>
+              <p className="text-2xl font-semibold text-success dark:text-green-300 mt-1">{stats.present}</p>
             </CardContent>
           </Card>
           <Card className="border-none shadow-sm rounded-2xl bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950 dark:to-red-900">
             <CardContent className="p-4">
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Absent</p>
-              <p className="text-2xl font-black text-red-700 dark:text-red-300 mt-1">{stats.absent}</p>
+              <p className="text-xs font-bold text-muted-foreground font-medium">Absent</p>
+              <p className="text-2xl font-semibold text-destructive dark:text-red-300 mt-1">{stats.absent}</p>
             </CardContent>
           </Card>
           <Card className="border-none shadow-sm rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900">
             <CardContent className="p-4">
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+              <p className="text-xs font-bold text-muted-foreground font-medium flex items-center gap-1">
                 <TrendingUp className="w-3 h-3" />
                 Percentage
               </p>
-              <p className="text-2xl font-black text-amber-700 dark:text-amber-300 mt-1">{stats.percentage}%</p>
+              <p className="text-2xl font-semibold text-warning dark:text-amber-300 mt-1">{stats.percentage}%</p>
             </CardContent>
           </Card>
         </div>
@@ -238,7 +238,7 @@ export default function AttendanceHistory() {
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
           ) : attendanceData.length === 0 ? (
-            <div className="text-center py-20 bg-muted/20 rounded-3xl border border-dashed">
+            <div className="text-center py-20 bg-muted/20 rounded-2xl border border-dashed">
               <CalendarIcon className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">No attendance records found. Apply filters to view data.</p>
             </div>
@@ -264,25 +264,25 @@ export default function AttendanceHistory() {
                         <TableCell>
                           <div className="flex flex-col gap-1">
                             <Badge
-                              className={`text-[10px] px-2 py-0 h-5 w-fit ${
+                              className={`text-xs px-2 py-0 h-5 w-fit ${
                                 record.status === 'Present'
-                                  ? 'bg-green-100 text-green-700 hover:bg-green-100 border-none'
+                                  ? 'bg-success/10 text-success hover:bg-success/10 border-none'
                                   : record.status === 'Absent'
-                                  ? 'bg-red-100 text-red-700 hover:bg-red-100 border-none'
-                                  : 'bg-amber-100 text-amber-700 hover:bg-amber-100 border-none'
+                                  ? 'bg-destructive/10 text-destructive hover:bg-destructive/10 border-none'
+                                  : 'bg-warning/10 text-warning hover:bg-warning/10 border-none'
                               }`}
                             >
                               {record.status}
                             </Badge>
                             {earlyLeave && (
-                              <Badge className="text-[10px] px-2 py-0 h-5 w-fit bg-amber-500 text-white hover:bg-amber-500 border-none">
+                              <Badge className="text-xs px-2 py-0 h-5 w-fit bg-amber-500 text-white hover:bg-amber-500 border-none">
                                 Early Leave: {earlyLeave.exit_time.substring(0, 5)}
                               </Badge>
                             )}
                           </div>
                         </TableCell>
                         {earlyLeave && (
-                          <TableCell className="text-[10px] text-muted-foreground italic max-w-[200px] truncate">
+                          <TableCell className="text-xs text-muted-foreground italic max-w-[200px] truncate">
                             {earlyLeave.reason}
                           </TableCell>
                         )}

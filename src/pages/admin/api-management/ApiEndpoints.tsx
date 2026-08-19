@@ -198,17 +198,17 @@ export default function ApiEndpoints() {
               <Plus className="w-4 h-4" /> Create API Endpoint
             </Button>
           </DialogTrigger>
-          <DialogContent className="rounded-[2.5rem] sm:max-w-[600px] max-h-[90vh] overflow-y-auto no-scrollbar">
+          <DialogContent className="rounded-2xl sm:max-w-[600px] max-h-[90vh] overflow-y-auto no-scrollbar">
             <DialogHeader>
-              <DialogTitle className="text-xl font-black">{editingId ? 'Edit' : 'Create'} API Endpoint</DialogTitle>
-              <DialogDescription className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+              <DialogTitle className="text-xl font-semibold">{editingId ? 'Edit' : 'Create'} API Endpoint</DialogTitle>
+              <DialogDescription className="text-xs font-medium font-medium text-muted-foreground">
                 Configure data visibility and access methods
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase tracking-widest">Target Data Module</Label>
+                  <Label className="text-xs font-bold font-medium">Target Data Module</Label>
                   <Select value={formData.module_name} onValueChange={handleModuleChange} disabled={!!editingId}>
                     <SelectTrigger className="rounded-xl border-2 h-12">
                       <SelectValue placeholder="Select Module" />
@@ -221,7 +221,7 @@ export default function ApiEndpoints() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-bold uppercase tracking-widest">Public Endpoint Path</Label>
+                  <Label className="text-xs font-bold font-medium">Public Endpoint Path</Label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-xs">/api</span>
                     <Input
@@ -235,13 +235,13 @@ export default function ApiEndpoints() {
               </div>
 
               <div className="space-y-3">
-                <Label className="text-[10px] font-bold uppercase tracking-widest">Allowed Methods</Label>
+                <Label className="text-xs font-bold font-medium">Allowed Methods</Label>
                 <div className="flex flex-wrap gap-2">
                   {HTTP_METHODS.map(method => (
                     <Badge 
                       key={method}
                       variant={formData.methods.includes(method) ? "default" : "outline"}
-                      className={`cursor-pointer px-4 py-1.5 rounded-xl text-[11px] font-black tracking-widest transition-all ${
+                      className={`cursor-pointer px-4 py-1.5 rounded-xl text-[11px] font-semibold tracking-widest transition-all ${
                         formData.methods.includes(method) 
                           ? 'bg-primary text-white shadow-md scale-105' 
                           : 'bg-muted/30 hover:bg-muted/50 border-none opacity-50'
@@ -256,8 +256,8 @@ export default function ApiEndpoints() {
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <Label className="text-[10px] font-bold uppercase tracking-widest">Data Field Control (Selection & Masking)</Label>
-                  <Badge variant="outline" className="text-[9px] font-bold uppercase border-primary/20 text-primary">
+                  <Label className="text-xs font-bold font-medium">Data Field Control (Selection & Masking)</Label>
+                  <Badge variant="outline" className="text-xs font-bold uppercase border-primary/20 text-primary">
                     {formData.exposed_fields.length} Fields Selected
                   </Badge>
                 </div>
@@ -265,10 +265,10 @@ export default function ApiEndpoints() {
                   {columnsLoading ? (
                     <div className="flex items-center justify-center py-8 gap-2">
                       <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Analysing Module Schema...</span>
+                      <span className="text-xs font-bold font-medium text-muted-foreground">Analysing Module Schema...</span>
                     </div>
                   ) : availableColumns.length === 0 ? (
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground text-center py-8">Select a module to view available fields</p>
+                    <p className="text-xs font-bold font-medium text-muted-foreground text-center py-8">Select a module to view available fields</p>
                   ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                       {availableColumns.map(column => (
@@ -281,7 +281,7 @@ export default function ApiEndpoints() {
                           />
                           <label 
                             htmlFor={`col-${column}`}
-                            className="text-[11px] font-black uppercase tracking-tight text-foreground/80 cursor-pointer select-none"
+                            className="text-[11px] font-semibold uppercase tracking-tight text-foreground/80 cursor-pointer select-none"
                           >
                             {column}
                           </label>
@@ -290,12 +290,12 @@ export default function ApiEndpoints() {
                     </div>
                   )}
                 </div>
-                <p className="text-[10px] text-muted-foreground font-medium italic">* Selected fields will be exposed via the API. All other fields remain masked.</p>
+                <p className="text-xs text-muted-foreground font-medium italic">* Selected fields will be exposed via the API. All other fields remain masked.</p>
               </div>
             </div>
             <DialogFooter className="gap-2 sm:gap-0">
               <Button variant="outline" onClick={() => { setEditingId(null); resetForm(); }} className="rounded-xl font-bold border-2">Cancel</Button>
-              <Button onClick={handleSaveEndpoint} disabled={isCreating} className="rounded-xl font-black tracking-widest shadow-lg hover:shadow-primary/20 min-w-[120px]">
+              <Button onClick={handleSaveEndpoint} disabled={isCreating} className="rounded-xl font-semibold tracking-widest shadow-lg hover:shadow-primary/20 min-w-[120px]">
                 {isCreating ? <Loader2 className="w-4 h-4 animate-spin" /> : editingId ? "Save Changes" : "Deploy Endpoint"}
               </Button>
             </DialogFooter>
@@ -306,26 +306,26 @@ export default function ApiEndpoints() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? (
           Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="h-48 bg-muted/20 animate-pulse rounded-[2rem]" />
+            <div key={i} className="h-48 bg-muted/20 animate-pulse rounded-2xl" />
           ))
         ) : endpoints.length === 0 ? (
-          <div className="col-span-full py-12 text-center bg-muted/10 rounded-[2.5rem] border-2 border-dashed border-muted-foreground/20">
-            <p className="text-muted-foreground font-bold uppercase tracking-widest text-xs">No API endpoints configured yet.</p>
+          <div className="col-span-full py-12 text-center bg-muted/10 rounded-2xl border-2 border-dashed border-muted-foreground/20">
+            <p className="text-muted-foreground font-bold font-medium text-xs">No API endpoints configured yet.</p>
           </div>
         ) : (
           endpoints.map((endpoint) => (
-            <Card key={endpoint.id} className="border-none shadow-sm rounded-[2rem] bg-background border hover:shadow-md transition-all group overflow-hidden">
+            <Card key={endpoint.id} className="border-none shadow-sm rounded-2xl bg-background border hover:shadow-md transition-all group overflow-hidden">
               <CardHeader className="p-6 pb-2">
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
-                    <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest border-primary/20 text-primary bg-primary/5">
+                    <Badge variant="outline" className="text-xs font-semibold border-primary/20 text-primary bg-primary/5">
                       {endpoint.module_name}
                     </Badge>
-                    <CardTitle className="text-md font-black tracking-tight flex items-center gap-2 group-hover:text-primary transition-colors">
+                    <CardTitle className="text-md font-semibold tracking-tight flex items-center gap-2 group-hover:text-primary transition-colors">
                       <Code className="w-4 h-4 text-primary" /> {endpoint.path}
                     </CardTitle>
                   </div>
-                  <Badge className={`text-[9px] font-black uppercase rounded-lg border-none ${endpoint.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                  <Badge className={`text-xs font-semibold uppercase rounded-lg border-none ${endpoint.is_active ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
                     {endpoint.is_active ? 'Active' : 'Inactive'}
                   </Badge>
                 </div>
@@ -333,12 +333,12 @@ export default function ApiEndpoints() {
               <CardContent className="p-6 pt-2 space-y-4">
                 <div className="flex flex-wrap gap-1">
                   {endpoint.methods.map(m => (
-                    <span key={m} className="text-[9px] font-black bg-muted/50 px-2 py-0.5 rounded-md text-foreground/70 uppercase">
+                    <span key={m} className="text-xs font-semibold bg-muted/50 px-2 py-0.5 rounded-md text-foreground/70 uppercase">
                       {m}
                     </span>
                   ))}
                 </div>
-                <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground bg-muted/20 p-2 rounded-xl">
+                <div className="flex items-center justify-between text-xs font-bold font-medium text-muted-foreground bg-muted/20 p-2 rounded-xl">
                   <span>{endpoint.exposed_fields?.length || 0} Fields Exposed</span>
                   <div className="flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3 text-primary" />
@@ -362,7 +362,7 @@ export default function ApiEndpoints() {
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className={`h-8 w-8 rounded-lg ${endpoint.is_active ? 'text-blue-600 hover:bg-blue-50' : 'text-green-600 hover:bg-green-50'}`}
+                    className={`h-8 w-8 rounded-lg ${endpoint.is_active ? 'text-info hover:bg-info/10' : 'text-success hover:bg-success/10'}`}
                     onClick={() => handleToggleStatus(endpoint.id, endpoint.is_active)}
                   >
                     <Power className="w-4 h-4" />
@@ -370,7 +370,7 @@ export default function ApiEndpoints() {
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="h-8 w-8 rounded-lg text-red-600 hover:bg-red-50"
+                    className="h-8 w-8 rounded-lg text-destructive hover:bg-destructive/10"
                     onClick={() => handleDelete(endpoint.id)}
                   >
                     <Trash2 className="w-4 h-4" />

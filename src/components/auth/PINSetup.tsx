@@ -96,12 +96,12 @@ export const PINSetup: React.FC<PINSetupProps> = ({ onSuccess, onCancel }) => {
         transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
         className="relative z-10 w-[92%] max-w-[420px]"
       >
-        <div className="bg-card rounded-3xl border border-border/50 shadow-xl shadow-black/8 overflow-hidden">
+        <div className="bg-card rounded-2xl border border-border/50 shadow-xl shadow-black/8 overflow-hidden">
           <div className="h-1 bg-gradient-to-r from-primary/60 via-primary to-primary/60" />
 
           <div className="px-6 pt-7 pb-7 flex flex-col items-center gap-5">
             {/* Header */}
-            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+            <div className="flex items-center gap-1.5 text-xs font-bold font-medium text-muted-foreground">
               <KeyRound className="w-3.5 h-3.5 text-primary" />
               {title}
             </div>
@@ -114,7 +114,7 @@ export const PINSetup: React.FC<PINSetupProps> = ({ onSuccess, onCancel }) => {
             >
               <Avatar className="h-16 w-16 border-4 border-background shadow-lg ring-2 ring-primary/20">
                 <AvatarImage src={avatarUrl} className="object-cover" />
-                <AvatarFallback className="bg-primary/10 text-primary font-black text-lg">
+                <AvatarFallback className="bg-primary/10 text-primary font-semibold text-lg">
                   {initials}
                 </AvatarFallback>
               </Avatar>
@@ -140,7 +140,7 @@ export const PINSetup: React.FC<PINSetupProps> = ({ onSuccess, onCancel }) => {
 
             {/* PIN boxes */}
             <div className="w-full flex flex-col items-center gap-2">
-              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              <p className="text-xs font-semibold font-medium text-muted-foreground">
                 {step === 'create' ? 'Enter New PIN' : 'Confirm PIN'}
               </p>
               {step === 'create' ? (

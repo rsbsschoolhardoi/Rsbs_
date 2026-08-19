@@ -9,7 +9,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { api } from '@/db/api';
 import type { DocumentTemplate } from '@/types';
 import {
-  StudioElement, StudioState, PageConfig, ElementType,
+  StudioElement, StudioState, PageConfig, PageSize, ElementType,
   PAGE_PRESETS, elementsToLegacy, legacyToElements, makeElement,
 } from './types';
 import { useStudioHistory, type Snapshot } from './useStudioHistory';
@@ -19,6 +19,7 @@ import { PropertiesPanel } from './PropertiesPanel';
 import { LayersPanel } from './LayersPanel';
 import { StudioToolbar, SaveStatus } from './StudioToolbar';
 import { StudioPreview } from './StudioPreview';
+import { ImageCropDialog } from './ImageCropDialog';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import {
@@ -33,6 +34,19 @@ import { getPlaceholderByKey } from '@/constants/placeholders';
 /* ─── helpers ──────────────────────────────────────────────────────────────── */
 function deepClone<T>(obj: T): T { return JSON.parse(JSON.stringify(obj)); }
 
+function buildPageFromTemplate(template: DocumentTemplate): PageConfig {
+  const savedSize = (template.layout_config.page_size as PageSize | undefined) ?? 'A4';
+  const savedOrientation = template.layout_config.orientation ?? 'portrait';
+  const preset = PAGE_PRESETS[savedSize] ?? PAGE_PRESETS.A4;
+  let width = template.layout_config.page_width ?? preset.w;
+  let height = template.layout_config.page_height ?? preset.h;
+  if (savedOrientation === 'landscape') {
+    width = template.layout_config.page_width ?? preset.h;
+    height = template.layout_config.page_height ?? preset.w;
+  }
+  return { size: savedSize, orientation: savedOrientation, width, height };
+}
+
 function buildInitialState(template: DocumentTemplate | null): StudioState {
   const page: PageConfig = {
     size: 'A4', orientation: 'portrait',
@@ -46,13 +60,21 @@ function buildInitialState(template: DocumentTemplate | null): StudioState {
       showGrid: false, gridSize: 'medium', snapToGrid: false, snapToElements: true,
     };
   }
+  const tplPage = buildPageFromTemplate(template);
+  const elements = [
+    ...legacyToElements(template.content_config.header, 'header'),
+    ...legacyToElements(template.content_config.body,   'body'),
+    ...legacyToElements(template.content_config.footer, 'footer'),
+  ];
+  if (!elements.some(e => e.type === 'background')) {
+    elements.push(makeElement('background', 'body', {
+      x: 0, y: 0, width: tplPage.width, height: tplPage.height,
+      backgroundColor: '#ffffff', locked: true, zIndex: -1,
+    }, 0));
+  }
   return {
-    name: template.name, type: template.type, page,
-    elements: [
-      ...legacyToElements(template.content_config.header, 'header'),
-      ...legacyToElements(template.content_config.body,   'body'),
-      ...legacyToElements(template.content_config.footer, 'footer'),
-    ],
+    name: template.name, type: template.type, page: tplPage,
+    elements,
     headerEnabled: template.layout_config.header_enabled,
     bodyEnabled:   template.layout_config.body_enabled,
     footerEnabled: template.layout_config.footer_enabled,
@@ -67,6 +89,10 @@ function stateToTemplateData(state: StudioState) {
       header_enabled: state.headerEnabled,
       body_enabled:   state.bodyEnabled,
       footer_enabled: state.footerEnabled,
+      page_size:      state.page.size,
+      orientation:    state.page.orientation,
+      page_width:     state.page.width,
+      page_height:    state.page.height,
     },
     content_config: {
       header: elementsToLegacy(state.elements, 'header'),
@@ -155,6 +181,10 @@ export const TemplateStudio: React.FC<TemplateStudioProps> = ({ template, onBack
     name: string;
     renameValue: string;
   }>({ open: false, existingId: '', name: '', renameValue: '' });
+  const [cropDialog, setCropDialog] = useState<{ open: boolean; imageUrl: string }>({
+    open: false,
+    imageUrl: '',
+  });
 
   const canvasRef = useRef<HTMLDivElement>(null);
   const workspaceSizeRef = useRef({ width: 0, height: 0 });
@@ -162,11 +192,17 @@ export const TemplateStudio: React.FC<TemplateStudioProps> = ({ template, onBack
   const panXRef = useRef(panX);
   const panYRef = useRef(panY);
   const pageRef = useRef(state.page);
+  const prevPageRef = useRef({ width: state.page.width, height: state.page.height });
   const isDirtyRef = useRef(isDirty);
   const lastSavedState = useRef<StudioState>(deepClone(initialSession.state));
   const draftTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingBackRef = useRef<(() => void) | null>(null);
   const hasFittedRef = useRef(false);
+  const pageChangeEffectFirst = useRef(true);
+
+  const ZOOM_MIN = 10;
+  const ZOOM_MAX = 500;
+  const FIT_PAD = 24;
 
   const sessionRef = useRef<PersistedSession>({
     templateId,
@@ -208,7 +244,7 @@ export const TemplateStudio: React.FC<TemplateStudioProps> = ({ template, onBack
   /* ═══════════════════════════════════════════════════════════════════════════════
      Zoom & Pan helpers
      ═══════════════════════════════════════════════════════════════════════════════ */
-  const clampZoom = useCallback((z: number) => Math.max(10, Math.min(500, Math.round(z))), []);
+  const clampZoom = useCallback((z: number) => Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, Math.round(z))), []);
 
   const clampPanX = useCallback((value: number) => {
     const s = zoomRef.current / 100;
@@ -243,24 +279,27 @@ export const TemplateStudio: React.FC<TemplateStudioProps> = ({ template, onBack
     const r = canvasRef.current?.getBoundingClientRect();
     if (!r) return;
     workspaceSizeRef.current = { width: r.width, height: r.height };
-    const availW = Math.max(1, r.width - RULER_SIZE);
-    const availH = Math.max(1, r.height - RULER_SIZE);
-    const z = clampZoom(Math.min((100 * availW) / pageRef.current.width, (100 * availH) / pageRef.current.height));
+    const availW = Math.max(1, r.width - RULER_SIZE - FIT_PAD * 2);
+    const availH = Math.max(1, r.height - RULER_SIZE - FIT_PAD * 2);
+    const z = Math.min(100, clampZoom(Math.min(
+      (100 * availW) / pageRef.current.width,
+      (100 * availH) / pageRef.current.height,
+    )));
     zoomRef.current = z;
     setZoom(z);
-    setPanX(clampPanX((availW - pageRef.current.width * (z / 100)) / 2));
-    setPanY(clampPanY((availH - pageRef.current.height * (z / 100)) / 2));
+    setPanX(clampPanX((r.width - RULER_SIZE - pageRef.current.width * (z / 100)) / 2));
+    setPanY(clampPanY((r.height - RULER_SIZE - pageRef.current.height * (z / 100)) / 2));
   }, [clampPanX, clampPanY, clampZoom]);
 
   const fitWidth = useCallback(() => {
     const r = canvasRef.current?.getBoundingClientRect();
     if (!r) return;
     workspaceSizeRef.current = { width: r.width, height: r.height };
-    const availW = Math.max(1, r.width - RULER_SIZE);
-    const z = clampZoom((100 * availW) / pageRef.current.width);
+    const availW = Math.max(1, r.width - RULER_SIZE - FIT_PAD * 2);
+    const z = Math.min(100, clampZoom((100 * availW) / pageRef.current.width));
     zoomRef.current = z;
     setZoom(z);
-    setPanX(clampPanX(0));
+    setPanX(clampPanX(FIT_PAD));
     setPanY(clampPanY((Math.max(0, r.height - RULER_SIZE) - pageRef.current.height * (z / 100)) / 2));
   }, [clampPanX, clampPanY, clampZoom]);
 
@@ -342,6 +381,42 @@ export const TemplateStudio: React.FC<TemplateStudioProps> = ({ template, onBack
   const handleUpdateElement = useCallback((id: string, patch: Partial<StudioElement>) => {
     commit(s => ({ ...s, elements: s.elements.map(el => el.id === id ? { ...el, ...patch } : el) }));
   }, [commit]);
+
+  const handleBackgroundImageChange = useCallback((file: File) => {
+    const url = URL.createObjectURL(file);
+    setCropDialog({ open: true, imageUrl: url });
+  }, []);
+
+  const handleCropConfirm = useCallback((croppedImageUrl: string) => {
+    if (cropDialog.imageUrl) URL.revokeObjectURL(cropDialog.imageUrl);
+    const bg = state.elements.find(el => el.type === 'background');
+    if (bg) {
+      handleUpdateElement(bg.id, { imageUrl: croppedImageUrl });
+    } else {
+      // If no background element exists, add one sized to the page
+      commit(s => ({
+        ...s,
+        elements: [...s.elements, {
+          ...makeElement('background', 'body', {
+            x: 0,
+            y: 0,
+            width: s.page.width,
+            height: s.page.height,
+            backgroundColor: 'transparent',
+            imageUrl: croppedImageUrl,
+            locked: true,
+            zIndex: 0,
+          }, s.elements.length),
+        }],
+      }));
+    }
+    setCropDialog({ open: false, imageUrl: '' });
+  }, [cropDialog.imageUrl, state.elements, handleUpdateElement, commit]);
+
+  const handleCropCancel = useCallback(() => {
+    if (cropDialog.imageUrl) URL.revokeObjectURL(cropDialog.imageUrl);
+    setCropDialog({ open: false, imageUrl: '' });
+  }, [cropDialog.imageUrl]);
 
   /* canvas silentSet (no history during drag, commit on mouseup) */
   const handleMoveElements = useCallback((moves: { id: string; x: number; y: number }[]) => {
@@ -734,11 +809,63 @@ export const TemplateStudio: React.FC<TemplateStudioProps> = ({ template, onBack
 
   /* Initial fit-to-page for brand-new sessions */
   useEffect(() => {
-    if (!restored.current && workspaceSize.width > 0 && !hasFittedRef.current) {
+    if (workspaceSize.width > 0 && !hasFittedRef.current) {
       hasFittedRef.current = true;
       fitPage();
     }
   }, [workspaceSize, fitPage]);
+
+  /* When the page size changes, scale existing content to the new page and re-fit.
+     This keeps the selected page as the single source of truth and avoids creating
+     a second canvas/background behind the document. */
+  useEffect(() => {
+    if (pageChangeEffectFirst.current) {
+      pageChangeEffectFirst.current = false;
+      prevPageRef.current = { width: state.page.width, height: state.page.height };
+      return;
+    }
+    const old = prevPageRef.current;
+    const next = state.page;
+    if (old.width === next.width && old.height === next.height) {
+      prevPageRef.current = { width: next.width, height: next.height };
+      return;
+    }
+
+    const scaleX = old.width ? next.width / old.width : 1;
+    const scaleY = old.height ? next.height / old.height : 1;
+    const scale  = Math.min(scaleX, scaleY);
+
+    commit(s => {
+      const updated = s.elements.map(el => {
+        if (el.type === 'background') {
+          return { ...el, x: 0, y: 0, width: next.width, height: next.height };
+        }
+        const copy = { ...el };
+        copy.x = Math.round(el.x * scaleX);
+        copy.y = Math.round(el.y * scaleY);
+        copy.width = Math.round(el.width * scaleX);
+        copy.height = Math.round(el.height * scaleY);
+        if (el.type === 'text' || el.type === 'placeholder') {
+          copy.fontSize = Math.max(6, Math.round((el.fontSize ?? 14) * scale));
+          copy.letterSpacing = typeof el.letterSpacing === 'number' ? el.letterSpacing * scale : el.letterSpacing;
+        }
+        copy.padding = typeof el.padding === 'number' ? Math.round(el.padding * scale) : el.padding;
+        copy.borderWidth = (el.borderWidth ?? 0) * scale;
+        copy.borderRadius = (el.borderRadius ?? 0) * scale;
+        copy.shadowBlur = (el.shadowBlur ?? 0) * scale;
+        copy.shadowX = (el.shadowX ?? 0) * scale;
+        copy.shadowY = (el.shadowY ?? 0) * scale;
+        return copy;
+      });
+      return { ...s, elements: updated };
+    });
+
+    prevPageRef.current = { width: next.width, height: next.height };
+    if (workspaceSizeRef.current.width > 0) {
+      hasFittedRef.current = true;
+      fitPage();
+    }
+  }, [state.page.width, state.page.height, commit, fitPage]);
 
   /* Keep pan within the available workspace whenever its size changes */
   useEffect(() => {
@@ -940,6 +1067,7 @@ export const TemplateStudio: React.FC<TemplateStudioProps> = ({ template, onBack
                   selectedElement={selectedElement}
                   onUpdateElement={handleUpdateElement}
                   onUpdateState={handleUpdateState}
+                  onBackgroundImageChange={handleBackgroundImageChange}
                 />
               </div>
             </ResizablePanel>
@@ -993,10 +1121,20 @@ export const TemplateStudio: React.FC<TemplateStudioProps> = ({ template, onBack
               selectedElement={selectedElement}
               onUpdateElement={handleUpdateElement}
               onUpdateState={handleUpdateState}
+              onBackgroundImageChange={handleBackgroundImageChange}
             />
           </div>
         </div>
       )}
+
+      {/* Background image crop dialog */}
+      <ImageCropDialog
+        open={cropDialog.open}
+        imageUrl={cropDialog.imageUrl}
+        aspectRatio={state.page.width / state.page.height}
+        onCancel={handleCropCancel}
+        onConfirm={handleCropConfirm}
+      />
 
       {/* Context menu */}
       {contextMenu && (

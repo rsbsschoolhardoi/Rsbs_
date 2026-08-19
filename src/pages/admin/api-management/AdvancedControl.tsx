@@ -120,9 +120,9 @@ export default function AdvancedControl() {
 
   return (
     <div className="space-y-8">
-      <Alert className="border-red-200 bg-red-50 rounded-2xl">
-        <ShieldAlert className="h-5 w-5 text-red-600" />
-        <AlertTitle className="text-sm font-black uppercase tracking-widest text-red-900">Advanced Method-Level Control</AlertTitle>
+      <Alert className="border-red-200 bg-destructive/10 rounded-2xl">
+        <ShieldAlert className="h-5 w-5 text-destructive" />
+        <AlertTitle className="text-sm font-semibold text-red-900">Advanced Method-Level Control</AlertTitle>
         <AlertDescription className="text-xs mt-2 text-red-800">
           This system provides granular control over the HTTP methods allowed for each API. By default, only **POST** is enabled for data submission. Enabling additional methods increases the potential surface area for data exposure.
         </AlertDescription>
@@ -131,17 +131,17 @@ export default function AdvancedControl() {
       <div className="grid grid-cols-1 gap-6">
         {loading ? (
           Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="h-48 bg-muted/20 animate-pulse rounded-[2.5rem]" />
+            <div key={i} className="h-48 bg-muted/20 animate-pulse rounded-2xl" />
           ))
         ) : moduleApis.length === 0 ? (
-          <div className="py-12 text-center bg-muted/10 rounded-[2.5rem] border-2 border-dashed border-muted-foreground/20">
-            <p className="text-muted-foreground font-bold uppercase tracking-widest text-xs italic">No submission APIs configured yet.</p>
+          <div className="py-12 text-center bg-muted/10 rounded-2xl border-2 border-dashed border-muted-foreground/20">
+            <p className="text-muted-foreground font-bold font-medium text-xs italic">No submission APIs configured yet.</p>
           </div>
         ) : (
           moduleApis.map((apiItem) => {
             const currentMethods = apiItem.allowed_methods || ['POST'];
             return (
-              <Card key={apiItem.id} className="border-none shadow-sm rounded-[2.5rem] bg-background border hover:shadow-md transition-all overflow-hidden">
+              <Card key={apiItem.id} className="border-none shadow-sm rounded-2xl bg-background border hover:shadow-md transition-all overflow-hidden">
                 <CardHeader className="p-6 pb-2 bg-muted/20">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
@@ -149,13 +149,13 @@ export default function AdvancedControl() {
                         <Settings2 className="w-5 h-5 text-primary" />
                       </div>
                       <div>
-                        <CardTitle className="text-md font-black">{apiItem.api_name}</CardTitle>
-                        <CardDescription className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                        <CardTitle className="text-md font-semibold">{apiItem.api_name}</CardTitle>
+                        <CardDescription className="text-xs font-bold font-medium text-muted-foreground">
                           {apiItem.endpoint_path || `/api/${apiItem.module_name}`}
                         </CardDescription>
                       </div>
                     </div>
-                    <Badge className={`text-[9px] font-black uppercase rounded-lg border-none ${apiItem.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                    <Badge className={`text-xs font-semibold uppercase rounded-lg border-none ${apiItem.is_active ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
                       {apiItem.is_active ? 'API Active' : 'API Inactive'}
                     </Badge>
                   </div>
@@ -169,7 +169,7 @@ export default function AdvancedControl() {
                       return (
                         <div key={method} className={`p-4 rounded-2xl border-2 transition-all flex flex-col gap-3 ${isEnabled ? 'bg-primary/5 border-primary/20' : 'bg-muted/10 border-transparent'}`}>
                           <div className="flex items-center justify-between">
-                            <Badge className={`text-[10px] font-black rounded h-5 ${isEnabled ? 'bg-primary text-primary-foreground' : 'bg-muted-foreground/20 text-muted-foreground'}`}>
+                            <Badge className={`text-xs font-semibold rounded h-5 ${isEnabled ? 'bg-primary text-primary-foreground' : 'bg-muted-foreground/20 text-muted-foreground'}`}>
                               {method}
                             </Badge>
                             {isUpdating ? (
@@ -183,8 +183,8 @@ export default function AdvancedControl() {
                           </div>
                           
                           <div className="flex items-center justify-between">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Status</span>
-                            <span className={`text-[10px] font-bold ${isEnabled ? 'text-green-600' : 'text-muted-foreground'}`}>
+                            <span className="text-xs font-semibold text-muted-foreground">Status</span>
+                            <span className={`text-xs font-bold ${isEnabled ? 'text-success' : 'text-muted-foreground'}`}>
                               {isEnabled ? 'ENABLED' : 'DISABLED'}
                             </span>
                           </div>
@@ -200,19 +200,19 @@ export default function AdvancedControl() {
       </div>
 
       <Dialog open={showSecurityDialog} onOpenChange={setShowSecurityDialog}>
-        <DialogContent className="rounded-[2rem] sm:max-w-[500px] border-red-100">
+        <DialogContent className="rounded-2xl sm:max-w-[500px] border-red-100">
           <DialogHeader>
-            <DialogTitle className="text-xl font-black flex items-center gap-2 text-red-600">
+            <DialogTitle className="text-xl font-semibold flex items-center gap-2 text-destructive">
               <AlertTriangle className="w-6 h-6" />
               Security Protocol: {pendingMethod} Method
             </DialogTitle>
-            <DialogDescription className="text-xs font-medium uppercase tracking-widest text-muted-foreground pt-2 leading-relaxed">
-              ⚠️ <strong className="text-red-600">Security Warning:</strong> Enabling this method can expose or modify system data. Proceed only if you fully understand the risks and have appropriate authorization.
+            <DialogDescription className="text-xs font-medium font-medium text-muted-foreground pt-2 leading-relaxed">
+              ⚠️ <strong className="text-destructive">Security Warning:</strong> Enabling this method can expose or modify system data. Proceed only if you fully understand the risks and have appropriate authorization.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-6 py-4">
-            <div className="space-y-4 p-4 bg-red-50 rounded-2xl border border-red-100">
+            <div className="space-y-4 p-4 bg-destructive/10 rounded-2xl border border-red-100">
               <div className="flex items-start gap-3">
                 <Checkbox 
                   id="understandRisk" 
@@ -227,7 +227,7 @@ export default function AdvancedControl() {
             </div>
 
             <div className="space-y-3">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+              <Label className="text-xs font-semibold text-muted-foreground flex items-center gap-2">
                 <LockKeyhole className="w-3 h-3" /> Administrator Password Required
               </Label>
               <Input 
@@ -246,7 +246,7 @@ export default function AdvancedControl() {
             </Button>
             <Button 
               onClick={confirmSecurityAction} 
-              className="rounded-xl font-black uppercase tracking-widest bg-red-600 hover:bg-red-700 shadow-lg shadow-red-200"
+              className="rounded-xl font-semibold bg-red-600 hover:bg-red-700 shadow-lg shadow-red-200"
               disabled={!understandRisk || !adminPassword}
             >
               Authorize & Enable

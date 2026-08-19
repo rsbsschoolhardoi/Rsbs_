@@ -106,9 +106,9 @@ export default function AutoApiConfig() {
 
   const getComplexityColor = (complexity?: string) => {
     switch (complexity) {
-      case 'simple': return 'bg-green-100 text-green-700';
-      case 'medium': return 'bg-amber-100 text-amber-700';
-      case 'complex': return 'bg-red-100 text-red-700';
+      case 'simple': return 'bg-success/10 text-success';
+      case 'medium': return 'bg-warning/10 text-warning';
+      case 'complex': return 'bg-destructive/10 text-destructive';
       default: return 'bg-muted text-muted-foreground';
     }
   };
@@ -117,7 +117,7 @@ export default function AutoApiConfig() {
     <div className="space-y-8">
       <Alert className="border-primary/20 bg-primary/5 rounded-2xl">
         <ShieldCheck className="h-5 w-5 text-primary" />
-        <AlertTitle className="text-sm font-black uppercase tracking-widest">Automatic API Configuration System</AlertTitle>
+        <AlertTitle className="text-sm font-semibold">Automatic API Configuration System</AlertTitle>
         <AlertDescription className="text-xs mt-2">
           Click "Enable API" on any module to automatically generate a secure, inbound-only POST endpoint with schema validation, rate limiting, and zero data exposure.
         </AlertDescription>
@@ -126,7 +126,7 @@ export default function AutoApiConfig() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? (
           Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-64 bg-muted/20 animate-pulse rounded-[2.5rem]" />
+            <div key={i} className="h-64 bg-muted/20 animate-pulse rounded-2xl" />
           ))
         ) : (
           AVAILABLE_MODULES.map((module) => {
@@ -135,19 +135,19 @@ export default function AutoApiConfig() {
             const isEnabling = enablingModule === module.id;
 
             return (
-              <Card key={module.id} className={`border-none shadow-sm rounded-[2.5rem] overflow-hidden transition-all hover:shadow-md ${isEnabled ? 'bg-background border' : 'bg-muted/10 border-2 border-dashed border-muted-foreground/20'}`}>
+              <Card key={module.id} className={`border-none shadow-sm rounded-2xl overflow-hidden transition-all hover:shadow-md ${isEnabled ? 'bg-background border' : 'bg-muted/10 border-2 border-dashed border-muted-foreground/20'}`}>
                 <CardHeader className="p-6 pb-3">
                   <div className="flex items-start justify-between mb-2">
                     <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
                       <Database className="w-6 h-6 text-primary" />
                     </div>
                     {isEnabled && (
-                      <Badge className={`text-[9px] font-black uppercase rounded-lg border-none ${existingApi.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                      <Badge className={`text-xs font-semibold uppercase rounded-lg border-none ${existingApi.is_active ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
                         {existingApi.is_active ? 'Active' : 'Inactive'}
                       </Badge>
                     )}
                   </div>
-                  <CardTitle className="text-lg font-black">{module.name}</CardTitle>
+                  <CardTitle className="text-lg font-semibold">{module.name}</CardTitle>
                   <CardDescription className="text-xs">{module.description}</CardDescription>
                 </CardHeader>
                 <CardContent className="p-6 pt-0 space-y-4">
@@ -162,7 +162,7 @@ export default function AutoApiConfig() {
                               <div className="w-1.5 h-1.5 rounded-full bg-primary" />
                             </div>
                             <div className="flex flex-col">
-                              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Module</span>
+                              <span className="text-xs font-semibold text-muted-foreground">Module</span>
                               <span className="text-sm font-bold">{module.name}</span>
                             </div>
                           </div>
@@ -172,7 +172,7 @@ export default function AutoApiConfig() {
                               <div className="w-1.5 h-1.5 rounded-full bg-primary" />
                             </div>
                             <div className="flex flex-col">
-                              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Linked API</span>
+                              <span className="text-xs font-semibold text-muted-foreground">Linked API</span>
                               <span className="text-sm font-bold text-primary">{existingApi.api_name}</span>
                             </div>
                           </div>
@@ -182,7 +182,7 @@ export default function AutoApiConfig() {
                               <div className="w-1.5 h-1.5 rounded-full bg-primary" />
                             </div>
                             <div className="flex flex-col">
-                              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Endpoint</span>
+                              <span className="text-xs font-semibold text-muted-foreground">Endpoint</span>
                               <code className="text-xs font-mono font-bold bg-muted p-1 rounded w-fit">{existingApi.endpoint_path || `/api/${module.id}`}</code>
                             </div>
                           </div>
@@ -190,12 +190,12 @@ export default function AutoApiConfig() {
 
                         <div className="grid grid-cols-2 gap-2 mt-4">
                           <div className="p-2 bg-muted/30 rounded-xl flex flex-col items-center justify-center">
-                            <span className="text-[9px] font-black uppercase text-muted-foreground">Rate Limit</span>
+                            <span className="text-xs font-semibold uppercase text-muted-foreground">Rate Limit</span>
                             <span className="text-xs font-bold">{existingApi.rate_limit_minute}/min</span>
                           </div>
                           <div className="p-2 bg-muted/30 rounded-xl flex flex-col items-center justify-center">
-                            <span className="text-[9px] font-black uppercase text-muted-foreground">Complexity</span>
-                            <Badge className={`text-[8px] font-black uppercase rounded-md border-none px-1 h-4 ${getComplexityColor(existingApi.complexity)}`}>
+                            <span className="text-xs font-semibold uppercase text-muted-foreground">Complexity</span>
+                            <Badge className={`text-xs font-semibold uppercase rounded-md border-none px-1 h-4 ${getComplexityColor(existingApi.complexity)}`}>
                               {existingApi.complexity || 'Simple'}
                             </Badge>
                           </div>
@@ -203,9 +203,9 @@ export default function AutoApiConfig() {
                       </div>
 
                       <div className="p-3 bg-muted/30 rounded-2xl space-y-2 border border-muted">
-                        <span className="text-[10px] font-black uppercase text-muted-foreground">API Access Key</span>
+                        <span className="text-xs font-semibold uppercase text-muted-foreground">API Access Key</span>
                         <div className="flex items-center gap-2 bg-background p-2 rounded-lg border border-muted-foreground/10">
-                          <code className="text-[10px] font-mono flex-1 truncate">
+                          <code className="text-xs font-mono flex-1 truncate">
                             {visibleKeys[existingApi.id] ? existingApi.api_key : '••••••••••••••••••••••••••••'}
                           </code>
                           <Button 
@@ -252,7 +252,7 @@ export default function AutoApiConfig() {
                     <div className="space-y-4 pt-2">
                       <div className="flex items-start gap-2 p-3 bg-muted/20 rounded-xl border border-dashed border-muted-foreground/20">
                         <Info className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
-                        <p className="text-[10px] text-muted-foreground leading-relaxed">
+                        <p className="text-xs text-muted-foreground leading-relaxed">
                           Enabling this module will auto-generate a secure API endpoint with schema validation based on database structure.
                         </p>
                       </div>
@@ -283,35 +283,35 @@ export default function AutoApiConfig() {
       </div>
 
       <Dialog open={showKeyDialog} onOpenChange={setShowKeyDialog}>
-        <DialogContent className="rounded-[2rem] sm:max-w-[500px]">
+        <DialogContent className="rounded-2xl sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle className="text-xl font-black flex items-center gap-2">
+            <DialogTitle className="text-xl font-semibold flex items-center gap-2">
               <CheckCircle2 className="w-6 h-6 text-green-500" />
               API Successfully Enabled
             </DialogTitle>
-            <DialogDescription className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+            <DialogDescription className="text-xs font-medium font-medium text-muted-foreground">
               Save this API key securely - it won't be shown again
             </DialogDescription>
           </DialogHeader>
           {newlyCreatedApi && (
             <div className="space-y-4 py-4">
-              <Alert className="border-amber-200 bg-amber-50 rounded-2xl">
-                <AlertCircle className="h-4 w-4 text-amber-600" />
-                <AlertTitle className="text-xs font-black uppercase tracking-widest text-amber-900">Important</AlertTitle>
+              <Alert className="border-amber-200 bg-warning/10 rounded-2xl">
+                <AlertCircle className="h-4 w-4 text-warning" />
+                <AlertTitle className="text-xs font-semibold text-amber-900">Important</AlertTitle>
                 <AlertDescription className="text-xs text-amber-800 mt-1">
                   Copy and store this API key now. For security reasons, you won't be able to view it again.
                 </AlertDescription>
               </Alert>
 
               <div className="space-y-2">
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Module</span>
+                <span className="text-xs font-semibold text-muted-foreground">Module</span>
                 <div className="p-3 bg-muted/30 rounded-xl border border-muted">
                   <span className="text-sm font-bold">{newlyCreatedApi.api_name}</span>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">API Key</span>
+                <span className="text-xs font-semibold text-muted-foreground">API Key</span>
                 <div className="flex items-center gap-2 p-3 bg-background rounded-xl border-2 border-primary/20">
                   <code className="text-xs font-mono flex-1 break-all">
                     {newlyCreatedApi.api_key}
@@ -328,7 +328,7 @@ export default function AutoApiConfig() {
               </div>
 
               <div className="space-y-2">
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Endpoint</span>
+                <span className="text-xs font-semibold text-muted-foreground">Endpoint</span>
                 <div className="p-3 bg-muted/30 rounded-xl border border-muted">
                   <code className="text-xs font-mono">{newlyCreatedApi.endpoint_path || `/api/v1/modules/${newlyCreatedApi.module_name}/submit`}</code>
                 </div>
@@ -336,19 +336,19 @@ export default function AutoApiConfig() {
 
               <div className="grid grid-cols-3 gap-3 pt-2">
                 <div className="p-3 bg-muted/20 rounded-xl border border-dashed text-center">
-                  <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Complexity</div>
-                  <Badge className={`text-[9px] font-black uppercase rounded-lg border-none ${getComplexityColor(newlyCreatedApi.complexity)}`}>
+                  <div className="text-xs font-semibold text-muted-foreground mb-1">Complexity</div>
+                  <Badge className={`text-xs font-semibold uppercase rounded-lg border-none ${getComplexityColor(newlyCreatedApi.complexity)}`}>
                     {newlyCreatedApi.complexity || 'N/A'}
                   </Badge>
                 </div>
                 <div className="p-3 bg-muted/20 rounded-xl border border-dashed text-center">
-                  <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Method</div>
-                  <Badge className="text-[9px] font-black uppercase rounded-lg border-none bg-blue-100 text-blue-700">
+                  <div className="text-xs font-semibold text-muted-foreground mb-1">Method</div>
+                  <Badge className="text-xs font-semibold uppercase rounded-lg border-none bg-info/10 text-info">
                     POST
                   </Badge>
                 </div>
                 <div className="p-3 bg-muted/20 rounded-xl border border-dashed text-center">
-                  <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Rate Limit</div>
+                  <div className="text-xs font-semibold text-muted-foreground mb-1">Rate Limit</div>
                   <span className="text-xs font-bold">{newlyCreatedApi.rate_limit_minute}/min</span>
                 </div>
               </div>

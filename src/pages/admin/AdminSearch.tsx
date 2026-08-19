@@ -75,7 +75,7 @@ export default function AdminSearch() {
       {!query.trim() ? (
         <div className="flex flex-col items-center justify-center py-20 opacity-30">
           <Search className="w-16 h-16 mb-4" />
-          <p className="font-bold uppercase tracking-widest text-sm">Type to search the ecosystem</p>
+          <p className="font-bold font-medium text-sm">Type to search the ecosystem</p>
         </div>
       ) : !hasResults && !loading ? (
         <div className="text-center py-20">
@@ -86,7 +86,7 @@ export default function AdminSearch() {
           {/* Students */}
           {results.students.length > 0 && (
             <section className="space-y-3">
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2 px-2">
+              <h3 className="text-xs font-semibold text-muted-foreground flex items-center gap-2 px-2">
                 <Users className="w-3 h-3" /> Students ({results.students.length})
               </h3>
               <div className="grid gap-3">
@@ -95,12 +95,12 @@ export default function AdminSearch() {
                     <Card className="rounded-2xl border-none shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
                       <CardContent className="p-4 flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
+                          <div className="w-10 h-10 rounded-xl bg-info/10 text-info flex items-center justify-center font-bold">
                             {student.name[0]}
                           </div>
                           <div>
-                            <p className="text-sm font-black">{student.name}</p>
-                            <p className="text-[10px] text-muted-foreground uppercase font-bold">{student.class} - {student.section}</p>
+                            <p className="text-sm font-semibold">{student.name}</p>
+                            <p className="text-xs text-muted-foreground uppercase font-bold">{student.class} - {student.section}</p>
                           </div>
                         </div>
                         <ArrowRight className="w-4 h-4 text-muted-foreground opacity-30" />
@@ -115,7 +115,7 @@ export default function AdminSearch() {
           {/* Teachers */}
           {results.teachers.length > 0 && (
             <section className="space-y-3">
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2 px-2">
+              <h3 className="text-xs font-semibold text-muted-foreground flex items-center gap-2 px-2">
                 <GraduationCap className="w-3 h-3" /> Teachers ({results.teachers.length})
               </h3>
               <div className="grid gap-3">
@@ -124,12 +124,12 @@ export default function AdminSearch() {
                     <Card className="rounded-2xl border-none shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
                       <CardContent className="p-4 flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold">
+                          <div className="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center font-bold">
                             {teacher.name[0]}
                           </div>
                           <div>
-                            <p className="text-sm font-black">{teacher.name}</p>
-                            <p className="text-[10px] text-muted-foreground uppercase font-bold">{teacher.subject_role}</p>
+                            <p className="text-sm font-semibold">{teacher.name}</p>
+                            <p className="text-xs text-muted-foreground uppercase font-bold">{teacher.subject_role}</p>
                           </div>
                         </div>
                         <ArrowRight className="w-4 h-4 text-muted-foreground opacity-30" />
@@ -144,7 +144,7 @@ export default function AdminSearch() {
           {/* Admissions */}
           {results.admissions.length > 0 && (
             <section className="space-y-3">
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2 px-2">
+              <h3 className="text-xs font-semibold text-muted-foreground flex items-center gap-2 px-2">
                 <UserPlus className="w-3 h-3" /> Admissions ({results.admissions.length})
               </h3>
               <div className="grid gap-3">
@@ -153,15 +153,15 @@ export default function AdminSearch() {
                     <Card className="rounded-2xl border-none shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
                       <CardContent className="p-4 flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold">
+                          <div className="w-10 h-10 rounded-xl bg-warning/10 text-warning flex items-center justify-center font-bold">
                             {admission.student_name[0]}
                           </div>
                           <div>
-                            <p className="text-sm font-black">{admission.student_name}</p>
-                            <p className="text-[10px] text-muted-foreground uppercase font-bold">Applying for Class {admission.applying_class}</p>
+                            <p className="text-sm font-semibold">{admission.student_name}</p>
+                            <p className="text-xs text-muted-foreground uppercase font-bold">Applying for Class {admission.applying_class}</p>
                           </div>
                         </div>
-                        <Badge variant="secondary" className="text-[8px] font-black uppercase">{admission.status}</Badge>
+                        <Badge variant="secondary" className="text-xs font-semibold uppercase">{admission.status}</Badge>
                       </CardContent>
                     </Card>
                   </Link>
@@ -173,7 +173,7 @@ export default function AdminSearch() {
           {/* Appointments */}
           {results.appointments.length > 0 && (
             <section className="space-y-3">
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2 px-2">
+              <h3 className="text-xs font-semibold text-muted-foreground flex items-center gap-2 px-2">
                 <CalendarCheck className="w-3 h-3" /> Appointments ({results.appointments.length})
               </h3>
               <div className="grid gap-3">
@@ -182,15 +182,15 @@ export default function AdminSearch() {
                     <Card className="rounded-2xl border-none shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
                       <CardContent className="p-4 flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-xl bg-green-100 text-green-600 flex items-center justify-center font-bold">
+                          <div className="w-10 h-10 rounded-xl bg-success/10 text-success flex items-center justify-center font-bold">
                             {appointment.parent_name[0]}
                           </div>
                           <div>
-                            <p className="text-sm font-black">{appointment.parent_name}</p>
-                            <p className="text-[10px] text-muted-foreground uppercase font-bold">{new Date(appointment.preferred_date).toLocaleDateString()}</p>
+                            <p className="text-sm font-semibold">{appointment.parent_name}</p>
+                            <p className="text-xs text-muted-foreground uppercase font-bold">{new Date(appointment.preferred_date).toLocaleDateString()}</p>
                           </div>
                         </div>
-                        <Badge variant="secondary" className="text-[8px] font-black uppercase">{appointment.status}</Badge>
+                        <Badge variant="secondary" className="text-xs font-semibold uppercase">{appointment.status}</Badge>
                       </CardContent>
                     </Card>
                   </Link>

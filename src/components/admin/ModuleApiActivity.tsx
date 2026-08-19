@@ -34,9 +34,9 @@ interface ModuleApiActivityProps {
 
 const getComplexityColor = (complexity?: string) => {
   switch (complexity) {
-    case 'simple': return 'bg-green-100 text-green-700';
-    case 'medium': return 'bg-amber-100 text-amber-700';
-    case 'complex': return 'bg-red-100 text-red-700';
+    case 'simple': return 'bg-success/10 text-success';
+    case 'medium': return 'bg-warning/10 text-warning';
+    case 'complex': return 'bg-destructive/10 text-destructive';
     default: return 'bg-muted text-muted-foreground';
   }
 };
@@ -93,8 +93,8 @@ export default function ModuleApiActivity({ moduleName }: ModuleApiActivityProps
             <Send className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-sm font-black uppercase tracking-widest">External Data Submissions</h3>
-            <p className="text-[10px] text-muted-foreground font-medium uppercase">API connectivity for {moduleName} module</p>
+            <h3 className="text-sm font-semibold">External Data Submissions</h3>
+            <p className="text-xs text-muted-foreground font-medium uppercase">API connectivity for {moduleName} module</p>
           </div>
         </div>
         <Button 
@@ -111,15 +111,15 @@ export default function ModuleApiActivity({ moduleName }: ModuleApiActivityProps
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-4">
-          <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-2">Configured APIs</h4>
+          <h4 className="text-xs font-semibold text-muted-foreground px-2">Configured APIs</h4>
           {loading ? (
             <div className="h-32 bg-muted/20 animate-pulse rounded-2xl" />
           ) : moduleApis.length === 0 ? (
             <Card className="rounded-2xl border-2 border-dashed border-muted bg-transparent shadow-none">
               <CardContent className="flex flex-col items-center justify-center py-8 text-center gap-2">
                 <ShieldCheck className="w-8 h-8 text-muted-foreground opacity-20" />
-                <p className="text-[10px] font-bold uppercase text-muted-foreground">No APIs configured for this module</p>
-                <Button variant="link" className="text-[9px] font-black uppercase" asChild>
+                <p className="text-xs font-bold uppercase text-muted-foreground">No APIs configured for this module</p>
+                <Button variant="link" className="text-xs font-semibold uppercase" asChild>
                   <a href="/admin/api-management">Create one in API Management</a>
                 </Button>
               </CardContent>
@@ -134,24 +134,24 @@ export default function ModuleApiActivity({ moduleName }: ModuleApiActivityProps
                         <Key className="w-4 h-4" />
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-sm font-black">{apiItem.api_name}</span>
-                        <Badge className={`text-[8px] font-black uppercase rounded-lg border-none w-fit ${getComplexityColor(apiItem.complexity)}`}>
+                        <span className="text-sm font-semibold">{apiItem.api_name}</span>
+                        <Badge className={`text-xs font-semibold uppercase rounded-lg border-none w-fit ${getComplexityColor(apiItem.complexity)}`}>
                           {apiItem.complexity || 'Simple'}
                         </Badge>
                       </div>
                     </div>
-                    <Badge variant={apiItem.is_active ? 'default' : 'secondary'} className="text-[9px] uppercase font-bold rounded-md px-1.5 h-5">
+                    <Badge variant={apiItem.is_active ? 'default' : 'secondary'} className="text-xs uppercase font-bold rounded-md px-1.5 h-5">
                       {apiItem.is_active ? 'Active' : 'Inactive'}
                     </Badge>
                   </div>
                   
                   <div className="space-y-1 bg-muted/30 p-2 rounded-xl border border-muted-foreground/5">
                     <div className="flex items-center justify-between px-1">
-                      <span className="text-[9px] font-black uppercase text-muted-foreground">Endpoint</span>
-                      <code className="text-[9px] font-mono font-bold">{apiItem.endpoint_path || `/api/v1/modules/${apiItem.module_name}/submit`}</code>
+                      <span className="text-xs font-semibold uppercase text-muted-foreground">Endpoint</span>
+                      <code className="text-xs font-mono font-bold">{apiItem.endpoint_path || `/api/v1/modules/${apiItem.module_name}/submit`}</code>
                     </div>
                     <div className="flex items-center gap-2 bg-background p-2 rounded-lg border border-muted-foreground/10">
-                      <code className="text-[10px] font-mono flex-1 truncate opacity-70">
+                      <code className="text-xs font-mono flex-1 truncate opacity-70">
                         {visibleKeys[apiItem.id] ? apiItem.api_key : '••••••••••••••••'}
                       </code>
                       <Button 
@@ -173,7 +173,7 @@ export default function ModuleApiActivity({ moduleName }: ModuleApiActivityProps
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        className="h-6 w-6 rounded-md text-amber-600"
+                        className="h-6 w-6 rounded-md text-warning"
                         onClick={() => handleRegenerateKey(apiItem.id)}
                       >
                         <RotateCw className="w-3 h-3" />
@@ -187,15 +187,15 @@ export default function ModuleApiActivity({ moduleName }: ModuleApiActivityProps
         </div>
 
         <div className="space-y-4">
-          <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-2">Recent Submissions</h4>
-          <Card className="rounded-[2.5rem] border-none shadow-sm bg-background border overflow-hidden">
+          <h4 className="text-xs font-semibold text-muted-foreground px-2">Recent Submissions</h4>
+          <Card className="rounded-2xl border-none shadow-sm bg-background border overflow-hidden">
             <CardContent className="p-0">
               <Table>
                 <TableHeader className="bg-muted/30">
                   <TableRow className="hover:bg-transparent border-none">
-                    <TableHead className="text-[9px] font-black uppercase tracking-widest h-10 pl-6">Status</TableHead>
-                    <TableHead className="text-[9px] font-black uppercase tracking-widest h-10">Client IP</TableHead>
-                    <TableHead className="text-right text-[9px] font-black uppercase tracking-widest h-10 pr-6">Time</TableHead>
+                    <TableHead className="text-xs font-semibold h-10 pl-6">Status</TableHead>
+                    <TableHead className="text-xs font-semibold h-10">Client IP</TableHead>
+                    <TableHead className="text-right text-xs font-semibold h-10 pr-6">Time</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -207,7 +207,7 @@ export default function ModuleApiActivity({ moduleName }: ModuleApiActivityProps
                     </TableRow>
                   ) : logs.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={3} className="h-32 text-center text-[10px] font-bold uppercase text-muted-foreground opacity-50">
+                      <TableCell colSpan={3} className="h-32 text-center text-xs font-bold uppercase text-muted-foreground opacity-50">
                         No recent submissions
                       </TableCell>
                     </TableRow>
@@ -215,15 +215,15 @@ export default function ModuleApiActivity({ moduleName }: ModuleApiActivityProps
                     logs.map(log => (
                       <TableRow key={log.id} className="hover:bg-muted/10 border-none transition-colors">
                         <TableCell className="pl-6 py-3">
-                          <Badge className={`text-[9px] font-black uppercase rounded-lg border-none ${log.status_code < 300 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                          <Badge className={`text-xs font-semibold uppercase rounded-lg border-none ${log.status_code < 300 ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
                             {log.status_code}
                           </Badge>
                         </TableCell>
                         <TableCell className="py-3">
-                          <span className="text-[10px] font-mono font-bold opacity-60">{log.ip_address || '0.0.0.0'}</span>
+                          <span className="text-xs font-mono font-bold opacity-60">{log.ip_address || '0.0.0.0'}</span>
                         </TableCell>
                         <TableCell className="text-right pr-6 py-3">
-                          <span className="text-[10px] font-black uppercase tracking-tighter text-muted-foreground">
+                          <span className="text-xs font-semibold uppercase tracking-tighter text-muted-foreground">
                             {new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </span>
                         </TableCell>

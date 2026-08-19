@@ -14,6 +14,7 @@ import {
   Receipt, Download, Printer, Search, FileText, Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatPeriodMonths, periodTypeLabel } from '@/lib/feePeriods';
 
 export default function StudentFees() {
   const { profile } = useAuth();
@@ -34,7 +35,7 @@ export default function StudentFees() {
   const fetchReceipts = useCallback(async () => {
     if (!profile?.student_id) return;
     setReceiptsLoading(true);
-    const { data } = await api.getFeeReceipts(profile.student_id);
+    const { data } = await api.getVisibleFeeReceiptsForStudent(profile.student_id);
     setReceipts(data || []);
     setReceiptsLoading(false);
   }, [profile?.student_id]);
@@ -55,6 +56,12 @@ export default function StudentFees() {
   const handlePrint = (receipt: any) => {
     if (!receipt.pdf_url) { toast.info('PDF not available for this receipt.'); return; }
     window.open(receipt.pdf_url, '_blank')?.print();
+  };
+
+  const formatExpires = (d: string) => {
+    if (!d) return '—';
+    const date = new Date(d);
+    return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
   };
 
   const getStatusIcon = (status: string) => {
@@ -79,9 +86,12 @@ export default function StudentFees() {
 
   const filteredReceipts = receipts.filter((r) => {
     const q = receiptSearch.toLowerCase();
+    const periodText = formatPeriodMonths(r.period_months, r.period_type).toLowerCase();
     return (
       r.receipt_number?.toLowerCase().includes(q) ||
-      r.payment_method?.toLowerCase().includes(q)
+      r.payment_method?.toLowerCase().includes(q) ||
+      r.period_value?.toLowerCase().includes(q) ||
+      periodText.includes(q)
     );
   });
 
@@ -245,12 +255,18 @@ export default function StudentFees() {
                           <p className="capitalize">{r.payment_method}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground">Items</p>
-                          <p>{Array.isArray(r.items) ? r.items.length : 0} item(s)</p>
+                          <p className="text-xs text-muted-foreground">Period</p>
+                          <p className="text-sm">
+                            {r.period_value || '—'}
+                            {r.period_type && (
+                              <span className="ml-1 text-xs text-muted-foreground">({periodTypeLabel(r.period_type)})</span>
+                            )}
+                          </p>
+                          <p className="text-xs text-muted-foreground">{formatPeriodMonths(r.period_months, r.period_type)}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground">Status</p>
-                          <p className="capitalize">{r.status || 'Paid'}</p>
+                          <p className="text-xs text-muted-foreground">Visible Until</p>
+                          <p>{formatExpires(r.expires_at)}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 pt-1">
@@ -287,8 +303,9 @@ export default function StudentFees() {
                       <TableHead className="whitespace-nowrap">Receipt #</TableHead>
                       <TableHead className="whitespace-nowrap">Date</TableHead>
                       <TableHead className="whitespace-nowrap">Method</TableHead>
-                      <TableHead className="whitespace-nowrap">Items</TableHead>
+                      <TableHead className="whitespace-nowrap">Period</TableHead>
                       <TableHead className="whitespace-nowrap">Amount</TableHead>
+                      <TableHead className="whitespace-nowrap">Visible Until</TableHead>
                       <TableHead className="text-right whitespace-nowrap">Download</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -305,11 +322,18 @@ export default function StudentFees() {
                         </TableCell>
                         <TableCell className="whitespace-nowrap text-sm">{r.payment_method}</TableCell>
                         <TableCell className="whitespace-nowrap text-sm">
-                          {Array.isArray(r.items) ? r.items.length : 0} item(s)
+                          <div className="flex flex-col">
+                            <span>{r.period_value || '—'}</span>
+                            {r.period_type && (
+                              <span className="text-xs text-muted-foreground">({periodTypeLabel(r.period_type)})</span>
+                            )}
+                            <span className="text-xs text-muted-foreground">{formatPeriodMonths(r.period_months, r.period_type)}</span>
+                          </div>
                         </TableCell>
                         <TableCell className="whitespace-nowrap font-semibold text-primary">
                           ₹{Number(r.total_amount).toLocaleString('en-IN')}
                         </TableCell>
+                        <TableCell className="whitespace-nowrap text-sm">{formatExpires(r.expires_at)}</TableCell>
                         <TableCell className="text-right whitespace-nowrap">
                           <div className="flex items-center justify-end gap-2">
                             <Button

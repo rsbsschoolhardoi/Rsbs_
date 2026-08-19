@@ -147,7 +147,7 @@ export default function QuizImport() {
       )}
 
       {questions.length > 0 && questions.every((q) => !q.errors?.length) && (
-        <div className="flex items-center gap-2 text-sm text-green-600">
+        <div className="flex items-center gap-2 text-sm text-success">
           <CheckCircle2 className="w-4 h-4" /> All {questions.length} questions are valid.
         </div>
       )}

@@ -194,7 +194,7 @@ export default function QuizEdit() {
           <div>
             <h1 className="text-xl md:text-2xl font-bold tracking-tight truncate">{quiz.title || 'Untitled Quiz'}</h1>
             <div className="flex items-center gap-2 mt-1">
-              <Badge variant="outline" className="text-[10px] uppercase">{quiz.status}</Badge>
+              <Badge variant="outline" className="text-xs uppercase">{quiz.status}</Badge>
               <span className="text-xs text-muted-foreground">{questions.length} questions</span>
             </div>
           </div>
@@ -216,7 +216,7 @@ export default function QuizEdit() {
         <div className="mt-6">
           <TabsContent value="questions" className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Question Builder</h2>
+              <h2 className="text-sm font-semibold font-medium text-muted-foreground">Question Builder</h2>
               <Button size="sm" onClick={addQuestion}><Plus className="w-4 h-4 mr-1.5" /> Add Question</Button>
             </div>
             <Reorder.Group axis="y" values={questions} onReorder={setQuestions} className="space-y-4">

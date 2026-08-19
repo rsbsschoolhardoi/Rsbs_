@@ -22,7 +22,8 @@ import { getPlaceholderByKey } from '@/constants/placeholders';
 
 /* ─── constants ─────────────────────────────────────────────────────────────── */
 const SNAP_PX        = 6;
-export const RULER_SIZE = 20;
+export const RULER_SIZE = 0;
+const DRAG_THRESHOLD = 5;
 const HANDLE_SIZE    = 8;
 const ROT_OFFSET     = 28;
 const AUTO_SCROLL_PX = 40;
@@ -79,6 +80,7 @@ const ElementContent: React.FC<{ el: StudioElement }> = ({ el }) => {
   const isImage = ['photo','logo','custom_image','signature','principal_signature'].includes(el.type);
   const isQrBar = el.type === 'qrcode' || el.type === 'barcode';
   const isLine  = el.type === 'line' || el.type === 'divider';
+  const isBackground = el.type === 'background';
 
   const baseText: React.CSSProperties = {
     ...CHILD_NO_PE,
@@ -127,6 +129,14 @@ const ElementContent: React.FC<{ el: StudioElement }> = ({ el }) => {
   );
 
   if (isLine) return <div style={{ width: '100%', height: '100%', background: el.backgroundColor || '#e2e8f0', ...CHILD_NO_PE }} />;
+
+  if (isBackground) {
+    if (el.imageUrl) {
+      return <img src={el.imageUrl} alt="" draggable={false} style={{ width: '100%', height: '100%', objectFit: (el.objectFit || 'cover') as React.CSSProperties['objectFit'], ...CHILD_NO_PE }} />;
+    }
+    // Solid colour background: rendered via backgroundColor on the element wrapper
+    return null;
+  }
 
   if (el.type === 'table') return (
     <div style={{ width: '100%', height: '100%', border: '1px solid rgba(0,0,0,0.15)', borderRadius: 4, overflow: 'hidden', ...CHILD_NO_PE }}>
@@ -274,7 +284,7 @@ export const StudioCanvas = React.forwardRef<HTMLDivElement, StudioCanvasProps>(
 
   // ── drag state (ref: no re-render during drag) ──
   const drag = useRef<{
-    mode: 'move' | 'resize' | 'rotate' | 'pan' | 'lasso' | null;
+    mode: 'move' | 'pendingMove' | 'resize' | 'rotate' | 'pan' | 'lasso' | null;
     pointerId: number;
     startClientX: number; startClientY: number;
     // move
@@ -290,7 +300,7 @@ export const StudioCanvas = React.forwardRef<HTMLDivElement, StudioCanvasProps>(
     // pan
     panStartX: number; panStartY: number; panOrigX: number; panOrigY: number;
     // pinch
-    pinchStartDist: number; pinchStartZoom: number;
+    pinchStartDist: number; pinchStartScale: number;
   }>({
     mode: null, pointerId: -1,
     startClientX: 0, startClientY: 0,
@@ -300,7 +310,7 @@ export const StudioCanvas = React.forwardRef<HTMLDivElement, StudioCanvasProps>(
     rotateId: '', rotateCX: 0, rotateCY: 0, startAngle: 0, origRot: 0,
     lassoStartX: 0, lassoStartY: 0,
     panStartX: 0, panStartY: 0, panOrigX: 0, panOrigY: 0,
-    pinchStartDist: 0, pinchStartZoom: 0,
+    pinchStartDist: 0, pinchStartScale: 1,
   });
 
   /* ── client → canvas pixel coords ── */
@@ -309,8 +319,8 @@ export const StudioCanvas = React.forwardRef<HTMLDivElement, StudioCanvasProps>(
     const r  = vp ? vp.getBoundingClientRect() : { left: 0, top: 0 };
     const s  = scaleRef.current;
     return {
-      x: (cx - r.left - RULER_SIZE - panXRef.current) / s,
-      y: (cy - r.top  - RULER_SIZE - panYRef.current) / s,
+      x: (cx - r.left - panXRef.current) / s,
+      y: (cy - r.top  - panYRef.current) / s,
     };
   }, []); // no deps – reads from refs
 
@@ -338,16 +348,10 @@ export const StudioCanvas = React.forwardRef<HTMLDivElement, StudioCanvasProps>(
     e: React.PointerEvent,
     el: StudioElement,
   ) => {
-    if (el.locked) return;
     if (e.button === 2) return; // let context menu handle right-click
     e.stopPropagation(); // BUG3 fix: prevent viewport pointerdown (lasso) from also firing
     e.preventDefault();
 
-    // Capture so pointermove/up reliably route to this target
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-
-    const d = drag.current;
-    // BUG1 fix: compute newIds here (before calling onSelect) so origPositions is correct
     const additive = e.shiftKey || e.ctrlKey || e.metaKey;
     const curSel   = selectedIdsRef.current;
     let newIds: string[];
@@ -362,14 +366,20 @@ export const StudioCanvas = React.forwardRef<HTMLDivElement, StudioCanvasProps>(
 
     onSelect(newIds);
 
-    d.mode          = 'move';
+    // Locked elements (e.g. the page background) can be selected but not dragged/resized
+    if (el.locked) return;
+
+    // Capture so pointermove/up reliably route to this target
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+
+    const d = drag.current;
+    d.mode          = 'pendingMove';
     d.pointerId     = e.pointerId;
     d.startClientX  = e.clientX;
     d.startClientY  = e.clientY;
-    // Snapshot positions of all elements that will move
-    d.origPositions = stateRef.current.elements
-      .filter(elem => newIds.includes(elem.id))
-      .map(elem => ({ id: elem.id, x: elem.x, y: elem.y }));
+    // Actual move state and snapshot positions are created once the pointer
+    // travels past the drag threshold — this prevents accidental drags on clicks.
+    d.origPositions = [];
   }, [onSelect]);
 
   /** Called from handle div onPointerDown – handles resize / rotation */
@@ -424,6 +434,15 @@ export const StudioCanvas = React.forwardRef<HTMLDivElement, StudioCanvasProps>(
     const st = stateRef.current;
     const dx = (e.clientX - d.startClientX) / s;
     const dy = (e.clientY - d.startClientY) / s;
+
+    if (d.mode === 'pendingMove') {
+      if (Math.hypot(e.clientX - d.startClientX, e.clientY - d.startClientY) <= DRAG_THRESHOLD) return;
+      const curIds = selectedIdsRef.current;
+      d.mode = 'move';
+      d.origPositions = st.elements
+        .filter(elem => curIds.includes(elem.id))
+        .map(elem => ({ id: elem.id, x: elem.x, y: elem.y }));
+    }
 
     if (d.mode === 'move') {
       let moved = d.origPositions.map(op => ({ id: op.id, x: op.x + dx, y: op.y + dy }));
@@ -574,31 +593,36 @@ export const StudioCanvas = React.forwardRef<HTMLDivElement, StudioCanvasProps>(
     return () => { window.removeEventListener('keydown', kd); window.removeEventListener('keyup', ku); };
   }, []);
 
-  /* ── Ctrl+Wheel zoom (cursor-centered) ── */
+  /* ── Ctrl+Wheel zoom (cursor-centered, smooth exponential) ── */
   const handleWheel = useCallback((e: React.WheelEvent) => {
     if (e.ctrlKey || e.metaKey) {
       e.preventDefault();
-      const z = zoom / 100;
-      const nextZ = Math.max(0.1, Math.min(5.0, z - e.deltaY * 0.001));
-      onZoom(nextZ * 100, e.clientX, e.clientY);
+      // Normalize delta by mode so mouse wheel, trackpad and line/page modes behave consistently.
+      const normalized =
+        e.deltaY * (e.deltaMode === 1 ? 18 : e.deltaMode === 2 ? 800 : 1);
+      if (normalized === 0) return;
+      // Gentler exponential factor prevents sudden jumps while still feeling responsive.
+      const current = scaleRef.current;
+      const next = Math.max(0.1, Math.min(5.0, current * Math.exp(-normalized * 0.0005)));
+      scaleRef.current = next;
+      onZoom(next * 100, e.clientX, e.clientY);
     } else if (e.shiftKey) {
       onPan(-e.deltaY, 0);
     } else {
       onPan(-e.deltaX, -e.deltaY);
     }
-  }, [onZoom, onPan, zoom]);
+  }, [onZoom, onPan]);
 
   /* ── pinch zoom (touch) ── */
   useEffect(() => {
     const vp = viewportRef.current;
     if (!vp) return;
-    let lastDist = 0;
 
     const onTouchStart = (e: TouchEvent) => {
       if (e.touches.length === 2) {
         const t = e.touches;
-        lastDist = Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
-        drag.current.pinchStartZoom = zoom;
+        drag.current.pinchStartDist = Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+        drag.current.pinchStartScale = scaleRef.current;
       }
     };
     const onTouchMove = (e: TouchEvent) => {
@@ -606,12 +630,13 @@ export const StudioCanvas = React.forwardRef<HTMLDivElement, StudioCanvasProps>(
       e.preventDefault();
       const t = e.touches;
       const dist = Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+      // Guard against a very small initial pinch distance causing huge jumps.
+      const startDist = Math.max(20, drag.current.pinchStartDist || dist);
+      const next = Math.max(0.1, Math.min(5.0, drag.current.pinchStartScale * (dist / startDist)));
       const midX = (t[0].clientX + t[1].clientX) / 2;
       const midY = (t[0].clientY + t[1].clientY) / 2;
-      const z = zoom / 100;
-      const nextZ = Math.max(0.1, Math.min(5.0, z + (dist - lastDist) * 0.002));
-      onZoom(nextZ * 100, midX, midY);
-      lastDist = dist;
+      scaleRef.current = next;
+      onZoom(next * 100, midX, midY);
     };
     vp.addEventListener('touchstart', onTouchStart, { passive: true });
     vp.addEventListener('touchmove',  onTouchMove,  { passive: false });
@@ -619,7 +644,7 @@ export const StudioCanvas = React.forwardRef<HTMLDivElement, StudioCanvasProps>(
       vp.removeEventListener('touchstart', onTouchStart);
       vp.removeEventListener('touchmove',  onTouchMove);
     };
-  }, [zoom, onZoom]);
+  }, [onZoom]);
 
   /* ── HTML drag-and-drop from ComponentLibrary ── */
   const handleDrop = useCallback((e: React.DragEvent) => {
@@ -638,22 +663,6 @@ export const StudioCanvas = React.forwardRef<HTMLDivElement, StudioCanvasProps>(
   const scaledW = pageW * scale;
   const scaledH = pageH * scale;
 
-  const hTicks = useMemo(() => {
-    const step = scale >= 1.5 ? 50 : scale >= 0.75 ? 100 : 200;
-    const ticks: { pos: number; label: string }[] = [];
-    for (let px = 0; px <= pageW; px += step)
-      ticks.push({ pos: px * scale + panX + RULER_SIZE, label: String(px) });
-    return ticks;
-  }, [pageW, scale, panX]);
-
-  const vTicks = useMemo(() => {
-    const step = scale >= 1.5 ? 50 : scale >= 0.75 ? 100 : 200;
-    const ticks: { pos: number; label: string }[] = [];
-    for (let px = 0; px <= pageH; px += step)
-      ticks.push({ pos: px * scale + panY + RULER_SIZE, label: String(px) });
-    return ticks;
-  }, [pageH, scale, panY]);
-
   const sorted = useMemo(
     () => [...state.elements].sort((a, b) => a.zIndex - b.zIndex),
     [state.elements],
@@ -665,8 +674,7 @@ export const StudioCanvas = React.forwardRef<HTMLDivElement, StudioCanvasProps>(
   return (
     <div
       ref={viewportRef}
-      className="relative w-full h-full overflow-hidden select-none"
-      style={{ background: '#e8eaed' }}
+      className="relative w-full h-full overflow-hidden select-none bg-muted/30"
       onPointerDown={handleViewportPointerDown}
       onPointerMove={handleViewportPointerMove}
       onPointerUp={handleViewportPointerUp}
@@ -675,46 +683,20 @@ export const StudioCanvas = React.forwardRef<HTMLDivElement, StudioCanvasProps>(
       onDragOver={e => e.preventDefault()}
       onContextMenu={e => { e.preventDefault(); onContextMenu({ x: e.clientX, y: e.clientY, elementId: null }); }}
     >
-      {/* ── Horizontal ruler ── */}
-      <div style={{ position: 'absolute', top: 0, left: RULER_SIZE, right: 0, height: RULER_SIZE, background: '#f1f3f4', borderBottom: '1px solid #d1d5db', zIndex: 200, overflow: 'hidden', pointerEvents: 'none' }}>
-        {hTicks.map(t => (
-          <div key={t.label} style={{ position: 'absolute', left: t.pos - RULER_SIZE, top: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{ width: 1, height: 6, background: '#9ca3af', marginTop: 'auto' }} />
-            <span style={{ fontSize: 8, color: '#9ca3af', fontFamily: 'monospace', marginTop: 1 }}>{t.label}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* ── Vertical ruler ── */}
-      <div style={{ position: 'absolute', top: RULER_SIZE, left: 0, bottom: 0, width: RULER_SIZE, background: '#f1f3f4', borderRight: '1px solid #d1d5db', zIndex: 200, overflow: 'hidden', pointerEvents: 'none' }}>
-        {vTicks.map(t => (
-          <div key={t.label} style={{ position: 'absolute', top: t.pos - RULER_SIZE, left: 0, display: 'flex', alignItems: 'center' }}>
-            <div style={{ width: 6, height: 1, background: '#9ca3af', marginLeft: 'auto' }} />
-            <span style={{ fontSize: 8, color: '#9ca3af', fontFamily: 'monospace', marginLeft: 1, transform: 'rotate(-90deg)', transformOrigin: 'left center', whiteSpace: 'nowrap' }}>{t.label}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* ── Corner ── */}
-      <div style={{ position: 'absolute', top: 0, left: 0, width: RULER_SIZE, height: RULER_SIZE, background: '#e5e7eb', borderRight: '1px solid #d1d5db', borderBottom: '1px solid #d1d5db', zIndex: 201, pointerEvents: 'none' }} />
-
-      {/* ── Canvas (pan offset) ── */}
-      <div style={{
-        position: 'absolute',
-        top:  RULER_SIZE + panY,
-        left: RULER_SIZE + panX,
-        width: scaledW, height: scaledH,
-        boxShadow: '0 4px 32px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.08)',
-      }}>
-        {/* White page */}
-        <div
-          style={{
-            width: pageW, height: pageH,
-            transform: `scale(${scale})`, transformOrigin: 'top left',
-            background: '#ffffff', position: 'relative', overflow: 'visible',
-          }}
-          onContextMenu={e => { e.preventDefault(); onContextMenu({ x: e.clientX, y: e.clientY, elementId: null }); }}
-        >
+      {/* Page canvas — this is the only visual page; no hidden workspace */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0, left: 0,
+          width: pageW, height: pageH,
+          transform: `translate(${panX}px, ${panY}px) scale(${scale})`,
+          transformOrigin: 'top left',
+          background: '#ffffff',
+          boxShadow: '0 4px 32px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.08)',
+          overflow: 'visible',
+        }}
+        onContextMenu={e => { e.preventDefault(); onContextMenu({ x: e.clientX, y: e.clientY, elementId: null }); }}
+      >
           {/* Grid overlay */}
           {state.showGrid && (
             <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0 }}>
@@ -726,9 +708,6 @@ export const StudioCanvas = React.forwardRef<HTMLDivElement, StudioCanvasProps>(
               <rect width="100%" height="100%" fill="url(#sg)" />
             </svg>
           )}
-
-          {/* Page clip rect (visual only, not a pointer blocker) */}
-          <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }} />
 
           {/* Snap guide lines */}
           {snapLines.map((l, i) => (
@@ -798,25 +777,35 @@ export const StudioCanvas = React.forwardRef<HTMLDivElement, StudioCanvasProps>(
                     so they are in the same stacking context and don't block
                     pointer events on other elements' bodies) */}
                 {isSelected && (
-                  <Handles
-                    el={el}
-                    multi={selectedIds.length > 1}
-                    onPointerDownHandle={(e, dir) => {
-                      e.stopPropagation();
-                      handleHandlePointerDown(e, el, dir);
-                    }}
-                  />
+                  el.locked ? (
+                    <div style={{
+                      position: 'absolute',
+                      inset: -1,
+                      border: '2px solid #2563eb',
+                      borderRadius: el.borderRadius || 0,
+                      pointerEvents: 'none',
+                      zIndex: 1,
+                    }} />
+                  ) : (
+                    <Handles
+                      el={el}
+                      multi={selectedIds.length > 1}
+                      onPointerDownHandle={(e, dir) => {
+                        e.stopPropagation();
+                        handleHandlePointerDown(e, el, dir);
+                      }}
+                    />
+                  )
                 )}
               </div>
             );
           })}
         </div>
-      </div>
 
-      {/* Cursor coords */}
-      <div style={{ position: 'absolute', bottom: 4, right: 8, fontSize: 10, color: '#9ca3af', fontFamily: 'monospace', pointerEvents: 'none', zIndex: 300 }}>
-        {Math.round(cursorPos.x)}, {Math.round(cursorPos.y)} px
+        {/* Cursor coords */}
+        <div style={{ position: 'absolute', bottom: 4, right: 8, fontSize: 10, color: '#9ca3af', fontFamily: 'monospace', pointerEvents: 'none', zIndex: 300 }}>
+          {Math.round(cursorPos.x)}, {Math.round(cursorPos.y)} px
+        </div>
       </div>
-    </div>
   );
 });

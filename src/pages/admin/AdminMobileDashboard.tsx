@@ -91,10 +91,10 @@ function StatBadge({ label, value, icon: Icon, accent }: StatBadgeProps) {
   return (
     <div className={cn('flex flex-col items-center gap-0.5 px-2 py-2 rounded-xl bg-background border min-w-0 flex-1', 'shadow-sm')}>
       <Icon className={cn('w-4 h-4 shrink-0', accent)} />
-      <span className="font-black text-base leading-none tabular-nums">
+      <span className="font-semibold text-base leading-none tabular-nums">
         {value === null ? '–' : value}
       </span>
-      <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight">{label}</span>
+      <span className="text-xs font-bold font-medium text-muted-foreground text-center leading-tight">{label}</span>
     </div>
   );
 }
@@ -134,16 +134,16 @@ function EmergencyTile({ tile, badge, delay }: TileProps) {
 
         {/* Text */}
         <div className="flex-1 min-w-0">
-          <p className="font-black text-white text-xs leading-tight truncate">{tile.label}</p>
+          <p className="font-semibold text-white text-xs leading-tight truncate">{tile.label}</p>
           {!tile.wide && (
-            <p className="text-white/70 text-[9px] font-medium mt-0.5 truncate">{tile.sublabel}</p>
+            <p className="text-white/70 text-xs font-medium mt-0.5 truncate">{tile.sublabel}</p>
           )}
         </div>
 
         {/* Badge */}
         {badge !== undefined && badge > 0 && (
           <div className="absolute top-2 right-2 min-w-[16px] h-[16px] rounded-full bg-white flex items-center justify-center px-1">
-            <span className="text-[8px] font-black text-foreground">{badge > 99 ? '99+' : badge}</span>
+            <span className="text-xs font-semibold text-foreground">{badge > 99 ? '99+' : badge}</span>
           </div>
         )}
 
@@ -217,8 +217,8 @@ export default function AdminMobileDashboard() {
         transition={{ type: 'spring', stiffness: 380, damping: 30 }}
         className="px-1 shrink-0"
       >
-        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{dateStr}</p>
-        <h1 className="text-base font-black leading-tight">
+        <p className="text-xs font-bold font-medium text-muted-foreground">{dateStr}</p>
+        <h1 className="text-base font-semibold leading-tight">
           {greeting},{' '}
           <span className="text-primary">{profile?.username?.split(' ')[0] ?? 'Admin'}</span>
         </h1>
@@ -259,9 +259,9 @@ export default function AdminMobileDashboard() {
         <div className="flex items-center justify-between mb-2 shrink-0">
           <div className="flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-primary" />
-            <span className="text-xs font-black uppercase tracking-widest text-foreground">Recent Notices</span>
+            <span className="text-xs font-semibold text-foreground">Recent Notices</span>
           </div>
-          <Link to={ROUTES.ADMIN.NOTICES} className="text-[10px] font-bold text-primary uppercase tracking-wider flex items-center gap-0.5">
+          <Link to={ROUTES.ADMIN.NOTICES} className="text-xs font-bold text-primary font-medium flex items-center gap-0.5">
             View all <ChevronRight className="w-3 h-3" />
           </Link>
         </div>
@@ -287,7 +287,7 @@ export default function AdminMobileDashboard() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-semibold truncate">{(notice as any).title}</p>
-                  <p className="text-[10px] text-muted-foreground truncate mt-0.5">
+                  <p className="text-xs text-muted-foreground truncate mt-0.5">
                     {(notice as any).created_at
                       ? new Date((notice as any).created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
                       : 'Recent'}

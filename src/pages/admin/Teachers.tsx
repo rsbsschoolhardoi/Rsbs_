@@ -358,7 +358,7 @@ export default function Teachers() {
                   {[1, 2, 3].map(i => <Skeleton key={i} className="h-24 w-full bg-muted rounded-2xl" />)}
                 </div>
               ) : filteredTeachers.length === 0 ? (
-                <div className="text-center py-20 bg-muted/20 rounded-3xl border border-dashed">
+                <div className="text-center py-20 bg-muted/20 rounded-2xl border border-dashed">
                   <p className="text-muted-foreground">No teachers found.</p>
                 </div>
               ) : (
@@ -391,8 +391,8 @@ export default function Teachers() {
                                 <ProfileTagBadge tag={teacher.profile_tag} size="sm" />
                               </div>
                               <div className="flex flex-col gap-0.5">
-                                <span className="text-[9px] text-muted-foreground uppercase font-mono tracking-tighter">L: {teacher.login_id}</span>
-                                <span className="text-[9px] text-primary/80 uppercase font-mono font-bold tracking-tighter">V: {teacher.verification_id}</span>
+                                <span className="text-xs text-muted-foreground uppercase font-mono tracking-tighter">L: {teacher.login_id}</span>
+                                <span className="text-xs text-primary/80 uppercase font-mono font-bold tracking-tighter">V: {teacher.verification_id}</span>
                               </div>
                             </div>
                           </div>
@@ -402,7 +402,7 @@ export default function Teachers() {
                         <TableCell>
                           <div className="flex flex-wrap gap-1">
                             {teacher.class_assignments?.map((a, i) => (
-                              <Badge key={i} variant="secondary" className="text-[10px] px-1.5 py-0">
+                              <Badge key={i} variant="secondary" className="text-xs px-1.5 py-0">
                                 {a.class_name}-{a.section_name}
                               </Badge>
                             )) || <span className="text-xs text-muted-foreground italic">None</span>}
@@ -412,13 +412,13 @@ export default function Teachers() {
                         <TableCell className="text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="outline" size="sm" className="h-8 px-2 font-black flex items-center gap-1 border-muted-foreground/20">
+                              <Button variant="outline" size="sm" className="h-8 px-2 font-semibold flex items-center gap-1 border-muted-foreground/20">
                                 Manage
                                 <ChevronDown className="w-3 h-3 text-muted-foreground" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-52 rounded-xl p-1.5 shadow-xl">
-                              <DropdownMenuLabel className="px-3 py-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Management Options</DropdownMenuLabel>
+                              <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold text-muted-foreground/70">Management Options</DropdownMenuLabel>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem 
                                 className="rounded-lg px-3 py-2 text-sm font-bold flex items-center gap-2"
@@ -465,7 +465,7 @@ export default function Teachers() {
 
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-[2rem]">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl">
           <DialogHeader>
             <DialogTitle>{editingTeacher ? 'Edit Teacher Profile' : 'Add New Teacher'}</DialogTitle>
             <DialogDescription>
@@ -591,7 +591,7 @@ export default function Teachers() {
                       <div className="flex items-center justify-between">
                         <FormLabel>Email (Optional)</FormLabel>
                         {!isSecondaryLoginEnabled && (
-                          <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground bg-muted/20">
+                          <Badge variant="outline" className="text-xs font-bold font-medium text-muted-foreground bg-muted/20">
                             Secondary Login: Disabled
                           </Badge>
                         )}
@@ -618,14 +618,14 @@ export default function Teachers() {
                   <div className="space-y-2 col-span-full border-b pb-4 mb-2 bg-primary/5 p-4 rounded-2xl">
                     <Label className="text-primary font-bold">Verification Record ID</Label>
                     <div className="flex items-center gap-4">
-                      <div className="bg-white border-2 border-primary/20 rounded-xl px-6 py-3 font-mono text-primary font-black tracking-widest text-xl shadow-sm uppercase">
+                      <div className="bg-white border-2 border-primary/20 rounded-xl px-6 py-3 font-mono text-primary font-semibold tracking-widest text-xl shadow-sm uppercase">
                         {editingTeacher.verification_id}
                       </div>
                       <div className="flex-1 space-y-1">
                         <p className="text-xs text-muted-foreground font-medium leading-relaxed">
                           Official immutable record identifier. Parallel to Login ID for verification lookups.
                         </p>
-                        <p className="text-[10px] text-destructive uppercase font-bold tracking-widest">
+                        <p className="text-xs text-destructive uppercase font-bold tracking-widest">
                           * Cannot be used for authentication
                         </p>
                       </div>
@@ -724,7 +724,7 @@ export default function Teachers() {
                     <FormItem>
                       <FormLabel>Initial PIN (Optional)</FormLabel>
                       <FormControl><Input type="password" maxLength={4} placeholder="4-digit PIN" {...field} onChange={(e) => field.onChange(e.target.value.replace(/[^0-9]/g, ''))} /></FormControl>
-                      <FormDescription className="text-[10px]">Teacher must change this on next login.</FormDescription>
+                      <FormDescription className="text-xs">Teacher must change this on next login.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -767,7 +767,7 @@ export default function Teachers() {
 
               <div className="space-y-4 pt-4 border-t">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                  <h3 className="text-sm font-bold font-medium text-muted-foreground flex items-center gap-2">
                     <GraduationCap className="w-4 h-4" /> Class Assignments
                   </h3>
                 </div>
@@ -815,7 +815,7 @@ export default function Teachers() {
                       const className = classes.find(c => c.id === a.class_id)?.name;
                       const sectionName = classes.find(c => c.id === a.class_id)?.sections.find(s => s.id === a.section_id)?.name;
                       return (
-                        <Badge key={i} variant="secondary" className="pl-3 pr-1 py-1 rounded-full flex items-center gap-2 text-[10px] font-bold">
+                        <Badge key={i} variant="secondary" className="pl-3 pr-1 py-1 rounded-full flex items-center gap-2 text-xs font-bold">
                           {className}-{sectionName}
                           <Button variant="ghost" size="icon" className="h-4 w-4 rounded-full hover:bg-destructive hover:text-white" onClick={() => removeAssignment(i)}>
                             <X className="w-3 h-3" />
@@ -839,7 +839,7 @@ export default function Teachers() {
       </Dialog>
 
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border-none shadow-2xl p-0 overflow-hidden">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border-none shadow-2xl p-0 overflow-hidden">
           <div className="bg-gradient-to-br from-primary/10 via-background to-background p-6">
             <DialogHeader className="mb-6">
               <div className="flex items-center gap-3">
@@ -847,7 +847,7 @@ export default function Teachers() {
                   <Eye className="w-5 h-5 text-blue-500" />
                 </div>
                 <div>
-                  <DialogTitle className="text-xl font-black text-foreground">Teacher Profile</DialogTitle>
+                  <DialogTitle className="text-xl font-semibold text-foreground">Teacher Profile</DialogTitle>
                   <p className="text-xs text-muted-foreground font-medium">Complete record information (Read-Only)</p>
                 </div>
               </div>
@@ -855,20 +855,20 @@ export default function Teachers() {
             
             {viewingTeacher && (
               <div className="space-y-6">
-                <div className="flex items-center gap-5 p-5 rounded-3xl bg-white/50 dark:bg-black/20 border border-white dark:border-white/5 shadow-sm backdrop-blur-sm">
+                <div className="flex items-center gap-5 p-5 rounded-2xl bg-white/50 dark:bg-black/20 border border-white dark:border-white/5 shadow-sm backdrop-blur-sm">
                   <Avatar className="h-20 w-20 border-4 border-white dark:border-black shadow-lg">
                     <AvatarImage src={viewingTeacher.profile_picture_url || ''} />
-                    <AvatarFallback className="text-2xl font-black bg-primary text-primary-foreground">{viewingTeacher.name[0]}</AvatarFallback>
+                    <AvatarFallback className="text-2xl font-semibold bg-primary text-primary-foreground">{viewingTeacher.name[0]}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <h3 className="text-2xl font-black text-foreground leading-tight">
+                    <h3 className="text-2xl font-semibold text-foreground leading-tight">
                       {viewingTeacher.prefix && <span>{viewingTeacher.prefix} </span>}
                       {viewingTeacher.name}
                     </h3>
                     <div className="flex flex-wrap gap-2 mt-2">
-                      <Badge className="bg-primary/10 text-primary border-none font-bold rounded-lg px-2.5 py-1 uppercase text-[10px] tracking-wider">{viewingTeacher.subject_role}</Badge>
+                      <Badge className="bg-primary/10 text-primary border-none font-bold rounded-lg px-2.5 py-1 uppercase text-xs tracking-wider">{viewingTeacher.subject_role}</Badge>
                       <ProfileTagBadge tag={viewingTeacher.profile_tag} />
-                      <Badge variant="outline" className="rounded-lg font-mono text-[10px] border-muted-foreground/20">{viewingTeacher.login_id}</Badge>
+                      <Badge variant="outline" className="rounded-lg font-mono text-xs border-muted-foreground/20">{viewingTeacher.login_id}</Badge>
                     </div>
                   </div>
                 </div>
@@ -885,7 +885,7 @@ export default function Teachers() {
                     { label: 'Description', value: viewingTeacher.description || 'N/A', full: true },
                   ].map((item, i) => (
                     <div key={i} className={cn("p-4 rounded-2xl border border-muted-foreground/5 bg-white/40 dark:bg-black/10 backdrop-blur-sm", item.full && "col-span-full")}>
-                      <Label className="text-[10px] uppercase tracking-widest text-muted-foreground/70 font-black block mb-1">{item.label}</Label>
+                      <Label className="text-xs font-medium text-muted-foreground/70 font-semibold block mb-1">{item.label}</Label>
                       <p className={cn("text-sm font-bold text-foreground", item.mono && "font-mono text-[11px]")}>{item.value}</p>
                     </div>
                   ))}
@@ -893,12 +893,12 @@ export default function Teachers() {
 
                 {viewingTeacher.class_assignments && viewingTeacher.class_assignments.length > 0 && (
                   <div className="space-y-3">
-                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground/70 font-black px-1 block">Class Assignments</Label>
+                    <Label className="text-xs font-medium text-muted-foreground/70 font-semibold px-1 block">Class Assignments</Label>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                       {viewingTeacher.class_assignments.map((assignment, i) => (
                         <div key={i} className="p-4 rounded-2xl border border-muted-foreground/5 bg-white/40 dark:bg-black/10 backdrop-blur-sm flex flex-col gap-1 group transition-all hover:border-primary/20">
                           <span className="font-bold text-sm text-foreground">{assignment.class_name}</span>
-                          <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Section {assignment.section_name}</span>
+                          <span className="text-xs text-muted-foreground font-semibold">Section {assignment.section_name}</span>
                         </div>
                       ))}
                     </div>
@@ -910,7 +910,7 @@ export default function Teachers() {
               <Button 
                 variant="outline" 
                 onClick={() => setIsViewDialogOpen(false)} 
-                className="rounded-xl font-black uppercase text-[10px] tracking-widest h-10 px-6 border-muted-foreground/20 hover:bg-muted transition-all active:scale-95"
+                className="rounded-xl font-semibold uppercase text-xs tracking-widest h-10 px-6 border-muted-foreground/20 hover:bg-muted transition-all active:scale-95"
               >
                 Close Record
               </Button>

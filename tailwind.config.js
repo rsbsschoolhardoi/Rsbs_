@@ -24,8 +24,8 @@ export default {
         },
         extend: {
             fontFamily: {
-                sans: ['Inter', 'system-ui', 'sans-serif'],
-                heading: ['Playfair Display', 'Georgia', 'serif'],
+                sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', '"Inter"', '"Segoe UI"', 'Roboto', 'sans-serif'],
+                heading: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"Inter"', '"Segoe UI"', 'Roboto', 'sans-serif'],
             },
             colors: {
                 border: 'hsl(var(--border))',
@@ -102,7 +102,8 @@ export default {
             },
             boxShadow: {
                 card: 'var(--shadow-card)',
-                hover: 'var(--shadow-hover)'
+                hover: 'var(--shadow-hover)',
+                dropdown: 'var(--shadow-dropdown)'
             },
             keyframes: {
                 'accordion-down': {

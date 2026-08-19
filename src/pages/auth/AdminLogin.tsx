@@ -194,7 +194,7 @@ export default function AdminLogin() {
     <AuthLayout
       panel={
         <AuthBrandPanel
-          gradientClass="bg-gradient-to-br from-[hsl(221,83%,28%)] via-[hsl(221,83%,38%)] to-[hsl(225,75%,50%)]"
+          gradientClass="bg-gradient-to-br from-primary via-primary/90 to-accent"
           icon={<ShieldCheck />}
           title="Admin Control Centre"
           tagline="Manage your institution with complete visibility, security, and control."

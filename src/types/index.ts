@@ -171,6 +171,10 @@ export interface ExtraFee {
   collected_by?: string;
   created_at: string;
   students?: { name: string; login_id: string; class: string; section: string };
+  is_revoked?: boolean;
+  revoked_at?: string | null;
+  revoked_by?: string | null;
+  revocation_expires_at?: string | null;
 }
 
 export interface FeePayment {
@@ -178,6 +182,9 @@ export interface FeePayment {
   student_id: string;
   session_year: string;
   payment_period: string;
+  period_type?: 'monthly' | 'annual' | 'combined' | 'extra' | null;
+  period_value?: string | null;
+  period_months?: string[] | null;
   amount: number;
   payment_method: string;
   payment_date: string;
@@ -185,7 +192,12 @@ export interface FeePayment {
   notes?: string;
   collected_by?: string;
   receipt_id?: string;
+  fee_receipts?: { id: string; receipt_number: string; pdf_url?: string }[];
   created_at: string;
+  is_revoked?: boolean;
+  revoked_at?: string | null;
+  revoked_by?: string | null;
+  revocation_expires_at?: string | null;
 }
 
 /** Receipt line items passed into the template placeholder resolver at generation time. */
@@ -204,6 +216,43 @@ export interface FeeReceiptData {
   previous_due: number;
   /** Final total */
   grand_total: number;
+  /** Fee period type */
+  period_type?: string;
+  /** Fee period label */
+  period_value?: string;
+  /** Fee period month keys */
+  period_months?: string[];
+}
+
+export interface FeeReceipt {
+  id: string;
+  student_id: string;
+  receipt_number: string;
+  fee_detail_ids: string[];
+  items: { description: string; amount: number; due_date?: string }[];
+  total_amount: number;
+  payment_method: string;
+  transaction_id?: string;
+  payment_date: string;
+  notes?: string;
+  generated_by?: string;
+  pdf_url?: string;
+  created_at: string;
+  updated_at: string;
+  regenerated_count?: number;
+  is_receipt_generated: boolean;
+  generation_timestamp: string;
+  period_type?: 'monthly' | 'annual' | 'combined' | 'extra' | null;
+  period_value?: string | null;
+  period_months?: string[] | null;
+  expires_at?: string | null;
+  is_extended?: boolean | null;
+  role?: string;
+  students?: { name: string; login_id: string; class: string; section: string; profile_picture_url?: string };
+  is_revoked?: boolean;
+  revoked_at?: string | null;
+  revoked_by?: string | null;
+  revocation_expires_at?: string | null;
 }
 
 export interface Attendance {
@@ -452,6 +501,10 @@ export interface DocumentTemplate {
     header_enabled: boolean;
     body_enabled: boolean;
     footer_enabled: boolean;
+    page_size?: string;
+    orientation?: 'portrait' | 'landscape';
+    page_width?: number;
+    page_height?: number;
   };
   content_config: {
     header: TemplateElement[];

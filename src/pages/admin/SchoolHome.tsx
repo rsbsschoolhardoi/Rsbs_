@@ -107,27 +107,27 @@ function HomepagePreview({
           <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
           <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
         </div>
-        <span className="text-[10px] font-mono text-muted-foreground flex-1 text-center truncate">rsbs-school.com</span>
+        <span className="text-xs font-mono text-muted-foreground flex-1 text-center truncate">rsbs-school.com</span>
         <Monitor className="w-3 h-3 text-muted-foreground" />
       </div>
 
       {/* Scrollable mock page */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-3 text-[10px]">
+      <div className="flex-1 overflow-y-auto p-3 space-y-3 text-xs">
         {/* Hero card */}
         <div className="rounded-xl bg-primary text-primary-foreground p-4 relative overflow-hidden">
           <div className="relative z-10 space-y-1.5">
             <div className="w-7 h-7 rounded-lg bg-primary-foreground/20 flex items-center justify-center mb-2">
               <School className="w-4 h-4 text-primary-foreground" />
             </div>
-            <p className="font-black text-sm leading-tight line-clamp-2">
+            <p className="font-semibold text-sm leading-tight line-clamp-2">
               {introduction?.title || 'RSBS School'}
             </p>
-            <p className="opacity-80 text-[9px] line-clamp-2 leading-relaxed">
+            <p className="opacity-80 text-xs line-clamp-2 leading-relaxed">
               {introduction?.content?.substring(0, 80) || 'Welcome description goes here...'}
             </p>
             <div className="flex gap-1.5 pt-1">
-              <span className="bg-primary-foreground text-primary text-[8px] font-bold px-2 py-0.5 rounded-full">About Us</span>
-              <span className="border border-primary-foreground/40 text-primary-foreground text-[8px] font-bold px-2 py-0.5 rounded-full">Contact</span>
+              <span className="bg-primary-foreground text-primary text-xs font-bold px-2 py-0.5 rounded-full">About Us</span>
+              <span className="border border-primary-foreground/40 text-primary-foreground text-xs font-bold px-2 py-0.5 rounded-full">Contact</span>
             </div>
           </div>
           <div className="absolute -bottom-4 -right-4 w-20 h-20 bg-primary-foreground/5 rounded-full" />
@@ -135,19 +135,19 @@ function HomepagePreview({
 
         {/* Get Enrolled */}
         <div>
-          <p className="text-[8px] font-black uppercase tracking-widest text-foreground border-l-2 border-primary pl-2 mb-1.5">Get Enrolled</p>
+          <p className="text-xs font-semibold text-foreground border-l-2 border-primary pl-2 mb-1.5">Get Enrolled</p>
           <div className="grid grid-cols-2 gap-1.5">
             <div className="border rounded-xl p-2 flex items-center gap-1.5">
               <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                 <UserPlus className="w-3 h-3 text-primary" />
               </div>
-              <span className="font-black text-[8px] leading-tight">Apply for Admission</span>
+              <span className="font-semibold text-xs leading-tight">Apply for Admission</span>
             </div>
             <div className="border rounded-xl p-2 flex items-center gap-1.5">
-              <div className="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
-                <Calendar className="w-3 h-3 text-blue-600" />
+              <div className="w-6 h-6 rounded-lg bg-info/10 flex items-center justify-center shrink-0">
+                <Calendar className="w-3 h-3 text-info" />
               </div>
-              <span className="font-black text-[8px] leading-tight">Book Appointment</span>
+              <span className="font-semibold text-xs leading-tight">Book Appointment</span>
             </div>
           </div>
         </div>
@@ -155,7 +155,7 @@ function HomepagePreview({
         {/* Faculty */}
         {(principal || faculty.length > 0) && (
           <div>
-            <p className="text-[8px] font-black uppercase tracking-widest text-foreground border-l-2 border-primary pl-2 mb-1.5">Our Faculty</p>
+            <p className="text-xs font-semibold text-foreground border-l-2 border-primary pl-2 mb-1.5">Our Faculty</p>
             {principal && (
               <div className="border rounded-xl overflow-hidden flex mb-1.5">
                 <div className="w-1/3 aspect-[3/4] bg-muted overflow-hidden">
@@ -165,9 +165,9 @@ function HomepagePreview({
                   }
                 </div>
                 <div className="flex-1 p-2 flex flex-col justify-center gap-0.5">
-                  <span className="text-[7px] bg-primary/10 text-primary px-1 rounded font-black w-fit">PRINCIPAL</span>
-                  <p className="font-black text-[9px] truncate">{principal.name}</p>
-                  <p className="text-[8px] text-muted-foreground italic line-clamp-2">"{principal.message?.substring(0, 40)}..."</p>
+                  <span className="text-[7px] bg-primary/10 text-primary px-1 rounded font-semibold w-fit">PRINCIPAL</span>
+                  <p className="font-semibold text-xs truncate">{principal.name}</p>
+                  <p className="text-xs text-muted-foreground italic line-clamp-2">"{principal.message?.substring(0, 40)}..."</p>
                 </div>
               </div>
             )}
@@ -177,9 +177,9 @@ function HomepagePreview({
                   <div key={t.id} className="rounded-xl bg-muted/30 p-2 text-center">
                     <Avatar className="w-8 h-8 mx-auto mb-1 border-2 border-background">
                       <AvatarImage src={t.image_url || ''} />
-                      <AvatarFallback className="text-[8px] bg-primary/10 text-primary font-black">{t.name[0]}</AvatarFallback>
+                      <AvatarFallback className="text-xs bg-primary/10 text-primary font-semibold">{t.name[0]}</AvatarFallback>
                     </Avatar>
-                    <p className="text-[8px] font-black truncate">{t.name}</p>
+                    <p className="text-xs font-semibold truncate">{t.name}</p>
                     <p className="text-[7px] text-primary truncate">{t.designation}</p>
                   </div>
                 ))}
@@ -191,7 +191,7 @@ function HomepagePreview({
         {/* Social links */}
         {visibleSocial.length > 0 && (
           <div className="rounded-xl bg-muted/30 p-2 text-center space-y-1.5">
-            <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground">Follow Us</p>
+            <p className="text-xs font-semibold text-muted-foreground">Follow Us</p>
             <div className="flex gap-1.5 justify-center flex-wrap">
               {visibleSocial.map(l => (
                 <div key={l.id} className="w-6 h-6 rounded-full bg-background border flex items-center justify-center">
@@ -235,12 +235,12 @@ function SectionCard({
                 <h3 className="font-bold text-sm truncate">{info.title}</h3>
                 <Badge
                   variant={info.is_visible ? 'default' : 'secondary'}
-                  className="text-[9px] h-4 px-1.5 uppercase font-black shrink-0"
+                  className="text-xs h-4 px-1.5 uppercase font-semibold shrink-0"
                 >
                   {info.is_visible ? 'Live' : 'Hidden'}
                 </Badge>
               </div>
-              <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
+              <p className="text-xs text-muted-foreground font-medium font-medium">
                 {SECTION_LABELS[info.section_key] ?? info.section_key}
               </p>
               <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{info.content}</p>
@@ -399,13 +399,13 @@ export default function SchoolHomeManagement() {
 
   const getSocialIcon = (platform: string) => {
     switch (platform.toLowerCase()) {
-      case 'facebook': return <Facebook className="h-5 w-5 text-blue-600" />;
+      case 'facebook': return <Facebook className="h-5 w-5 text-info" />;
       case 'instagram': return <Instagram className="h-5 w-5 text-pink-600" />;
-      case 'youtube': return <Youtube className="h-5 w-5 text-red-600" />;
+      case 'youtube': return <Youtube className="h-5 w-5 text-destructive" />;
       case 'twitter (x)':
       case 'twitter':
       case 'x': return <Twitter className="h-5 w-5" />;
-      case 'whatsapp': return <MessageCircle className="h-5 w-5 text-green-600" />;
+      case 'whatsapp': return <MessageCircle className="h-5 w-5 text-success" />;
       case 'website': return <Globe className="h-5 w-5 text-blue-500" />;
       default: return <Share2 className="h-5 w-5 text-muted-foreground" />;
     }
@@ -512,7 +512,7 @@ export default function SchoolHomeManagement() {
             <HomeIcon className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-black tracking-tight">Homepage Manager</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Homepage Manager</h1>
             <p className="text-sm text-muted-foreground">
               Control every visible section on the public-facing school homepage.
             </p>
@@ -520,7 +520,7 @@ export default function SchoolHomeManagement() {
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {/* Live status pill */}
-          <div className="flex items-center gap-1.5 bg-green-50 border border-green-200 text-green-700 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wider dark:bg-green-900/20 dark:border-green-800 dark:text-green-400">
+          <div className="flex items-center gap-1.5 bg-success/10 border border-green-200 text-success rounded-full px-3 py-1 text-xs font-semibold dark:bg-green-900/20 dark:border-green-800 dark:text-green-400">
             <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
             {visibleCount} sections live
           </div>
@@ -575,7 +575,7 @@ export default function SchoolHomeManagement() {
 
               {/* Hero sections */}
               <div className="space-y-3">
-                <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-1 flex items-center gap-2">
+                <h3 className="text-xs font-semibold text-muted-foreground px-1 flex items-center gap-2">
                   <School className="w-3.5 h-3.5" /> Hero Section
                 </h3>
                 {heroSections.map(info => (
@@ -587,7 +587,7 @@ export default function SchoolHomeManagement() {
 
               {/* Content sections */}
               <div className="space-y-3">
-                <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-1 flex items-center gap-2">
+                <h3 className="text-xs font-semibold text-muted-foreground px-1 flex items-center gap-2">
                   <Info className="w-3.5 h-3.5" /> Content Sections
                 </h3>
                 {contentSections.map(info => (
@@ -599,7 +599,7 @@ export default function SchoolHomeManagement() {
 
               {/* History sections */}
               <div className="space-y-3">
-                <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-1 flex items-center gap-2">
+                <h3 className="text-xs font-semibold text-muted-foreground px-1 flex items-center gap-2">
                   <History className="w-3.5 h-3.5" /> History Sections
                 </h3>
                 {historySections.map(info => (
@@ -623,12 +623,12 @@ export default function SchoolHomeManagement() {
                   <CardHeader className="pb-3 flex flex-row items-start justify-between gap-4">
                     <div className="space-y-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <CardTitle className="text-base font-black">{info.title}</CardTitle>
-                        <Badge variant={info.is_visible ? 'default' : 'secondary'} className="text-[9px] h-4 px-1.5 font-black uppercase">
+                        <CardTitle className="text-base font-semibold">{info.title}</CardTitle>
+                        <Badge variant={info.is_visible ? 'default' : 'secondary'} className="text-xs h-4 px-1.5 font-semibold uppercase">
                           {info.is_visible ? 'Live' : 'Hidden'}
                         </Badge>
                       </div>
-                      <CardDescription className="text-[10px] uppercase tracking-wider font-bold">
+                      <CardDescription className="text-xs font-medium font-bold">
                         {SECTION_LABELS[info.section_key]}
                       </CardDescription>
                     </div>
@@ -660,7 +660,7 @@ export default function SchoolHomeManagement() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <CardTitle className="text-base">{info.title}</CardTitle>
-                        <Badge variant={info.is_visible ? 'default' : 'secondary'} className="text-[9px] h-4 px-1.5 font-black uppercase">
+                        <Badge variant={info.is_visible ? 'default' : 'secondary'} className="text-xs h-4 px-1.5 font-semibold uppercase">
                           {info.is_visible ? 'Live' : 'Hidden'}
                         </Badge>
                       </div>
@@ -754,7 +754,7 @@ export default function SchoolHomeManagement() {
                               <h4 className="font-bold truncate text-sm">{teacher.name}</h4>
                               <p className="text-xs text-primary font-medium">{teacher.designation}</p>
                               {teacher.years_of_service && (
-                                <p className="text-[10px] text-muted-foreground mt-0.5">{teacher.years_of_service}</p>
+                                <p className="text-xs text-muted-foreground mt-0.5">{teacher.years_of_service}</p>
                               )}
                             </div>
                           </div>
@@ -798,7 +798,7 @@ export default function SchoolHomeManagement() {
                         </div>
                         <div className="min-w-0">
                           <CardTitle className="text-sm font-bold">{link.platform}</CardTitle>
-                          <CardDescription className="text-[10px] truncate max-w-[120px]">{link.url}</CardDescription>
+                          <CardDescription className="text-xs truncate max-w-[120px]">{link.url}</CardDescription>
                         </div>
                       </div>
                       <Switch checked={link.is_visible} onCheckedChange={() => toggleSocialVisibility(link.id, link.is_visible)} />
@@ -834,9 +834,9 @@ export default function SchoolHomeManagement() {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <Monitor className="w-4 h-4 text-primary" />
-                <span className="text-xs font-black uppercase tracking-widest text-muted-foreground">Live Preview</span>
+                <span className="text-xs font-semibold text-muted-foreground">Live Preview</span>
               </div>
-              <Badge variant="secondary" className="text-[9px] font-black uppercase">Auto-updates</Badge>
+              <Badge variant="secondary" className="text-xs font-semibold uppercase">Auto-updates</Badge>
             </div>
             <div className="flex-1 min-h-0 max-h-[680px]">
               <HomepagePreview

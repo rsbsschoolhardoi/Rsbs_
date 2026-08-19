@@ -49,18 +49,18 @@ export default function AdminLayout() {
       <AppSidebar role="admin" />
       <SidebarInset className="flex flex-col h-screen overflow-hidden">
         {/* Persistent Header */}
-        <header className="flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear border-b bg-background/80 backdrop-blur-md sticky top-0 z-40 px-4">
-          <div className="flex items-center gap-2">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
+        <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-primary-foreground/10 bg-gradient-to-r from-primary to-primary/95 text-primary-foreground backdrop-blur-md sticky top-0 z-40 px-4">
+          <div className="flex items-center gap-3">
+            <SidebarTrigger className="-ml-1 hover:bg-primary-foreground/10" />
+            <Separator orientation="vertical" className="h-5 bg-primary-foreground/20" />
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href={ROUTES.ADMIN.DASHBOARD}>Admin Panel</BreadcrumbLink>
+                  <BreadcrumbLink href={ROUTES.ADMIN.DASHBOARD} className="text-primary-foreground/70 hover:text-primary-foreground">Admin</BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator />
+                <BreadcrumbSeparator className="text-primary-foreground/40" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>
+                  <BreadcrumbPage className="font-medium text-primary-foreground">
                     {location.pathname.split('/').pop()?.charAt(0).toUpperCase()}
                     {location.pathname.split('/').pop()?.slice(1) || 'Dashboard'}
                   </BreadcrumbPage>
@@ -69,55 +69,56 @@ export default function AdminLayout() {
             </Breadcrumb>
           </div>
 
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" asChild className="rounded-full hover:bg-muted active:scale-95 transition-all">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" asChild className="rounded-lg text-primary-foreground hover:bg-primary-foreground/10 active:scale-95 transition-all">
               <Link to={ROUTES.ADMIN.SEARCH}>
-                <Search className="w-5 h-5 text-muted-foreground" />
+                <Search className="w-[18px] h-[18px]" />
               </Link>
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => {}} className="rounded-full relative hover:bg-muted active:scale-95 transition-all">
-              <Bell className="w-5 h-5 text-muted-foreground" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-background" />
+            <Button variant="ghost" size="icon" onClick={() => {}} className="rounded-lg relative text-primary-foreground hover:bg-primary-foreground/10 active:scale-95 transition-all">
+              <Bell className="w-[18px] h-[18px]" />
+              <span className="absolute top-2 right-2.5 w-2 h-2 bg-accent rounded-full border-2 border-primary" />
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="p-1 h-auto rounded-full hover:bg-muted active:scale-95 transition-all border border-muted">
-                  <Avatar className="h-8 w-8">
+                <Button variant="ghost" className="h-9 px-2 gap-2 rounded-lg text-primary-foreground hover:bg-primary-foreground/10 active:scale-95 transition-all border border-primary-foreground/30">
+                  <Avatar className="h-6 w-6">
                     <AvatarImage src={profile?.avatar_url || ''} />
-                    <AvatarFallback className="bg-primary/10 text-primary font-black text-xs">{userInitial}</AvatarFallback>
+                    <AvatarFallback className="bg-accent/20 text-accent-foreground text-xs font-semibold">{userInitial}</AvatarFallback>
                   </Avatar>
+                  <span className="hidden md:inline text-sm font-medium">{profile?.username}</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 mt-2 shadow-2xl">
+              <DropdownMenuContent align="end" className="w-56 rounded-xl p-2 mt-2 shadow-dropdown">
                 <DropdownMenuLabel className="p-3">
-                  <p className="text-sm font-black truncate uppercase tracking-widest">{profile?.username}</p>
+                  <p className="text-sm font-semibold truncate">{profile?.username}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <p className="text-[10px] text-muted-foreground truncate font-bold uppercase tracking-wider">ADMINISTRATOR</p>
+                    <p className="text-xs text-muted-foreground font-medium">Administrator</p>
                     {profile?.is_master && (
-                      <Badge className="h-4 text-[8px] bg-primary/10 text-primary border-none font-black uppercase">Master</Badge>
+                      <Badge className="h-4 text-xs bg-accent/10 text-accent border-none font-medium">Master</Badge>
                     )}
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild className="rounded-xl p-3 cursor-pointer">
+                <DropdownMenuItem asChild className="rounded-lg p-2.5 cursor-pointer text-sm">
                   <Link to={ROUTES.ADMIN.ADMIN_MANAGEMENT} className="flex items-center gap-3">
                     <User className="w-4 h-4" />
-                    <span className="font-bold text-xs uppercase">Management</span>
+                    <span className="font-medium">Management</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild className="rounded-xl p-3 cursor-pointer">
+                <DropdownMenuItem asChild className="rounded-lg p-2.5 cursor-pointer text-sm">
                   <Link to={ROUTES.ADMIN.API_MANAGEMENT} className="flex items-center gap-3">
                     <Settings className="w-4 h-4" />
-                    <span className="font-bold text-xs uppercase">API Settings</span>
+                    <span className="font-medium">API Settings</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => signOut()}
-                  className="rounded-xl p-3 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/5"
+                  className="rounded-lg p-2.5 cursor-pointer text-sm text-destructive focus:text-destructive focus:bg-destructive/5"
                 >
                   <LogOut className="w-4 h-4 mr-3" />
-                  <span className="font-black text-xs uppercase tracking-widest">Logout</span>
+                  <span className="font-medium">Logout</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -125,15 +126,15 @@ export default function AdminLayout() {
         </header>
 
         {/* Content Area with Transitions */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar bg-slate-50/50 dark:bg-background/50 scroll-smooth">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar bg-gradient-to-b from-muted/50 via-background to-background scroll-smooth">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="mx-auto w-full max-w-7xl p-10 pt-10 h-full"
+              className="mx-auto w-full max-w-7xl p-6 md:p-8 h-full"
             >
               <Outlet />
             </motion.div>

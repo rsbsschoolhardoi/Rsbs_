@@ -62,7 +62,7 @@ export const ChangePINDialog: React.FC<ChangePINDialogProps> = ({ open, onOpenCh
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md rounded-[2rem]">
+      <DialogContent className="sm:max-w-md rounded-2xl">
         <DialogHeader className="text-center space-y-2">
           <div className="flex justify-center mb-2">
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary border-2 border-primary/5">
@@ -77,7 +77,7 @@ export const ChangePINDialog: React.FC<ChangePINDialogProps> = ({ open, onOpenCh
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-4">
             <div className="space-y-1">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-1">Current PIN</label>
+              <label className="text-xs font-semibold text-muted-foreground font-medium ml-1">Current PIN</label>
               <Input
                 type="password"
                 inputMode="numeric"
@@ -90,7 +90,7 @@ export const ChangePINDialog: React.FC<ChangePINDialogProps> = ({ open, onOpenCh
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-1">New PIN</label>
+              <label className="text-xs font-semibold text-muted-foreground font-medium ml-1">New PIN</label>
               <Input
                 type="password"
                 inputMode="numeric"
@@ -103,7 +103,7 @@ export const ChangePINDialog: React.FC<ChangePINDialogProps> = ({ open, onOpenCh
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-1">Confirm New PIN</label>
+              <label className="text-xs font-semibold text-muted-foreground font-medium ml-1">Confirm New PIN</label>
               <Input
                 type="password"
                 inputMode="numeric"
@@ -121,7 +121,7 @@ export const ChangePINDialog: React.FC<ChangePINDialogProps> = ({ open, onOpenCh
           </Button>
         </form>
         <DialogFooter className="sm:justify-center flex-col items-center">
-          <div className="flex items-center space-x-2 text-[9px] text-muted-foreground uppercase tracking-widest font-bold">
+          <div className="flex items-center space-x-2 text-xs text-muted-foreground font-medium font-bold">
             <ShieldCheck className="w-3 h-3 text-primary" />
             <span>Encrypted Verification System</span>
           </div>

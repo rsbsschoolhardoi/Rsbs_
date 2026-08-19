@@ -49,7 +49,7 @@ export const AccountSwitcherSheet: React.FC<AccountSwitcherSheetProps> = ({
         className="h-auto max-h-[80vh] rounded-t-3xl border-t border-border bg-background px-4 pb-8"
       >
         <SheetHeader className="pb-2 text-left">
-          <SheetTitle className="text-lg font-black tracking-tight">Switch Account</SheetTitle>
+          <SheetTitle className="text-lg font-semibold tracking-tight">Switch Account</SheetTitle>
           <SheetDescription className="text-sm text-muted-foreground">
             Long-press your avatar anytime to switch accounts instantly.
           </SheetDescription>
@@ -89,7 +89,7 @@ export const AccountSwitcherSheet: React.FC<AccountSwitcherSheetProps> = ({
                   <div className="relative shrink-0">
                     <Avatar className={cn('h-12 w-12 border-2', isCurrent ? 'border-primary/50' : 'border-border/40')}>
                       <AvatarImage src={account.avatarUrl || ''} className="object-cover" />
-                      <AvatarFallback className="bg-primary/10 text-primary font-black text-sm">
+                      <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">
                         {initials}
                       </AvatarFallback>
                     </Avatar>

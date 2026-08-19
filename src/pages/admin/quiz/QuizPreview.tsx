@@ -57,7 +57,7 @@ export default function QuizPreview() {
                 {q.image_url && <img src={q.image_url} alt="Question" className="max-w-sm rounded-lg border" />}
                 <div className="space-y-1">
                   {q.options?.map((o, i) => (
-                    <div key={o.id} className={`text-sm p-2 rounded border ${o.is_correct ? 'bg-green-500/10 border-green-500 text-green-600' : 'bg-muted/30'}`}>
+                    <div key={o.id} className={`text-sm p-2 rounded border ${o.is_correct ? 'bg-green-500/10 border-green-500 text-success' : 'bg-muted/30'}`}>
                       {String.fromCharCode(65 + i)}. {o.option_text} {o.is_correct && '✓'}
                     </div>
                   ))}

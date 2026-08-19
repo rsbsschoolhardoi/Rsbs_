@@ -245,8 +245,8 @@ export default function AdminTimetable() {
                       <SelectItem key={s.id} value={s.id}>
                         <div className="flex items-center gap-2">
                           {s.name}
-                          {s.is_active && <Badge variant="default" className="text-[10px] h-4">Active</Badge>}
-                          {!s.is_published && <Badge variant="outline" className="text-[10px] h-4">Draft</Badge>}
+                          {s.is_active && <Badge variant="default" className="text-xs h-4">Active</Badge>}
+                          {!s.is_published && <Badge variant="outline" className="text-xs h-4">Draft</Badge>}
                         </div>
                       </SelectItem>
                     ))}
@@ -447,8 +447,8 @@ export default function AdminTimetable() {
                   <div className="flex flex-col">
                     <span className="font-medium">{s.name}</span>
                     <div className="flex gap-2 mt-1">
-                      {s.is_active && <Badge variant="default" className="text-[10px]">Active</Badge>}
-                      {s.is_published ? <Badge variant="secondary" className="text-[10px]">Published</Badge> : <Badge variant="outline" className="text-[10px]">Draft</Badge>}
+                      {s.is_active && <Badge variant="default" className="text-xs">Active</Badge>}
+                      {s.is_published ? <Badge variant="secondary" className="text-xs">Published</Badge> : <Badge variant="outline" className="text-xs">Draft</Badge>}
                     </div>
                   </div>
                   <div className="flex gap-1">

@@ -131,16 +131,16 @@ export default function ApiKeys() {
               <Plus className="w-4 h-4" /> Issue New Key
             </Button>
           </DialogTrigger>
-          <DialogContent className="rounded-[2rem] sm:max-w-[425px]">
+          <DialogContent className="rounded-2xl sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle className="text-xl font-black">Issue API Access Token</DialogTitle>
-              <DialogDescription className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+              <DialogTitle className="text-xl font-semibold">Issue API Access Token</DialogTitle>
+              <DialogDescription className="text-xs font-medium font-medium text-muted-foreground">
                 Identify the application or client using this key
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="name" className="text-xs font-bold uppercase tracking-widest">Client Name / Application</Label>
+                <Label htmlFor="name" className="text-xs font-bold font-medium">Client Name / Application</Label>
                 <Input
                   id="name"
                   value={newKeyName}
@@ -159,16 +159,16 @@ export default function ApiKeys() {
         </Dialog>
       </div>
 
-      <Card className="border-none shadow-sm rounded-[2.5rem] bg-background border flex flex-col overflow-hidden">
+      <Card className="border-none shadow-sm rounded-2xl bg-background border flex flex-col overflow-hidden">
         <CardContent className="p-0">
           <Table>
             <TableHeader className="bg-muted/30">
               <TableRow className="hover:bg-transparent border-none">
-                <TableHead className="w-[200px] text-[10px] font-bold uppercase tracking-widest h-12 pl-8">Client Name</TableHead>
-                <TableHead className="text-[10px] font-bold uppercase tracking-widest h-12">API Key / Token</TableHead>
-                <TableHead className="text-[10px] font-bold uppercase tracking-widest h-12">Status</TableHead>
-                <TableHead className="text-[10px] font-bold uppercase tracking-widest h-12">Created At</TableHead>
-                <TableHead className="text-right text-[10px] font-bold uppercase tracking-widest h-12 pr-8">Actions</TableHead>
+                <TableHead className="w-[200px] text-xs font-bold font-medium h-12 pl-8">Client Name</TableHead>
+                <TableHead className="text-xs font-bold font-medium h-12">API Key / Token</TableHead>
+                <TableHead className="text-xs font-bold font-medium h-12">Status</TableHead>
+                <TableHead className="text-xs font-bold font-medium h-12">Created At</TableHead>
+                <TableHead className="text-right text-xs font-bold font-medium h-12 pr-8">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -177,7 +177,7 @@ export default function ApiKeys() {
                   <TableCell colSpan={5} className="h-48 text-center">
                     <div className="flex flex-col items-center justify-center gap-4">
                       <Loader2 className="w-8 h-8 animate-spin text-primary/30" />
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Retrieving secure keys...</p>
+                      <p className="text-xs font-bold font-medium text-muted-foreground">Retrieving secure keys...</p>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -190,7 +190,7 @@ export default function ApiKeys() {
               ) : (
                 keys.map((key) => (
                   <TableRow key={key.id} className="group hover:bg-muted/10 transition-colors border-none">
-                    <TableCell className="font-black text-sm pl-8">
+                    <TableCell className="font-semibold text-sm pl-8">
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
                           <Key className="w-4 h-4" />
@@ -222,7 +222,7 @@ export default function ApiKeys() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={key.is_active ? "default" : "secondary"} className={`text-[10px] uppercase font-bold px-2 py-0 ${key.is_active ? 'bg-green-100 text-green-700 hover:bg-green-100' : 'bg-red-100 text-red-700 hover:bg-red-100'}`}>
+                      <Badge variant={key.is_active ? "default" : "secondary"} className={`text-xs uppercase font-bold px-2 py-0 ${key.is_active ? 'bg-success/10 text-success hover:bg-success/10' : 'bg-destructive/10 text-destructive hover:bg-destructive/10'}`}>
                         {key.is_active ? 'Active' : 'Inactive'}
                       </Badge>
                     </TableCell>
@@ -232,7 +232,7 @@ export default function ApiKeys() {
                           <Calendar className="w-3 h-3 text-muted-foreground" />
                           {new Date(key.created_at).toLocaleDateString()}
                         </span>
-                        <span className="text-[10px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                        <span className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
                           <Clock className="w-3 h-3" />
                           {key.last_used_at ? `Last used: ${new Date(key.last_used_at).toLocaleTimeString()}` : 'Never used'}
                         </span>
@@ -243,7 +243,7 @@ export default function ApiKeys() {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-8 w-8 text-blue-600 hover:bg-blue-50 rounded-lg"
+                          className="h-8 w-8 text-info hover:bg-info/10 rounded-lg"
                           title={key.is_active ? "Deactivate" : "Activate"}
                           onClick={() => handleToggleStatus(key.id, key.is_active)}
                         >
@@ -252,7 +252,7 @@ export default function ApiKeys() {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-8 w-8 text-amber-600 hover:bg-amber-50 rounded-lg"
+                          className="h-8 w-8 text-warning hover:bg-warning/10 rounded-lg"
                           title="Regenerate Key"
                           onClick={() => handleRegenerateKey(key.id)}
                         >
@@ -261,7 +261,7 @@ export default function ApiKeys() {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-8 w-8 text-red-600 hover:bg-red-50 rounded-lg"
+                          className="h-8 w-8 text-destructive hover:bg-destructive/10 rounded-lg"
                           title="Delete Key"
                           onClick={() => handleDeleteKey(key.id)}
                         >

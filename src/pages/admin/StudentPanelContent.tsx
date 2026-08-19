@@ -254,8 +254,8 @@ export default function StudentPanelContent() {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <p className="font-medium text-sm">{s.label}</p>
-                        <Badge variant="outline" className="text-[10px]">{s.type}</Badge>
-                        {!s.is_active && <Badge variant="secondary" className="text-[10px]">Inactive</Badge>}
+                        <Badge variant="outline" className="text-xs">{s.type}</Badge>
+                        {!s.is_active && <Badge variant="secondary" className="text-xs">Inactive</Badge>}
                       </div>
                       <p className="text-xs text-muted-foreground truncate">{s.key}</p>
                       {s.description && <p className="text-xs text-muted-foreground mt-0.5">{s.description}</p>}
@@ -295,8 +295,8 @@ export default function StudentPanelContent() {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <p className="font-medium text-sm">{n.label}</p>
-                        <Badge variant="outline" className="text-[10px]">{n.channel}</Badge>
-                        {!n.is_active && <Badge variant="secondary" className="text-[10px]">Inactive</Badge>}
+                        <Badge variant="outline" className="text-xs">{n.channel}</Badge>
+                        {!n.is_active && <Badge variant="secondary" className="text-xs">Inactive</Badge>}
                       </div>
                       <p className="text-xs text-muted-foreground truncate">{n.key}</p>
                       {n.description && <p className="text-xs text-muted-foreground mt-0.5">{n.description}</p>}
@@ -336,8 +336,8 @@ export default function StudentPanelContent() {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <p className="font-medium text-sm">{h.title}</p>
-                        {h.category && <Badge variant="outline" className="text-[10px]">{h.category}</Badge>}
-                        {!h.is_active && <Badge variant="secondary" className="text-[10px]">Inactive</Badge>}
+                        {h.category && <Badge variant="outline" className="text-xs">{h.category}</Badge>}
+                        {!h.is_active && <Badge variant="secondary" className="text-xs">Inactive</Badge>}
                       </div>
                       {(h.contact_email || h.contact_phone) && (
                         <p className="text-xs text-muted-foreground mt-0.5">
@@ -380,8 +380,8 @@ export default function StudentPanelContent() {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <p className="font-medium text-sm">{p.title}</p>
-                        <Badge variant="outline" className="text-[10px]">v{p.version}</Badge>
-                        {!p.is_active && <Badge variant="secondary" className="text-[10px]">Inactive</Badge>}
+                        <Badge variant="outline" className="text-xs">v{p.version}</Badge>
+                        {!p.is_active && <Badge variant="secondary" className="text-xs">Inactive</Badge>}
                       </div>
                       <p className="text-xs text-muted-foreground mt-0.5">
                         Effective {new Date(p.effective_date).toLocaleDateString()}

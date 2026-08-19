@@ -11,7 +11,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Receipt, Printer, Download, Loader2, CheckCircle2, RefreshCw, AlertTriangle } from 'lucide-react';
+import { Receipt, Printer, Download, Loader2, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { getLocalDateString } from '@/lib/utils';
 import { generateTemplateDocumentPDF } from '@/utils/templateDocumentGenerator';
 
@@ -58,9 +58,14 @@ export default function ReceiptGenerator({
   const [generating, setGenerating] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [receiptNumber, setReceiptNumber] = useState<string | null>(null);
-  const [isRegenerate, setIsRegenerate] = useState(false);
-  const [existingReceiptId, setExistingReceiptId] = useState<string | null>(null);
-  const [existingRegenCount, setExistingRegenCount] = useState(0);
+  const [existingReceipt, setExistingReceipt] = useState<{
+    id: string;
+    receipt_number: string;
+    pdf_url?: string;
+    period_type?: string;
+    period_value?: string;
+    period_months?: string[];
+  } | null>(null);
 
   const [corePayments, setCorePayments] = useState<FeePayment[]>([]);
   const [extraFees, setExtraFees] = useState<ExtraFee[]>([]);
@@ -69,11 +74,26 @@ export default function ReceiptGenerator({
 
   const [receiptTemplate, setReceiptTemplate] = useState<DocumentTemplate | null>(null);
   const [loadingTemplate, setLoadingTemplate] = useState(false);
+  const [feeReceipts, setFeeReceipts] = useState<any[]>([]);
 
-  const selectedPayments = corePayments.filter(p => selectedPaymentIds.includes(p.id));
-  const selectedExtraItems = extraFees.filter(ef => selectedExtraIds.includes(ef.id));
+  const receiptedIds = new Set<string>(
+    feeReceipts.flatMap((r) => Array.isArray(r.fee_detail_ids) ? (r.fee_detail_ids as string[]) : [])
+  );
+
+  const availableCorePayments = corePayments.filter((p) => !receiptedIds.has(p.id) && !p.receipt_id && !(p.fee_receipts && p.fee_receipts.length > 0));
+  const availableExtraFees = extraFees.filter((ef) => !receiptedIds.has(ef.id));
+
+  const selectedPayments = availableCorePayments.filter((p) => selectedPaymentIds.includes(p.id));
+  const selectedExtraItems = availableExtraFees.filter((ef) => selectedExtraIds.includes(ef.id));
   const coreTotal = selectedPayments.reduce((s, p) => s + p.amount, 0);
   const extraTotal = selectedExtraItems.reduce((s, ef) => s + ef.amount, 0);
+
+  // Drop selections that have already been receipted
+  useEffect(() => {
+    setSelectedPaymentIds((prev) => prev.filter((id) => availableCorePayments.some((p) => p.id === id)));
+    setSelectedExtraIds((prev) => prev.filter((id) => availableExtraFees.some((ef) => ef.id === id)));
+  }, [availableCorePayments, availableExtraFees]);
+
   const selectedTotal = coreTotal + extraTotal;
   const allCoreTotal = masterFeeTotal ?? 0;
   const previousDue = Math.max(0, allCoreTotal - (corePaidTotal - coreTotal));
@@ -83,7 +103,7 @@ export default function ReceiptGenerator({
     setSelectedPaymentIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   const toggleExtra = (id: string) =>
     setSelectedExtraIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
-  const selectAllCore = () => setSelectedPaymentIds(corePayments.map(p => p.id));
+  const selectAllCore = () => setSelectedPaymentIds(availableCorePayments.map(p => p.id));
 
   useEffect(() => {
     if (!open) return;
@@ -92,9 +112,7 @@ export default function ReceiptGenerator({
     setSelectedExtraIds([]);
     setPreviewUrl(null);
     setReceiptNumber(null);
-    setIsRegenerate(false);
-    setExistingReceiptId(null);
-    setExistingRegenCount(0);
+    setExistingReceipt(null);
     setReceiptTemplate(null);
     Promise.all([
       api.getFeePayments(student.id, currentSession),
@@ -105,12 +123,7 @@ export default function ReceiptGenerator({
       setCorePayments((pays ?? []) as FeePayment[]);
       setExtraFees(extras ?? []);
       setCorePaidTotal(paid ?? 0);
-      if (receipts && receipts.length > 0) {
-        const latest = receipts[0];
-        setIsRegenerate(true);
-        setExistingReceiptId(latest.id);
-        setExistingRegenCount(latest.regenerated_count ?? 0);
-      }
+      setFeeReceipts(receipts ?? []);
       setLoadingData(false);
     });
   }, [open, student.id, currentSession]);
@@ -163,6 +176,9 @@ export default function ReceiptGenerator({
         setReceiptNumber(rcptNum);
       }
 
+      const periodMonths = selectedPayments.flatMap((p) => p.period_months ?? []);
+      const periodType = selectedPayments.length > 1 ? 'combined' : (selectedPayments[0]?.period_type ?? 'combined');
+      const periodValue = selectedPayments.map((p) => p.payment_period).join(', ');
       const feeData: FeeReceiptData = {
         receipt_number: rcptNum,
         tuition_fee: coreTotal,
@@ -171,6 +187,9 @@ export default function ReceiptGenerator({
         discount: 0,
         previous_due: previousDue,
         grand_total: selectedTotal,
+        period_type: selectedExtraItems.length > 0 && selectedPayments.length === 0 ? 'extra' : periodType,
+        period_value: selectedExtraItems.length > 0 && selectedPayments.length === 0 ? 'Extra / Other Fees' : periodValue,
+        period_months: selectedExtraItems.length > 0 && selectedPayments.length === 0 ? [] : periodMonths,
       };
 
       const doc = await generateTemplateDocumentPDF({
@@ -192,26 +211,43 @@ export default function ReceiptGenerator({
         })),
       ];
 
-      if (isRegenerate && existingReceiptId) {
-        await api.incrementRegeneratedCount(existingReceiptId, pdfUrl ?? '');
-        toast.success(`Receipt ${rcptNum} regenerated (revision ${existingRegenCount + 1})`);
-      } else {
-        const { error: recErr } = await api.createFeeReceipt({
-          student_id: student.id,
-          receipt_number: rcptNum,
-          fee_detail_ids: selectedPaymentIds,
-          items: allItems,
-          total_amount: selectedTotal,
-          payment_method: paymentMethod,
-          transaction_id: transactionId || undefined,
-          payment_date: paymentDate,
-          notes: notes || undefined,
-          generated_by: profile?.id,
-          pdf_url: pdfUrl ?? undefined,
-        });
-        if (recErr) throw recErr;
-        toast.success(`Receipt ${rcptNum} generated and saved!`);
+      // Final backend safety: none of the selected items may already have a receipt
+      const alreadyReceipted = [...selectedPaymentIds, ...selectedExtraIds].filter((id) => receiptedIds.has(id));
+      if (alreadyReceipted.length > 0) {
+        toast.error('One or more selected fee items have already been receipted. Please refresh the dialog.');
+        return;
       }
+
+      const hash = api.buildReceiptHash(student.id, [...selectedPaymentIds, ...selectedExtraIds].sort());
+      const { data: duplicate } = await api.findReceiptByHash(hash);
+      if (duplicate) {
+        setExistingReceipt(duplicate);
+        toast.error('A receipt already exists for this exact fee period.');
+        return;
+      }
+
+      const { data: receipt, error: recErr } = await api.createFeeReceipt({
+        student_id: student.id,
+        receipt_number: rcptNum,
+        fee_detail_ids: selectedPaymentIds,
+        items: allItems,
+        total_amount: selectedTotal,
+        payment_method: paymentMethod,
+        transaction_id: transactionId || undefined,
+        payment_date: paymentDate,
+        notes: notes || undefined,
+        generated_by: profile?.id,
+        pdf_url: pdfUrl ?? undefined,
+        receipt_hash: hash,
+        period_type: selectedExtraItems.length > 0 && selectedPayments.length === 0 ? 'extra' : periodType,
+        period_value: selectedExtraItems.length > 0 && selectedPayments.length === 0 ? 'Extra / Other Fees' : periodValue,
+        period_months: selectedExtraItems.length > 0 && selectedPayments.length === 0 ? [] : periodMonths,
+      });
+      if (recErr) throw recErr;
+      if (receipt) {
+        await api.createFeeReceiptVisibility(receipt.id);
+      }
+      toast.success(`Receipt ${rcptNum} generated and saved!`);
       onReceiptCreated?.();
     } catch (err: any) {
       toast.error(err.message || 'Failed to generate receipt');
@@ -241,9 +277,7 @@ export default function ReceiptGenerator({
     setNotes('');
     setPreviewUrl(null);
     setReceiptNumber(null);
-    setIsRegenerate(false);
-    setExistingReceiptId(null);
-    setExistingRegenCount(0);
+    setExistingReceipt(null);
     setReceiptTemplate(null);
     onOpenChange(false);
   };
@@ -257,7 +291,7 @@ export default function ReceiptGenerator({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Receipt className="w-5 h-5 text-primary" />
-            {isRegenerate ? 'Regenerate Receipt' : 'Generate Receipt'} \u2014 {student.name}
+            Generate Receipt \u2014 {student.name}
           </DialogTitle>
           <DialogDescription>
             Select the fee payments to include, confirm payment details, then generate the receipt using the configured template.
@@ -265,18 +299,43 @@ export default function ReceiptGenerator({
         </DialogHeader>
 
         {templateMissing && (
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-sm">
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-warning/10 border border-amber-200 text-warning text-sm">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>No Fee Receipt template is selected. Pick one from the Receipts tab to continue.</span>
           </div>
         )}
 
+        {existingReceipt && (
+          <div className="space-y-4">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-warning/10 border border-amber-200 text-warning">
+              <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-sm">Receipt already exists for this fee period</p>
+                <p className="text-xs mt-0.5">
+                  Receipt No: {existingReceipt.receipt_number}
+                </p>
+                <p className="text-xs">
+                  Receipts are permanent records. Use the button below to download the original PDF.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3 justify-end">
+              <Button variant="outline" onClick={handleClose}>Close</Button>
+              {existingReceipt.pdf_url && (
+                <Button onClick={() => window.open(existingReceipt.pdf_url, '_blank')}>
+                  <Download className="w-4 h-4 mr-2" /> Download PDF
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+
         {previewUrl ? (
           <div className="space-y-4">
-            <div className="flex items-center gap-2 p-3 rounded-lg bg-green-50 border border-green-200 text-green-700">
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-success/10 border border-green-200 text-success">
               <CheckCircle2 className="w-5 h-5 shrink-0" />
               <div>
-                <p className="font-semibold text-sm">{isRegenerate ? 'Receipt Regenerated!' : 'Receipt Generated!'}</p>
+                <p className="font-semibold text-sm">Receipt Generated!</p>
                 <p className="text-xs">Receipt No: {receiptNumber}</p>
               </div>
             </div>
@@ -300,7 +359,7 @@ export default function ReceiptGenerator({
             <div>
               <div className="flex items-center justify-between mb-2">
                 <Label className="text-sm font-semibold">Core Fee Payments \u2014 {currentSession}</Label>
-                {corePayments.length > 0 && (
+                {availableCorePayments.length > 0 && (
                   <Button type="button" variant="ghost" size="sm" className="text-xs h-7" onClick={selectAllCore}>
                     Select All
                   </Button>
@@ -311,9 +370,18 @@ export default function ReceiptGenerator({
                   No core fee payments recorded for {currentSession}.{' '}
                   Use the <strong>Core Fees</strong> button in the Students tab to record one.
                 </p>
+              ) : availableCorePayments.length === 0 ? (
+                <div className="text-sm text-center py-4 border border-dashed rounded-lg bg-muted/30">
+                  <p className="text-muted-foreground">
+                    No core fee is currently available for registration.
+                  </p>
+                  <p className="text-muted-foreground text-xs mt-1">
+                    The full academic year fee for {currentSession} has already been paid.
+                  </p>
+                </div>
               ) : (
                 <div className="space-y-1.5">
-                  {corePayments.map(p => (
+                  {availableCorePayments.map(p => (
                     <div
                       key={p.id}
                       className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${selectedPaymentIds.includes(p.id) ? 'border-primary/60 bg-primary/5' : 'border-border hover:bg-muted/40'}`}
@@ -336,14 +404,14 @@ export default function ReceiptGenerator({
               )}
             </div>
 
-            {extraFees.length > 0 && (
+            {availableExtraFees.length > 0 && (
               <div>
                 <Label className="text-sm font-semibold mb-2 block">
                   Extra / Other Fees
                   <span className="text-xs font-normal text-muted-foreground ml-1">(isolated from yearly cap)</span>
                 </Label>
                 <div className="space-y-1.5">
-                  {extraFees.map(ef => (
+                  {availableExtraFees.map(ef => (
                     <div
                       key={ef.id}
                       className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${selectedExtraIds.includes(ef.id) ? 'border-orange-400/60 bg-orange-50' : 'border-border hover:bg-muted/40'}`}
@@ -354,7 +422,7 @@ export default function ReceiptGenerator({
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
                             <p className="text-sm font-medium truncate">{ef.description}</p>
-                            <Badge variant="outline" className={`text-xs shrink-0 ${ef.fee_category === 'extra' ? 'border-orange-300 text-orange-700' : 'border-blue-300 text-blue-700'}`}>
+                            <Badge variant="outline" className={`text-xs shrink-0 ${ef.fee_category === 'extra' ? 'border-orange-300 text-orange-700' : 'border-blue-300 text-info'}`}>
                               {ef.fee_category === 'extra' ? 'Extra' : 'Other'}
                             </Badge>
                           </div>
@@ -405,14 +473,12 @@ export default function ReceiptGenerator({
           </div>
         )}
 
-        {!previewUrl && !loadingData && !loadingTemplate && (
+        {!previewUrl && !loadingData && !loadingTemplate && !existingReceipt && (
           <DialogFooter>
             <Button variant="outline" onClick={handleClose}>Cancel</Button>
             <Button onClick={handleGenerate} disabled={generating || totalSelected === 0 || templateMissing}>
               {generating ? (
                 <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generating…</>
-              ) : isRegenerate ? (
-                <><RefreshCw className="w-4 h-4 mr-2" /> Regenerate Receipt</>
               ) : (
                 <><Receipt className="w-4 h-4 mr-2" /> Generate Receipt</>
               )}

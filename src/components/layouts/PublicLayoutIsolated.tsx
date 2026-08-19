@@ -88,11 +88,11 @@ export default function PublicLayoutIsolated() {
         {/* Mobile-only Return to Login Bar */}
         {returnPath && (
           <div className="md:hidden bg-primary/10 px-4 py-2 border-b flex items-center justify-between animate-in slide-in-from-top-full">
-             <span className="text-[10px] font-black uppercase tracking-widest text-primary/60">Arrived from portal</span>
+             <span className="text-xs font-semibold text-primary/60">Arrived from portal</span>
              <Button 
                variant="link" 
                size="sm" 
-               className="h-auto p-0 font-black text-[10px] uppercase tracking-widest text-primary flex items-center gap-1"
+               className="h-auto p-0 font-semibold text-xs font-medium text-primary flex items-center gap-1"
                onClick={() => navigate(returnPath)}
              >
                Return to Login <ArrowRight className="w-3 h-3" />

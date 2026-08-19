@@ -650,7 +650,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                   <div className="flex items-center justify-between">
                                     <FormLabel>Admin Email Address (Optional)</FormLabel>
                                     {!isSecondaryLoginEnabled && (
-                                      <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground bg-muted/20">
+                                      <Badge variant="outline" className="text-xs font-bold font-medium text-muted-foreground bg-muted/20">
                                         Secondary Login: Disabled
                                       </Badge>
                                     )}
@@ -736,7 +736,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                   <FormLabel className="flex items-center gap-2">
                                     Custom Role Tag
                                     {!currentAdmin?.is_master && (
-                                      <Badge variant="outline" className="text-[8px] h-4">Master Only</Badge>
+                                      <Badge variant="outline" className="text-xs h-4">Master Only</Badge>
                                     )}
                                   </FormLabel>
                                   <FormControl>
@@ -750,7 +750,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                       />
                                     </div>
                                   </FormControl>
-                                  <FormDescription className="text-[10px]">Replaces "System Administrator" label.</FormDescription>
+                                  <FormDescription className="text-xs">Replaces "System Administrator" label.</FormDescription>
                                   <FormMessage />
                                 </FormItem>
                               )}
@@ -778,7 +778,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                   <div className="space-y-0.5">
                                     <div className="flex items-center gap-2">
                                       <FormLabel className="text-sm font-bold">Login Access</FormLabel>
-                                      {!currentAdmin?.is_master && <Badge variant="outline" className="text-[8px] h-4">Master Only</Badge>}
+                                      {!currentAdmin?.is_master && <Badge variant="outline" className="text-xs h-4">Master Only</Badge>}
                                     </div>
                                     <FormDescription className="text-xs">Block or allow login.</FormDescription>
                                   </div>
@@ -941,7 +941,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                     </Badge>
                                   )}
                                   {admin.admin_custom_tag && (
-                                    <Badge variant="secondary" className="bg-muted text-muted-foreground font-black text-[10px] h-5 px-2">
+                                    <Badge variant="secondary" className="bg-muted text-muted-foreground font-semibold text-xs h-5 px-2">
                                       <ShieldCheck className="w-3 h-3 mr-1 text-primary" />
                                       {admin.admin_custom_tag}
                                     </Badge>
@@ -953,36 +953,36 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                 </div>
                                 <div className="flex flex-col gap-2 mt-2">
                                   <div className="flex items-center gap-2">
-                                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest w-24">Email Status:</span>
+                                    <span className="text-xs font-semibold uppercase text-muted-foreground tracking-widest w-24">Email Status:</span>
                                     <p className="text-xs font-mono text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
                                       {admin.email_verified || admin.email?.endsWith('@miaoda.com') ? admin.email : maskEmail(admin.email)}
                                     </p>
                                   </div>
                                   <div className="flex items-center gap-2">
-                                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest w-24">Verification:</span>
+                                    <span className="text-xs font-semibold uppercase text-muted-foreground tracking-widest w-24">Verification:</span>
                                     {admin.email_verified || admin.email?.endsWith('@miaoda.com') ? (
-                                      <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-100 font-black text-[10px] h-5 px-2">
+                                      <Badge variant="secondary" className="bg-success/10 text-success hover:bg-success/10 font-semibold text-xs h-5 px-2">
                                         <CheckCircle2 className="w-3 h-3 mr-1" />
                                         Verified
                                       </Badge>
                                     ) : (
-                                      <Badge variant="outline" className="bg-amber-100 text-amber-700 border-amber-200 hover:bg-amber-100 font-black text-[10px] h-5 px-2">
+                                      <Badge variant="outline" className="bg-warning/10 text-warning border-amber-200 hover:bg-warning/10 font-semibold text-xs h-5 px-2">
                                         <XCircle className="w-3 h-3 mr-1" />
                                         Unverified
                                       </Badge>
                                     )}
                                   </div>
                                 </div>
-                                <p className="text-[10px] text-muted-foreground mt-2 font-bold italic tracking-wider uppercase opacity-60">System Operator since {new Date(admin.created_at).toLocaleDateString()}</p>
+                                <p className="text-xs text-muted-foreground mt-2 font-bold italic tracking-wider uppercase opacity-60">System Operator since {new Date(admin.created_at).toLocaleDateString()}</p>
                               </div>
                             </div>
                             
                             <div className="flex flex-wrap gap-1 md:max-w-md justify-start md:justify-end">
                               {admin.permissions?.slice(0, 3).map(p => (
-                                <Badge key={p} variant="outline" className="text-[10px] py-0">{modules.find(m => m.id === p)?.label}</Badge>
+                                <Badge key={p} variant="outline" className="text-xs py-0">{modules.find(m => m.id === p)?.label}</Badge>
                               ))}
                               {(admin.permissions?.length || 0) > 3 && (
-                                <Badge variant="outline" className="text-[10px] py-0">+{admin.permissions.length - 3} more</Badge>
+                                <Badge variant="outline" className="text-xs py-0">+{admin.permissions.length - 3} more</Badge>
                               )}
                             </div>
 
@@ -997,7 +997,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                     </Button>
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end" className="w-48 rounded-xl p-1 shadow-lg border-muted">
-                                    <DropdownMenuLabel className="text-[10px] font-black uppercase text-muted-foreground px-2 py-1.5">Administrative Actions</DropdownMenuLabel>
+                                    <DropdownMenuLabel className="text-xs font-semibold uppercase text-muted-foreground px-2 py-1.5">Administrative Actions</DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem className="rounded-lg px-2 py-2 text-sm font-bold flex items-center gap-2 cursor-pointer transition-colors"
                                       onClick={() => { 
@@ -1094,7 +1094,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                 // For non-master admins
                                 <div className="flex items-center gap-2">
                                   {admin.is_master && (
-                                    <Badge variant="secondary" className="bg-amber-50 text-amber-700 border-amber-200 uppercase text-[9px] font-black tracking-widest px-2">Protected</Badge>
+                                    <Badge variant="secondary" className="bg-warning/10 text-warning border-amber-200 uppercase text-xs font-semibold tracking-widest px-2">Protected</Badge>
                                   )}
                                 </div>
                               )}
@@ -1110,28 +1110,28 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
 
             <TabsContent value="sessions" className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="bg-primary/5 border-none shadow-sm rounded-3xl p-6 flex items-center gap-6">
+                <Card className="bg-primary/5 border-none shadow-sm rounded-2xl p-6 flex items-center gap-6">
                   <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
                     <Activity className="w-8 h-8 text-primary" />
                   </div>
                   <div>
-                    <h3 className="text-3xl font-black text-primary">{activeSessions.length}</h3>
-                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Active Students</p>
+                    <h3 className="text-3xl font-semibold text-primary">{activeSessions.length}</h3>
+                    <p className="text-sm font-bold text-muted-foreground font-medium">Active Students</p>
                   </div>
                 </Card>
                 
-                <Card className="bg-amber-500/5 border-none shadow-sm rounded-3xl p-6 flex items-center gap-6">
+                <Card className="bg-amber-500/5 border-none shadow-sm rounded-2xl p-6 flex items-center gap-6">
                   <div className="w-16 h-16 rounded-2xl bg-amber-500/10 flex items-center justify-center">
                     <Ban className="w-8 h-8 text-amber-500" />
                   </div>
                   <div>
-                    <h3 className="text-3xl font-black text-amber-500">{allStudents.filter(s => s.is_blocked).length}</h3>
-                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Blocked Accounts</p>
+                    <h3 className="text-3xl font-semibold text-amber-500">{allStudents.filter(s => s.is_blocked).length}</h3>
+                    <p className="text-sm font-bold text-muted-foreground font-medium">Blocked Accounts</p>
                   </div>
                 </Card>
 
                 <div className="flex items-center justify-end">
-                  <Button variant="destructive" size="lg" className="rounded-2xl h-16 px-8 font-black text-lg shadow-xl shadow-destructive/20" onClick={handleForceLogoutAll}>
+                  <Button variant="destructive" size="lg" className="rounded-2xl h-16 px-8 font-semibold text-lg shadow-xl shadow-destructive/20" onClick={handleForceLogoutAll}>
                     <PowerOff className="w-6 h-6 mr-3" />
                     Emergency Logout All
                   </Button>
@@ -1140,10 +1140,10 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Active Sessions List */}
-                <Card className="lg:col-span-2 border shadow-md rounded-[2.5rem] overflow-hidden">
+                <Card className="lg:col-span-2 border shadow-md rounded-2xl overflow-hidden">
                   <CardHeader className="p-8 pb-4 flex flex-row items-center justify-between">
                     <div>
-                      <CardTitle className="text-2xl font-black text-primary flex items-center gap-3">
+                      <CardTitle className="text-2xl font-semibold text-primary flex items-center gap-3">
                         <MonitorIcon className="w-6 h-6" />
                         Live Sessions
                       </CardTitle>
@@ -1156,26 +1156,26 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                   <CardContent className="p-8 pt-0">
                     <ScrollArea className="h-[500px] pr-4">
                       {activeSessions.length === 0 ? (
-                        <div className="text-center py-20 bg-muted/20 rounded-3xl">
+                        <div className="text-center py-20 bg-muted/20 rounded-2xl">
                           <Activity className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
                           <p className="text-muted-foreground font-bold">No students currently logged in.</p>
                         </div>
                       ) : (
                         <div className="space-y-4">
                           {activeSessions.map((session) => (
-                            <div key={session.id} className="p-5 rounded-3xl bg-card border hover:shadow-lg transition-all group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div key={session.id} className="p-5 rounded-2xl bg-card border hover:shadow-lg transition-all group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                               <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center font-black text-primary">
+                                <div className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center font-semibold text-primary">
                                   {session.student_name[0]}
                                 </div>
                                 <div className="space-y-0.5">
                                   <div className="flex items-center gap-2">
-                                    <p className="font-black text-foreground">{session.student_name}</p>
-                                    <Badge variant="outline" className="text-[9px] px-1.5 py-0 uppercase font-black bg-primary/5 text-primary border-primary/20">
+                                    <p className="font-semibold text-foreground">{session.student_name}</p>
+                                    <Badge variant="outline" className="text-xs px-1.5 py-0 uppercase font-semibold bg-primary/5 text-primary border-primary/20">
                                       {session.login_id}
                                     </Badge>
                                   </div>
-                                  <div className="flex items-center gap-4 text-[10px] text-muted-foreground font-medium">
+                                  <div className="flex items-center gap-4 text-xs text-muted-foreground font-medium">
                                     <span className="flex items-center gap-1">
                                       <Smartphone className="w-3 h-3" />
                                       {session.device_info?.split('(')[0].substring(0, 20)}...
@@ -1189,13 +1189,13 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                               </div>
                               <div className="flex items-center gap-3 w-full sm:w-auto">
                                 <div className="text-right hidden md:block mr-2">
-                                  <p className="text-[10px] uppercase font-black text-muted-foreground">Last Activity</p>
+                                  <p className="text-xs uppercase font-semibold text-muted-foreground">Last Activity</p>
                                   <p className="text-xs font-bold text-primary">{new Date(session.last_activity).toLocaleTimeString()}</p>
                                 </div>
                                 <Button 
                                   variant="secondary" 
                                   size="sm" 
-                                  className="rounded-xl font-bold bg-amber-100 text-amber-600 hover:bg-amber-200 border-none flex-1 sm:flex-none"
+                                  className="rounded-xl font-bold bg-warning/10 text-warning hover:bg-amber-200 border-none flex-1 sm:flex-none"
                                   onClick={() => handleForceLogout(session.id)}
                                 >
                                   <PowerOff className="w-3.5 h-3.5 mr-2" />
@@ -1211,9 +1211,9 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                 </Card>
 
                 {/* Blocked Accounts Control */}
-                <Card className="border shadow-md rounded-[2.5rem] overflow-hidden">
+                <Card className="border shadow-md rounded-2xl overflow-hidden">
                   <CardHeader className="p-8 pb-4">
-                    <CardTitle className="text-2xl font-black text-amber-600 flex items-center gap-3">
+                    <CardTitle className="text-2xl font-semibold text-warning flex items-center gap-3">
                       <Ban className="w-6 h-6" />
                       Access Control
                     </CardTitle>
@@ -1233,12 +1233,12 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                           ) : (
                             <div className="space-y-3">
                               {allStudents.filter(s => s.is_blocked).map((student) => (
-                                <div key={student.id} className="p-4 rounded-2xl border bg-amber-50/50 dark:bg-amber-500/5 flex items-center justify-between">
+                                <div key={student.id} className="p-4 rounded-2xl border bg-warning/10/50 dark:bg-amber-500/5 flex items-center justify-between">
                                   <div>
                                     <p className="font-bold text-sm">{student.name}</p>
-                                    <p className="text-[10px] text-amber-600 font-bold">{student.block_reason || 'No reason provided'}</p>
+                                    <p className="text-xs text-warning font-bold">{student.block_reason || 'No reason provided'}</p>
                                   </div>
-                                  <Button size="icon" variant="ghost" className="rounded-full text-amber-600 hover:bg-amber-100" onClick={() => handleUnblockStudent(student.id)}>
+                                  <Button size="icon" variant="ghost" className="rounded-full text-warning hover:bg-warning/10" onClick={() => handleUnblockStudent(student.id)}>
                                     <Unlock className="w-4 h-4" />
                                   </Button>
                                 </div>
@@ -1252,7 +1252,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                             {allStudents.filter(s => !s.is_blocked).slice(0, 50).map((student) => (
                               <div key={student.id} className="p-3 rounded-2xl border flex items-center justify-between group hover:bg-muted/30 transition-colors">
                                 <p className="text-sm font-medium">{student.name}</p>
-                                <Button size="sm" variant="ghost" className="rounded-xl text-muted-foreground hover:text-amber-600 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => {
+                                <Button size="sm" variant="ghost" className="rounded-xl text-muted-foreground hover:text-warning opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => {
                                   setSelectedStudentForBlock(student);
                                   setIsBlockDialogOpen(true);
                                 }}>
@@ -1270,19 +1270,19 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
 
               {/* Block Student Dialog */}
               <Dialog open={isBlockDialogOpen} onOpenChange={setIsBlockDialogOpen}>
-                <DialogContent className="rounded-[2.5rem] p-8">
+                <DialogContent className="rounded-2xl p-8">
                   <DialogHeader>
-                    <DialogTitle className="text-2xl font-black text-amber-600 flex items-center gap-3">
+                    <DialogTitle className="text-2xl font-semibold text-warning flex items-center gap-3">
                       <Ban className="w-6 h-6" />
                       Block Student Access
                     </DialogTitle>
                     <DialogDescription className="font-medium">
-                      Student: <span className="text-foreground font-black">{selectedStudentForBlock?.name}</span>
+                      Student: <span className="text-foreground font-semibold">{selectedStudentForBlock?.name}</span>
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
-                      <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Block Reason (Optional)</Label>
+                      <Label className="text-xs font-semibold text-muted-foreground">Block Reason (Optional)</Label>
                       <Textarea 
                         placeholder="Explain why this student is being blocked..." 
                         className="rounded-2xl border-none bg-muted/30 min-h-[120px] p-4"
@@ -1293,7 +1293,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                   </div>
                   <DialogFooter className="gap-2 sm:gap-0">
                     <Button variant="ghost" className="rounded-2xl h-12 px-6 font-bold" onClick={() => setIsBlockDialogOpen(false)}>Cancel</Button>
-                    <Button variant="destructive" className="rounded-2xl h-12 px-8 font-black shadow-lg shadow-destructive/20" onClick={handleBlockStudent}>
+                    <Button variant="destructive" className="rounded-2xl h-12 px-8 font-semibold shadow-lg shadow-destructive/20" onClick={handleBlockStudent}>
                       Apply Block Now
                     </Button>
                   </DialogFooter>
@@ -1302,11 +1302,11 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
             </TabsContent>
 
             <TabsContent value="health" className="animate-in fade-in-50 duration-500">
-              <Card className="border-none shadow-xl overflow-hidden rounded-3xl bg-card/50 backdrop-blur-sm">
+              <Card className="border-none shadow-xl overflow-hidden rounded-2xl bg-card/50 backdrop-blur-sm">
                 <CardHeader className="p-8 border-b bg-muted/20">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                      <CardTitle className="text-2xl font-black text-primary flex items-center gap-2">
+                      <CardTitle className="text-2xl font-semibold text-primary flex items-center gap-2">
                         <ShieldCheck className="w-6 h-6" /> Stability & Safety Control Panel
                       </CardTitle>
                       <CardDescription>
@@ -1316,7 +1316,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                     <Button 
                       onClick={handleRunRemediation} 
                       disabled={remediating}
-                      className="rounded-2xl h-12 px-6 shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 text-primary-foreground font-black tracking-tight"
+                      className="rounded-2xl h-12 px-6 shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold tracking-tight"
                     >
                       {remediating ? (
                         <>
@@ -1334,28 +1334,28 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                 </CardHeader>
                 <CardContent className="p-8 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="p-6 rounded-2xl bg-amber-50 border border-amber-100 dark:bg-amber-900/10 dark:border-amber-900/20">
+                    <div className="p-6 rounded-2xl bg-warning/10 border border-amber-100 dark:bg-amber-900/10 dark:border-amber-900/20">
                       <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/20 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                        <div className="w-10 h-10 rounded-xl bg-warning/10 dark:bg-amber-900/20 flex items-center justify-center text-warning dark:text-amber-400">
                           <Activity className="w-5 h-5" />
                         </div>
                         <div>
                           <h4 className="font-bold text-amber-900 dark:text-amber-100">Orphaned Accounts</h4>
-                          <p className="text-xs text-amber-700 dark:text-amber-300 mt-1 leading-relaxed">
+                          <p className="text-xs text-warning dark:text-amber-300 mt-1 leading-relaxed">
                             Logins linked to non-existent or inactive students. Running the sync will permanently remove these orphaned login accounts to maintain system security.
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="p-6 rounded-2xl bg-blue-50 border border-blue-100 dark:bg-blue-900/10 dark:border-blue-900/20">
+                    <div className="p-6 rounded-2xl bg-info/10 border border-blue-100 dark:bg-blue-900/10 dark:border-blue-900/20">
                       <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <div className="w-10 h-10 rounded-xl bg-info/10 dark:bg-blue-900/20 flex items-center justify-center text-info dark:text-blue-400">
                           <UserPlus className="w-5 h-5" />
                         </div>
                         <div>
                           <h4 className="font-bold text-blue-900 dark:text-blue-100">Missing Accounts</h4>
-                          <p className="text-xs text-blue-700 dark:text-blue-300 mt-1 leading-relaxed">
+                          <p className="text-xs text-info dark:text-blue-300 mt-1 leading-relaxed">
                             Active students without any login credentials. Running the sync will automatically generate credentials using school-standard default patterns.
                           </p>
                         </div>
@@ -1390,7 +1390,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                   ) : (
                     <>
                       <div className="space-y-4">
-                        <h3 className="text-sm font-black uppercase tracking-widest text-primary/70">Major System Modules</h3>
+                        <h3 className="text-sm font-semibold text-primary/70">Major System Modules</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {modules.filter(m => !m.id.endsWith('_download')).map((module) => {
                             const setting = moduleSettings.find(s => s.module_id === module.id && !s.role && !s.user_id);
@@ -1426,7 +1426,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                       </div>
 
                       <div className="space-y-4">
-                        <h3 className="text-sm font-black uppercase tracking-widest text-primary/70">Student Profile Download Controls</h3>
+                        <h3 className="text-sm font-semibold text-primary/70">Student Profile Download Controls</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {modules.filter(m => m.id.endsWith('_download')).map((module) => {
                             const setting = moduleSettings.find(s => s.module_id === module.id && !s.role && !s.user_id);
@@ -1445,7 +1445,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                     {module.id === 'certificate_download' ? <FileText className="w-6 h-6" /> : <CreditCard className="w-6 h-6" />}
                                   </div>
                                   <div>
-                                    <p className="font-black text-lg uppercase tracking-tight">{module.label.replace(' Control', '')}</p>
+                                    <p className="font-semibold text-lg uppercase tracking-tight">{module.label.replace(' Control', '')}</p>
                                     <p className="text-xs text-muted-foreground font-medium">
                                       {isEnabled ? 'Students CAN download this document' : 'Download button is HIDDEN from students'}
                                     </p>
@@ -1472,14 +1472,14 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
         {hasAdminManagement && (
           <>
             <TabsContent value="logs" className="space-y-6 animate-in fade-in-50 duration-500">
-              <Card className="border-none shadow-xl rounded-3xl bg-card/50 backdrop-blur-sm overflow-hidden">
+              <Card className="border-none shadow-xl rounded-2xl bg-card/50 backdrop-blur-sm overflow-hidden">
                 <CardHeader className="p-8 border-b bg-muted/20">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                       <ClipboardList className="w-6 h-6" />
                     </div>
                     <div>
-                      <CardTitle className="text-2xl font-black text-foreground">System Logs & Audit Trails</CardTitle>
+                      <CardTitle className="text-2xl font-semibold text-foreground">System Logs & Audit Trails</CardTitle>
                       <CardDescription>Comprehensive history of system-wide events and authentication attempts.</CardDescription>
                     </div>
                   </div>
@@ -1495,7 +1495,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                     <TabsContent value="verification">
                       <ScrollArea className="h-[500px] pr-4">
                         {verificationLogs.length === 0 ? (
-                          <div className="text-center py-20 bg-muted/20 rounded-3xl">
+                          <div className="text-center py-20 bg-muted/20 rounded-2xl">
                             <Activity className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
                             <p className="text-muted-foreground font-bold">No verification logs found.</p>
                           </div>
@@ -1505,19 +1505,19 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                               <div key={log.id} className="p-4 rounded-2xl border bg-card flex items-center justify-between group hover:border-primary/30 transition-all">
                                 <div className="flex items-center gap-4">
                                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                                    log.event_type === 'link_sent' ? 'bg-blue-500/10 text-blue-600' :
-                                    log.event_type === 'verified' ? 'bg-green-500/10 text-green-600' : 'bg-amber-500/10 text-amber-600'
+                                    log.event_type === 'link_sent' ? 'bg-blue-500/10 text-info' :
+                                    log.event_type === 'verified' ? 'bg-green-500/10 text-success' : 'bg-amber-500/10 text-warning'
                                   }`}>
                                     <MailIcon className="w-5 h-5" />
                                   </div>
                                   <div>
                                     <p className="font-bold text-sm">{log.email}</p>
-                                    <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground mt-0.5">{(log.event_type || 'event').replace('_', ' ')}</p>
+                                    <p className="text-xs uppercase font-semibold tracking-widest text-muted-foreground mt-0.5">{(log.event_type || 'event').replace('_', ' ')}</p>
                                   </div>
                                 </div>
                                 <div className="text-right">
-                                  <p className="text-[10px] font-black text-primary">{new Date(log.created_at).toLocaleDateString()}</p>
-                                  <p className="text-[10px] text-muted-foreground">{new Date(log.created_at).toLocaleTimeString()}</p>
+                                  <p className="text-xs font-semibold text-primary">{new Date(log.created_at).toLocaleDateString()}</p>
+                                  <p className="text-xs text-muted-foreground">{new Date(log.created_at).toLocaleTimeString()}</p>
                                 </div>
                               </div>
                             ))}
@@ -1529,7 +1529,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                     <TabsContent value="deployment">
                       <ScrollArea className="h-[500px] pr-4">
                         {deploymentLogs.length === 0 ? (
-                          <div className="text-center py-20 bg-muted/20 rounded-3xl">
+                          <div className="text-center py-20 bg-muted/20 rounded-2xl">
                             <Activity className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
                             <p className="text-muted-foreground font-bold">No deployment audit logs found.</p>
                           </div>
@@ -1539,14 +1539,14 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                               <div key={log.id} className="p-5 rounded-2xl border bg-card hover:border-primary/30 transition-all border-l-4 border-l-primary">
                                 <div className="flex items-center justify-between mb-3">
                                   <div className="flex items-center gap-3">
-                                    <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/10 font-black tracking-tight rounded-lg">
+                                    <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/10 font-semibold tracking-tight rounded-lg">
                                       {log.version_label}
                                     </Badge>
-                                    <span className="text-[10px] uppercase font-black text-muted-foreground tracking-widest">
+                                    <span className="text-xs uppercase font-semibold text-muted-foreground tracking-widest">
                                       {log.status}
                                     </span>
                                   </div>
-                                  <span className="text-[10px] text-muted-foreground font-bold">
+                                  <span className="text-xs text-muted-foreground font-bold">
                                     {new Date(log.created_at).toLocaleString()}
                                   </span>
                                 </div>
@@ -1561,7 +1561,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                     <TabsContent value="oauth">
                       <ScrollArea className="h-[500px] pr-4">
                         {oauthLogs.length === 0 ? (
-                          <div className="text-center py-20 bg-muted/20 rounded-3xl">
+                          <div className="text-center py-20 bg-muted/20 rounded-2xl">
                             <Activity className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
                             <p className="text-muted-foreground font-bold">No OAuth audit logs found.</p>
                           </div>
@@ -1575,16 +1575,16 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                   </div>
                                   <div>
                                     <p className="font-bold text-sm">{log.email}</p>
-                                    <p className="text-[10px] font-bold text-muted-foreground truncate max-w-[200px]">{log.details}</p>
+                                    <p className="text-xs font-bold text-muted-foreground truncate max-w-[200px]">{log.details}</p>
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                  <Badge variant={log.status === 'success' ? 'default' : 'destructive'} className="text-[9px] font-black uppercase">
+                                  <Badge variant={log.status === 'success' ? 'default' : 'destructive'} className="text-xs font-semibold uppercase">
                                     {log.status}
                                   </Badge>
                                   <div className="text-right min-w-[70px]">
-                                    <p className="text-[10px] font-black text-primary">{new Date(log.created_at).toLocaleDateString()}</p>
-                                    <p className="text-[10px] text-muted-foreground">{new Date(log.created_at).toLocaleTimeString()}</p>
+                                    <p className="text-xs font-semibold text-primary">{new Date(log.created_at).toLocaleDateString()}</p>
+                                    <p className="text-xs text-muted-foreground">{new Date(log.created_at).toLocaleTimeString()}</p>
                                   </div>
                                 </div>
                               </div>
@@ -1599,7 +1599,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
             </TabsContent>
 
             <TabsContent value="security" className="space-y-6 animate-in fade-in-50 duration-500">
-              <Card className="rounded-[2.5rem] border shadow-xl bg-card/50 backdrop-blur-md overflow-hidden border-primary/5">
+              <Card className="rounded-2xl border shadow-xl bg-card/50 backdrop-blur-md overflow-hidden border-primary/5">
                 <CardHeader className="p-8 pb-4">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex items-center gap-4">
@@ -1607,8 +1607,8 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                         <ShieldCheck className="w-7 h-7" />
                       </div>
                       <div>
-                        <CardTitle className="text-2xl font-black uppercase tracking-tight text-primary">PIN Management System</CardTitle>
-                        <CardDescription className="text-sm font-bold uppercase tracking-widest text-muted-foreground font-black opacity-60">Categorized Data Handling & Intelligent Filtering</CardDescription>
+                        <CardTitle className="text-2xl font-semibold uppercase tracking-tight text-primary">PIN Management System</CardTitle>
+                        <CardDescription className="text-sm font-bold font-medium text-muted-foreground font-semibold opacity-60">Categorized Data Handling & Intelligent Filtering</CardDescription>
                       </div>
                     </div>
                     
@@ -1630,7 +1630,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                   <div className="flex flex-col lg:flex-row border-t min-h-[700px]">
                     {/* Folder-Based Structure (Rule 1) */}
                     <div className="w-full lg:w-64 bg-muted/20 border-r border-primary/5 p-4 space-y-2">
-                      <p className="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 mb-4">Storage Folders</p>
+                      <p className="px-4 text-xs font-semibold text-muted-foreground/50 mb-4">Storage Folders</p>
                       {[
                         { id: 'student', label: 'Students', icon: GraduationCap },
                         { id: 'teacher', label: 'Teachers', icon: UserCheck },
@@ -1642,7 +1642,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                           variant={activeFolder === folder.id ? 'default' : 'ghost'}
                           onClick={() => { setActiveFolder(folder.id as any); setAdvFilters({}); }}
                           className={cn(
-                            "w-full justify-start h-12 rounded-xl font-bold uppercase tracking-wider text-[11px]",
+                            "w-full justify-start h-12 rounded-xl font-bold font-medium text-[11px]",
                             activeFolder === folder.id ? "shadow-lg shadow-primary/20" : "hover:bg-primary/5 text-muted-foreground"
                           )}
                         >
@@ -1658,7 +1658,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                       <div className="p-6 bg-muted/10 border-b border-primary/5">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                           <div className="space-y-1.5">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                            <label className="text-xs font-semibold text-muted-foreground ml-1">
                               {activeFolder === 'student' ? 'Student ID' : activeFolder === 'teacher' ? 'Teacher ID' : activeFolder === 'parent' ? 'Parent ID' : 'Admin ID'}
                             </label>
                             <Input 
@@ -1669,7 +1669,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                             />
                           </div>
                           <div className="space-y-1.5">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Full Name</label>
+                            <label className="text-xs font-semibold text-muted-foreground ml-1">Full Name</label>
                             <Input 
                               placeholder="Search Name..." 
                               value={quickFilters.name}
@@ -1678,7 +1678,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                             />
                           </div>
                           <div className="space-y-1.5">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Mobile Number</label>
+                            <label className="text-xs font-semibold text-muted-foreground ml-1">Mobile Number</label>
                             <Input 
                               placeholder="01xxxxxxxxx" 
                               value={quickFilters.phone}
@@ -1687,7 +1687,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                             />
                           </div>
                           <div className="flex gap-2">
-                            <Button onClick={applyFilters} className="h-10 flex-1 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-md transition-all active:scale-95">
+                            <Button onClick={applyFilters} className="h-10 flex-1 rounded-xl font-semibold text-xs shadow-md transition-all active:scale-95">
                               Apply Filters
                             </Button>
                             <Button variant="outline" onClick={resetFilters} className="h-10 w-10 p-0 rounded-xl border-2 transition-all active:rotate-180">
@@ -1702,7 +1702,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                             variant="ghost" 
                             size="sm" 
                             onClick={() => setIsAdvFiltersOpen(!isAdvFiltersOpen)}
-                            className="text-[10px] font-black uppercase tracking-widest text-primary h-8 hover:bg-primary/5"
+                            className="text-xs font-semibold text-primary h-8 hover:bg-primary/5"
                           >
                             <Filter className="w-3.5 h-3.5 mr-2" />
                             Advanced Filter Settings
@@ -1715,7 +1715,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                               {activeFolder === 'student' && (
                                 <>
                                   <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Class</label>
+                                    <label className="text-xs font-semibold text-muted-foreground ml-1">Class</label>
                                     <Input 
                                       placeholder="e.g. Ten" 
                                       value={advFilters.class || ''}
@@ -1724,7 +1724,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                     />
                                   </div>
                                   <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Section</label>
+                                    <label className="text-xs font-semibold text-muted-foreground ml-1">Section</label>
                                     <Input 
                                       placeholder="e.g. A" 
                                       value={advFilters.section || ''}
@@ -1733,7 +1733,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                     />
                                   </div>
                                   <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Grade Level</label>
+                                    <label className="text-xs font-semibold text-muted-foreground ml-1">Grade Level</label>
                                     <Input 
                                       placeholder="e.g. Higher" 
                                       className="h-9 rounded-lg font-bold text-xs border-2 bg-muted/20" 
@@ -1746,7 +1746,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                               {activeFolder === 'teacher' && (
                                 <>
                                   <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Subject</label>
+                                    <label className="text-xs font-semibold text-muted-foreground ml-1">Subject</label>
                                     <Input 
                                       placeholder="e.g. Mathematics" 
                                       value={advFilters.subject || ''}
@@ -1755,7 +1755,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                     />
                                   </div>
                                   <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Department</label>
+                                    <label className="text-xs font-semibold text-muted-foreground ml-1">Department</label>
                                     <Input 
                                       placeholder="e.g. Science" 
                                       className="h-9 rounded-lg font-bold text-xs border-2 bg-muted/20" 
@@ -1768,7 +1768,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                               {activeFolder === 'parent' && (
                                 <>
                                   <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Occupation</label>
+                                    <label className="text-xs font-semibold text-muted-foreground ml-1">Occupation</label>
                                     <Input 
                                       placeholder="e.g. Business" 
                                       value={advFilters.occupation || ''}
@@ -1777,7 +1777,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                     />
                                   </div>
                                   <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Linked Student ID</label>
+                                    <label className="text-xs font-semibold text-muted-foreground ml-1">Linked Student ID</label>
                                     <Input 
                                       placeholder="e.g. RSBS001" 
                                       className="h-9 rounded-lg font-bold text-xs border-2 bg-muted/20" 
@@ -1790,7 +1790,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                               {activeFolder === 'admin' && (
                                 <>
                                   <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Role Type</label>
+                                    <label className="text-xs font-semibold text-muted-foreground ml-1">Role Type</label>
                                     <Input 
                                       placeholder="e.g. Master" 
                                       className="h-9 rounded-lg font-bold text-xs border-2 bg-muted/20" 
@@ -1798,7 +1798,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                     />
                                   </div>
                                   <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Access Level</label>
+                                    <label className="text-xs font-semibold text-muted-foreground ml-1">Access Level</label>
                                     <Input 
                                       placeholder="e.g. Level 1" 
                                       className="h-9 rounded-lg font-bold text-xs border-2 bg-muted/20" 
@@ -1808,7 +1808,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                 </>
                               )}
                               <div className="md:col-span-full pt-2 flex justify-end">
-                                <Button size="sm" onClick={applyFilters} className="text-[10px] font-black uppercase tracking-widest px-6 h-8 rounded-lg">
+                                <Button size="sm" onClick={applyFilters} className="text-xs font-semibold px-6 h-8 rounded-lg">
                                   Refine Search
                                 </Button>
                               </div>
@@ -1821,7 +1821,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                       <div className="p-6 flex-1 bg-white/50 overflow-hidden flex flex-col">
                         <div className="flex items-center justify-between mb-4">
                           <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="text-[9px] font-black uppercase border-primary/20 text-primary px-2 h-5">
+                            <Badge variant="outline" className="text-xs font-semibold uppercase border-primary/20 text-primary px-2 h-5">
                               {activeFolder} FOLDER
                             </Badge>
                             <span className="text-xs text-muted-foreground font-bold">
@@ -1862,20 +1862,20 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                               return (
                                 <div key={p.id} className="p-4 rounded-2xl bg-white border border-primary/5 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 group">
                                   <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center font-black text-primary border-2 border-primary/5 group-hover:scale-105 transition-transform">
+                                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center font-semibold text-primary border-2 border-primary/5 group-hover:scale-105 transition-transform">
                                       {realName?.[0].toUpperCase()}
                                     </div>
                                     <div className="space-y-1">
                                       <div className="flex items-center gap-2">
-                                        <p className="font-black text-sm tracking-tight text-foreground">{realName}</p>
-                                        <code className="text-[9px] font-mono bg-muted px-2 py-0.5 rounded uppercase text-muted-foreground">{p.username}</code>
+                                        <p className="font-semibold text-sm tracking-tight text-foreground">{realName}</p>
+                                        <code className="text-xs font-mono bg-muted px-2 py-0.5 rounded uppercase text-muted-foreground">{p.username}</code>
                                       </div>
                                       <div className="flex items-center gap-3">
-                                        <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-60 flex items-center gap-1.5">
+                                        <p className="text-xs text-muted-foreground font-semibold opacity-60 flex items-center gap-1.5">
                                           <User className="w-3 h-3" />
                                           {subInfo}
                                         </p>
-                                        <Badge variant={isSet ? "outline" : "secondary"} className="text-[8px] uppercase font-black px-1.5 h-4 border-primary/20 text-primary">
+                                        <Badge variant={isSet ? "outline" : "secondary"} className="text-xs uppercase font-semibold px-1.5 h-4 border-primary/20 text-primary">
                                           PIN: {isSet ? "SET" : "NOT SET"}
                                         </Badge>
                                       </div>
@@ -1884,7 +1884,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                   
                                   <div className="flex flex-wrap items-center gap-2">
                                     {isLocked && (
-                                      <Badge variant="destructive" className="animate-pulse flex items-center gap-1 text-[9px] uppercase font-black px-3 py-1 rounded-lg">
+                                      <Badge variant="destructive" className="animate-pulse flex items-center gap-1 text-xs uppercase font-semibold px-3 py-1 rounded-lg">
                                         <Clock className="w-3 h-3" />
                                         Locked
                                       </Badge>
@@ -1893,7 +1893,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                       variant="outline" 
                                       size="sm" 
                                       onClick={() => handleResetPIN(p.id)}
-                                      className="h-9 rounded-xl font-black uppercase tracking-widest text-[9px] border-2 border-primary/10 hover:border-primary/30 transition-all hover:bg-primary/5 shadow-sm"
+                                      className="h-9 rounded-xl font-semibold text-xs border-2 border-primary/10 hover:border-primary/30 transition-all hover:bg-primary/5 shadow-sm"
                                     >
                                       <Key className="w-3 h-3 mr-2 text-primary" />
                                       Change PIN
@@ -1902,7 +1902,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                       variant="ghost" 
                                       size="sm" 
                                       onClick={() => handleClearPIN(p.id)}
-                                      className="h-9 rounded-xl font-black uppercase tracking-widest text-[9px] text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                                      className="h-9 rounded-xl font-semibold text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                                     >
                                       <Trash2 className="w-3 h-3 mr-2" />
                                       Reset PIN
@@ -1912,7 +1912,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                                         variant="default" 
                                         size="sm" 
                                         onClick={() => handleRemoveLock(p.id)}
-                                        className="h-9 rounded-xl font-black uppercase tracking-widest text-[9px] shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 transition-all active:scale-95"
+                                        className="h-9 rounded-xl font-semibold text-xs shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 transition-all active:scale-95"
                                       >
                                         <Unlock className="w-3 h-3 mr-2" />
                                         Unblock
@@ -1924,10 +1924,10 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                             })}
                             
                             {getFilteredProfiles().length === 0 && (
-                              <div className="text-center py-20 bg-muted/5 rounded-[2rem] border-2 border-dashed border-primary/5">
+                              <div className="text-center py-20 bg-muted/5 rounded-2xl border-2 border-dashed border-primary/5">
                                 <Search className="w-10 h-10 text-muted-foreground/30 mx-auto mb-4" />
                                 <p className="text-sm font-bold text-muted-foreground">No matching records found in this folder.</p>
-                                <Button variant="link" onClick={resetFilters} className="text-xs font-black uppercase tracking-widest text-primary mt-2">Clear All Filters</Button>
+                                <Button variant="link" onClick={resetFilters} className="text-xs font-semibold text-primary mt-2">Clear All Filters</Button>
                               </div>
                             )}
                           </div>
@@ -1940,64 +1940,64 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
             </TabsContent>
 
             <TabsContent value="settings" className="space-y-6 animate-in fade-in-50 duration-500">
-              <Card className="border-none shadow-xl rounded-3xl bg-card/50 backdrop-blur-sm overflow-hidden">
+              <Card className="border-none shadow-xl rounded-2xl bg-card/50 backdrop-blur-sm overflow-hidden">
                 <CardHeader className="p-8 border-b bg-muted/20">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                       <Settings2 className="w-6 h-6" />
                     </div>
                     <div>
-                      <CardTitle className="text-2xl font-black text-foreground">Configuration & Settings</CardTitle>
+                      <CardTitle className="text-2xl font-semibold text-foreground">Configuration & Settings</CardTitle>
                       <CardDescription>Global system preferences and environment configurations.</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent className="p-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <Card className="rounded-3xl border shadow-md p-6 bg-background hover:shadow-lg transition-all">
+                    <Card className="rounded-2xl border shadow-md p-6 bg-background hover:shadow-lg transition-all">
                        <div className="flex items-center gap-4 mb-6">
                         <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                           <ShieldCheck className="w-5 h-5" />
                         </div>
-                        <h4 className="font-black uppercase tracking-tight text-lg text-primary">Security Protocols</h4>
+                        <h4 className="font-semibold uppercase tracking-tight text-lg text-primary">Security Protocols</h4>
                       </div>
                       <div className="space-y-4">
                          <div className="flex items-center justify-between p-4 rounded-2xl bg-muted/30">
                            <div className="space-y-0.5">
                              <p className="text-sm font-bold">Enforce MFA for Admins</p>
-                             <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">Master login only</p>
+                             <p className="text-xs text-muted-foreground font-medium font-medium">Master login only</p>
                            </div>
                            <Switch disabled checked={true} />
                          </div>
                          <div className="flex items-center justify-between p-4 rounded-2xl bg-muted/30">
                            <div className="space-y-0.5">
                              <p className="text-sm font-bold">Auto-Session Timeout</p>
-                             <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">30 Minutes Idle</p>
+                             <p className="text-xs text-muted-foreground font-medium font-medium">30 Minutes Idle</p>
                            </div>
                            <Switch disabled checked={true} />
                          </div>
                       </div>
                     </Card>
 
-                    <Card className="rounded-3xl border shadow-md p-6 bg-background hover:shadow-lg transition-all">
+                    <Card className="rounded-2xl border shadow-md p-6 bg-background hover:shadow-lg transition-all">
                        <div className="flex items-center gap-4 mb-6">
                         <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                           <Activity className="w-5 h-5" />
                         </div>
-                        <h4 className="font-black uppercase tracking-tight text-lg text-primary">Performance & Cache</h4>
+                        <h4 className="font-semibold uppercase tracking-tight text-lg text-primary">Performance & Cache</h4>
                       </div>
                       <div className="space-y-4">
                          <div className="flex items-center justify-between p-4 rounded-2xl bg-muted/30">
                            <div className="space-y-0.5">
                              <p className="text-sm font-bold">Real-time Data Sync</p>
-                             <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">Supabase Replication</p>
+                             <p className="text-xs text-muted-foreground font-medium font-medium">Supabase Replication</p>
                            </div>
                            <Switch disabled checked={true} />
                          </div>
                          <div className="flex items-center justify-between p-4 rounded-2xl bg-muted/30">
                            <div className="space-y-0.5">
                              <p className="text-sm font-bold">Edge Function Acceleration</p>
-                             <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">Global Deployments</p>
+                             <p className="text-xs text-muted-foreground font-medium font-medium">Global Deployments</p>
                            </div>
                            <Switch disabled checked={true} />
                          </div>
@@ -2005,7 +2005,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                     </Card>
                   </div>
 
-                  <div className="mt-8 p-6 rounded-3xl border border-dashed text-center bg-muted/10">
+                  <div className="mt-8 p-6 rounded-2xl border border-dashed text-center bg-muted/10">
                     <p className="text-sm font-bold text-muted-foreground">More settings are being migrated from legacy configurations.</p>
                   </div>
                 </CardContent>
@@ -2041,7 +2041,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Role Type</span>
+                  <span className="text-xs font-semibold uppercase text-muted-foreground tracking-widest">Role Type</span>
                   <div className="flex items-center gap-1.5">
                     {viewingAdmin.is_master ? (
                       <Badge className="bg-primary hover:bg-primary shadow-sm">Master Admin</Badge>
@@ -2051,22 +2051,22 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Login Access</span>
+                  <span className="text-xs font-semibold uppercase text-muted-foreground tracking-widest">Login Access</span>
                   <div>
                     {viewingAdmin.login_access_enabled !== false ? (
-                      <Badge variant="secondary" className="bg-green-100 text-green-700">Enabled</Badge>
+                      <Badge variant="secondary" className="bg-success/10 text-success">Enabled</Badge>
                     ) : (
-                      <Badge variant="secondary" className="bg-red-100 text-red-700">Disabled</Badge>
+                      <Badge variant="secondary" className="bg-destructive/10 text-destructive">Disabled</Badge>
                     )}
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Assigned Modules</span>
+                <span className="text-xs font-semibold uppercase text-muted-foreground tracking-widest">Assigned Modules</span>
                 <div className="flex flex-wrap gap-1.5">
                   {viewingAdmin.permissions?.map(p => (
-                    <Badge key={p} variant="secondary" className="text-[10px] font-bold">
+                    <Badge key={p} variant="secondary" className="text-xs font-bold">
                       {modules.find(m => m.id === p)?.label || p}
                     </Badge>
                   ))}
@@ -2074,7 +2074,7 @@ export default function AdminManagement({ defaultTab = 'admins' }: { defaultTab?
               </div>
 
               <div className="pt-4 border-t">
-                <p className="text-[10px] text-muted-foreground font-bold italic uppercase opacity-60">Created on {new Date(viewingAdmin.created_at).toLocaleString()}</p>
+                <p className="text-xs text-muted-foreground font-bold italic uppercase opacity-60">Created on {new Date(viewingAdmin.created_at).toLocaleString()}</p>
               </div>
             </div>
           )}

@@ -139,8 +139,8 @@ export const AccountPickerScreen: React.FC<AccountPickerScreenProps> = ({
             {brandIcon}
           </div>
           <div className="text-center">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">RSBS School</p>
-            <h1 className="text-base font-black tracking-tight text-foreground mt-0.5">{brandTitle}</h1>
+            <p className="text-xs font-bold font-medium text-muted-foreground">RSBS School</p>
+            <h1 className="text-base font-semibold tracking-tight text-foreground mt-0.5">{brandTitle}</h1>
           </div>
         </div>
 
@@ -255,7 +255,7 @@ export const AccountPickerScreen: React.FC<AccountPickerScreenProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-[10px] text-muted-foreground text-center mt-4 px-2"
+            className="text-xs text-muted-foreground text-center mt-4 px-2"
           >
             {idLabel}
           </motion.p>
@@ -266,7 +266,7 @@ export const AccountPickerScreen: React.FC<AccountPickerScreenProps> = ({
       <AlertDialog open={removeDialogOpen} onOpenChange={setRemoveDialogOpen}>
         <AlertDialogContent className="max-w-[calc(100%-2rem)] md:max-w-sm rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-base font-black">Remove Account?</AlertDialogTitle>
+            <AlertDialogTitle className="text-base font-semibold">Remove Account?</AlertDialogTitle>
             <AlertDialogDescription className="text-sm leading-relaxed">
               <strong className="text-foreground">{removeTarget?.fullName}</strong>
               {removeTarget?.loginId && (

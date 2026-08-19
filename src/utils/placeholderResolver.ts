@@ -140,6 +140,19 @@ export function buildPlaceholderMap(
     '{{discount}}':         feeData ? inr(feeData.discount) : '',
     '{{previous_due}}':     feeData ? inr(feeData.previous_due) : '',
     '{{grand_total}}':      feeData ? inr(feeData.grand_total) : '',
+    '{{fee_period_type}}':  feeData?.period_type ? feeData.period_type.charAt(0).toUpperCase() + feeData.period_type.slice(1) : '',
+    '{{fee_period}}':       feeData?.period_value ?? '',
+    '{{fee_period_months}}': feeData?.period_months?.length
+      ? feeData.period_months
+          .map((m) => {
+            const parts = m.split('-');
+            if (parts.length < 2) return m;
+            const monthIdx = Number(parts[1]) - 1;
+            const month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][monthIdx] ?? '';
+            return `${month} ${parts[0]}`;
+          })
+          .join(', ')
+      : '',
 
     // ── General System — computed ─────────────────────────────────────────
     '{{document_generation_date}}': today,

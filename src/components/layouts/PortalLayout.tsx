@@ -199,9 +199,9 @@ export function PortalLayout({ role, title }: PortalLayoutProps) {
               {/* Brand mark */}
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 rounded-md bg-primary flex items-center justify-center shadow-sm shadow-primary/30">
-                  <span className="text-primary-foreground font-black text-[10px] tracking-tight">RS</span>
+                  <span className="text-primary-foreground font-semibold text-xs tracking-tight">RS</span>
                 </div>
-                <span className="font-black text-[10px] uppercase tracking-[0.18em] text-primary">{title}</span>
+                <span className="font-semibold text-xs font-medium text-primary">{title}</span>
               </div>
 
               {/* Bell + Avatar */}
@@ -215,14 +215,14 @@ export function PortalLayout({ role, title }: PortalLayoutProps) {
                     <button className="rounded-full" {...longPress}>
                       <Avatar className="h-7 w-7 border border-muted">
                         <AvatarImage src={profile.avatar_url || ''} />
-                        <AvatarFallback className="bg-primary/10 text-primary font-black text-[10px]">{userInitial}</AvatarFallback>
+                        <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">{userInitial}</AvatarFallback>
                       </Avatar>
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48 rounded-xl p-2 mt-2">
                     <DropdownMenuLabel className="p-2.5">
-                      <p className="text-sm font-black truncate uppercase tracking-widest">{profile.username}</p>
-                      <p className="text-[10px] text-muted-foreground truncate font-bold uppercase mt-0.5 tracking-wider">{role} ACCOUNT</p>
+                      <p className="text-sm font-semibold truncate font-medium">{profile.username}</p>
+                      <p className="text-xs text-muted-foreground truncate font-bold uppercase mt-0.5 tracking-wider">{role} ACCOUNT</p>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     {role !== 'admin' && (
@@ -231,7 +231,7 @@ export function PortalLayout({ role, title }: PortalLayoutProps) {
                         className="rounded-lg p-2.5 cursor-pointer focus:bg-muted"
                       >
                         <User className="w-4 h-4 mr-2" />
-                        <span className="font-black text-xs uppercase tracking-widest">Switch account</span>
+                        <span className="font-semibold text-xs font-medium">Switch account</span>
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuItem
@@ -239,7 +239,7 @@ export function PortalLayout({ role, title }: PortalLayoutProps) {
                       className="rounded-lg p-2.5 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/5"
                     >
                       <LogOut className="w-4 h-4 mr-2" />
-                      <span className="font-black text-xs uppercase tracking-widest">Logout</span>
+                      <span className="font-semibold text-xs font-medium">Logout</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -323,14 +323,14 @@ export function PortalLayout({ role, title }: PortalLayoutProps) {
                   <Button variant="ghost" className="p-1 h-auto rounded-full hover:bg-muted active:scale-95 transition-all border border-muted" {...longPress}>
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={profile.avatar_url || ''} />
-                      <AvatarFallback className="bg-primary/10 text-primary font-black text-xs">{userInitial}</AvatarFallback>
+                      <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">{userInitial}</AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 mt-2">
                   <DropdownMenuLabel className="p-3">
-                    <p className="text-sm font-black truncate uppercase tracking-widest">{profile.username}</p>
-                    <p className="text-[10px] text-muted-foreground truncate font-bold uppercase mt-0.5 tracking-wider">{role} ACCOUNT</p>
+                    <p className="text-sm font-semibold truncate font-medium">{profile.username}</p>
+                    <p className="text-xs text-muted-foreground truncate font-bold uppercase mt-0.5 tracking-wider">{role} ACCOUNT</p>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild className="rounded-xl p-3 cursor-pointer">
@@ -352,7 +352,7 @@ export function PortalLayout({ role, title }: PortalLayoutProps) {
                       className="rounded-xl p-3 cursor-pointer"
                     >
                       <User className="w-4 h-4 mr-3" />
-                      <span className="font-black text-xs uppercase tracking-widest">Switch account</span>
+                      <span className="font-semibold text-xs font-medium">Switch account</span>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem
@@ -360,7 +360,7 @@ export function PortalLayout({ role, title }: PortalLayoutProps) {
                     className="rounded-xl p-3 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/5"
                   >
                     <LogOut className="w-4 h-4 mr-3" />
-                    <span className="font-black text-xs uppercase tracking-widest">Logout</span>
+                    <span className="font-semibold text-xs font-medium">Logout</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

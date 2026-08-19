@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { api } from '@/db/api';
-import { Student, FeePayment, ExtraFee } from '@/types';
+import { Student, FeePayment, ExtraFee, FeeReceipt } from '@/types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Loader2, Download, Receipt, TrendingUp, Wallet, ChevronRight } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Loader2, Download, Receipt, TrendingUp, Wallet, ChevronRight, RefreshCw, CalendarDays } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatPeriodMonths, periodTypeLabel } from '@/lib/feePeriods';
 
 // Auto-detect current fiscal session (Apr–Mar)
 function getCurrentSession(): string {
@@ -20,26 +23,41 @@ interface StudentLedgerProps {
   onOpenChange: (open: boolean) => void;
   onGenerateReceipt: (student: Student) => void;
   masterFeeTotal?: number;
+  refreshKey?: number;
 }
 
 export default function StudentLedger({
-  student, open, onOpenChange, onGenerateReceipt, masterFeeTotal,
+  student, open, onOpenChange, onGenerateReceipt, masterFeeTotal, refreshKey,
 }: StudentLedgerProps) {
   const currentSession = getCurrentSession();
 
   const [corePayments, setCorePayments] = useState<FeePayment[]>([]);
   const [extraFees, setExtraFees] = useState<ExtraFee[]>([]);
-  const [receipts, setReceipts] = useState<any[]>([]);
+  const [receipts, setReceipts] = useState<FeeReceipt[]>([]);
   const [corePaidTotal, setCorePaidTotal] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [extendReceipt, setExtendReceipt] = useState<FeeReceipt | null>(null);
+  const [extendDays, setExtendDays] = useState(30);
+  const [extendLoading, setExtendLoading] = useState(false);
+  const [visibilityStatus, setVisibilityStatus] = useState<{ role: string; expires_at: string; is_extended: boolean }[]>([]);
+
+  useEffect(() => {
+    if (!extendReceipt) {
+      setVisibilityStatus([]);
+      return;
+    }
+    api.getReceiptVisibilityStatus(extendReceipt.id).then(({ data }) => {
+      setVisibilityStatus(data ?? []);
+    });
+  }, [extendReceipt]);
 
   useEffect(() => {
     if (!open) return;
     setLoading(true);
     Promise.all([
       api.getFeePayments(student.id, currentSession),
-      api.getExtraFees(student.id, currentSession),
-      api.getFeeReceipts(student.id),
+      api.getExtraFees(student.id, currentSession, true),
+      api.getFeeReceipts(student.id, true),
       api.getStudentCorePaidTotal(student.id, currentSession),
     ]).then(([{ data: pays }, { data: extras }, { data: recs }, { data: paid }]) => {
       setCorePayments((pays ?? []) as FeePayment[]);
@@ -48,7 +66,7 @@ export default function StudentLedger({
       setCorePaidTotal(paid ?? 0);
       setLoading(false);
     });
-  }, [open, student.id, currentSession]);
+  }, [open, student.id, currentSession, refreshKey]);
 
   const extraTotal = extraFees.reduce((s, ef) => s + ef.amount, 0);
   const outstanding = masterFeeTotal ? Math.max(0, masterFeeTotal - corePaidTotal) : null;
@@ -82,16 +100,16 @@ export default function StudentLedger({
               <div className="rounded-lg border bg-muted/30 p-3">
                 <p className="text-xs text-muted-foreground">Yearly Cap</p>
                 <p className="font-bold text-base mt-0.5">
-                  {masterFeeTotal ? `₹${masterFeeTotal.toLocaleString('en-IN')}` : <span className="text-amber-600 text-xs">Not set</span>}
+                  {masterFeeTotal ? `₹${masterFeeTotal.toLocaleString('en-IN')}` : <span className="text-warning text-xs">Not set</span>}
                 </p>
               </div>
-              <div className="rounded-lg border bg-green-50 p-3">
+              <div className="rounded-lg border bg-success/10 p-3">
                 <p className="text-xs text-muted-foreground">Core Paid</p>
-                <p className="font-bold text-base text-green-700 mt-0.5">₹{corePaidTotal.toLocaleString('en-IN')}</p>
+                <p className="font-bold text-base text-success mt-0.5">₹{corePaidTotal.toLocaleString('en-IN')}</p>
               </div>
-              <div className={`rounded-lg border p-3 ${outstanding === 0 ? 'bg-green-50' : 'bg-amber-50'}`}>
+              <div className={`rounded-lg border p-3 ${outstanding === 0 ? 'bg-success/10' : 'bg-warning/10'}`}>
                 <p className="text-xs text-muted-foreground">Outstanding</p>
-                <p className={`font-bold text-base mt-0.5 ${outstanding === 0 ? 'text-green-700' : 'text-amber-700'}`}>
+                <p className={`font-bold text-base mt-0.5 ${outstanding === 0 ? 'text-success' : 'text-warning'}`}>
                   {outstanding !== null ? `₹${outstanding.toLocaleString('en-IN')}` : '—'}
                 </p>
               </div>
@@ -124,17 +142,46 @@ export default function StudentLedger({
                         <th className="text-left px-3 py-2 text-xs font-semibold whitespace-nowrap">Date</th>
                         <th className="text-left px-3 py-2 text-xs font-semibold whitespace-nowrap">Method</th>
                         <th className="text-right px-3 py-2 text-xs font-semibold whitespace-nowrap">Amount</th>
+                        <th className="text-left px-3 py-2 text-xs font-semibold whitespace-nowrap">Reference</th>
+                        <th className="text-right px-3 py-2 text-xs font-semibold whitespace-nowrap">Receipt</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {corePayments.map((p, i) => (
-                        <tr key={p.id} className={i % 2 === 0 ? '' : 'bg-muted/20'}>
-                          <td className="px-3 py-2 font-medium whitespace-nowrap">{p.payment_period}</td>
-                          <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">{fmtDate(p.payment_date)}</td>
-                          <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">{p.payment_method}</td>
-                          <td className="px-3 py-2 font-bold text-primary text-right whitespace-nowrap">₹{Number(p.amount).toLocaleString('en-IN')}</td>
-                        </tr>
-                      ))}
+                      {corePayments.map((p, i) => {
+                        const receipt = p.fee_receipts && p.fee_receipts[0];
+                        return (
+                          <tr key={p.id} className={i % 2 === 0 ? '' : 'bg-muted/20'}>
+                            <td className="px-3 py-2 whitespace-nowrap">
+                              <div className="flex items-center gap-2">
+                                <span className={`font-medium ${p.is_revoked ? 'line-through text-muted-foreground' : ''}`}>{p.payment_period}</span>
+                                <Badge variant="outline" className="text-[10px] font-normal">
+                                  {periodTypeLabel(p.period_type)}
+                                </Badge>
+                                {p.is_revoked && (
+                                  <Badge variant="destructive" className="text-[10px] font-normal">Revoked</Badge>
+                                )}
+                              </div>
+                              <p className="text-[10px] text-muted-foreground">{formatPeriodMonths(p.period_months, p.period_type)}</p>
+                            </td>
+                            <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">{fmtDate(p.payment_date)}</td>
+                            <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">{p.payment_method}</td>
+                            <td className="px-3 py-2 font-bold text-primary text-right whitespace-nowrap">₹{Number(p.amount).toLocaleString('en-IN')}</td>
+                            <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">
+                              {p.transaction_id || (receipt ? receipt.receipt_number : '—')}
+                            </td>
+                            <td className="px-3 py-2 text-right whitespace-nowrap">
+                              {receipt?.pdf_url ? (
+                                <Button variant="ghost" size="sm" className="h-7 text-xs"
+                                  onClick={() => window.open(receipt.pdf_url, '_blank')}>
+                                  <Download className="w-3 h-3 mr-1" /> PDF
+                                </Button>
+                              ) : (
+                                <span className="text-xs text-muted-foreground">—</span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                     <tfoot className="bg-muted/40 border-t">
                       <tr>
@@ -169,11 +216,16 @@ export default function StudentLedger({
                       {extraFees.map((ef, i) => (
                         <tr key={ef.id} className={i % 2 === 0 ? '' : 'bg-muted/20'}>
                           <td className="px-3 py-2 whitespace-nowrap">
-                            <Badge variant="outline" className={`text-xs ${ef.fee_category === 'extra' ? 'border-orange-300 text-orange-700' : 'border-blue-300 text-blue-700'}`}>
+                            <Badge variant="outline" className={`text-xs ${ef.fee_category === 'extra' ? 'border-orange-300 text-orange-700' : 'border-blue-300 text-info'}`}>
                               {ef.fee_category === 'extra' ? 'Extra' : 'Other'}
                             </Badge>
                           </td>
-                          <td className="px-3 py-2 font-medium whitespace-nowrap">{ef.description}</td>
+                          <td className="px-3 py-2 whitespace-nowrap">
+                            <span className={`font-medium ${ef.is_revoked ? 'line-through text-muted-foreground' : ''}`}>{ef.description}</span>
+                            {ef.is_revoked && (
+                              <Badge variant="destructive" className="text-[10px] font-normal ml-2">Revoked</Badge>
+                            )}
+                          </td>
                           <td className="px-3 py-2 text-muted-foreground text-xs max-w-[180px] truncate" title={ef.reason}>{ef.reason}</td>
                           <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">{fmtDate(ef.payment_date)}</td>
                           <td className="px-3 py-2 font-bold text-orange-600 text-right whitespace-nowrap">₹{Number(ef.amount).toLocaleString('en-IN')}</td>
@@ -202,16 +254,34 @@ export default function StudentLedger({
                         <th className="text-left px-3 py-2 text-xs font-semibold whitespace-nowrap">Receipt #</th>
                         <th className="text-left px-3 py-2 text-xs font-semibold whitespace-nowrap">Date</th>
                         <th className="text-left px-3 py-2 text-xs font-semibold whitespace-nowrap">Method</th>
+                        <th className="text-left px-3 py-2 text-xs font-semibold whitespace-nowrap">Period</th>
                         <th className="text-right px-3 py-2 text-xs font-semibold whitespace-nowrap">Amount</th>
                         <th className="text-right px-3 py-2 text-xs font-semibold whitespace-nowrap">PDF</th>
+                        <th className="text-right px-3 py-2 text-xs font-semibold whitespace-nowrap">Visible</th>
                       </tr>
                     </thead>
                     <tbody>
                       {receipts.map((r, i) => (
                         <tr key={r.id} className={i % 2 === 0 ? '' : 'bg-muted/20'}>
-                          <td className="px-3 py-2 font-mono text-xs font-semibold text-primary whitespace-nowrap">{r.receipt_number}</td>
+                          <td className="px-3 py-2 whitespace-nowrap">
+                            <span className={`font-mono text-xs font-semibold ${r.is_revoked ? 'text-muted-foreground line-through' : 'text-primary'}`}>{r.receipt_number}</span>
+                            {r.is_revoked && (
+                              <Badge variant="destructive" className="text-[10px] font-normal ml-2">Revoked</Badge>
+                            )}
+                          </td>
                           <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">{fmtDate(r.payment_date)}</td>
                           <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">{r.payment_method}</td>
+                          <td className="px-3 py-2 whitespace-nowrap">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs">{r.period_value || '—'}</span>
+                              {r.period_type && (
+                                <Badge variant="outline" className="text-[10px] font-normal">
+                                  {periodTypeLabel(r.period_type)}
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="text-[10px] text-muted-foreground">{formatPeriodMonths(r.period_months, r.period_type)}</p>
+                          </td>
                           <td className="px-3 py-2 font-bold text-primary text-right whitespace-nowrap">₹{Number(r.total_amount).toLocaleString('en-IN')}</td>
                           <td className="px-3 py-2 text-right whitespace-nowrap">
                             {r.pdf_url ? (
@@ -223,6 +293,12 @@ export default function StudentLedger({
                               <span className="text-xs text-muted-foreground">—</span>
                             )}
                           </td>
+                          <td className="px-3 py-2 text-right whitespace-nowrap">
+                            <Button variant="ghost" size="sm" className="h-7 text-xs"
+                              onClick={() => setExtendReceipt(r)}>
+                              <RefreshCw className="w-3 h-3 mr-1" /> Extend
+                            </Button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -233,6 +309,67 @@ export default function StudentLedger({
 
           </div>
         )}
+
+        {/* Extend receipt visibility dialog */}
+        <Dialog open={!!extendReceipt} onOpenChange={(o) => { if (!o) setExtendReceipt(null); }}>
+          <DialogContent className="max-w-[calc(100%-2rem)] md:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <CalendarDays className="w-5 h-5 text-primary" />
+                Extend Receipt Visibility
+              </DialogTitle>
+              <DialogDescription>
+                {extendReceipt ? `Receipt ${extendReceipt.receipt_number} visibility is managed independently for the Student and the Parent.` : ''}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-2">
+              <div className="space-y-1">
+                <Label className="text-xs">Visibility Duration (days)</Label>
+                <Input type="number" min={1} value={extendDays} onChange={(e) => setExtendDays(Number(e.target.value))} />
+              </div>
+              <div className="space-y-2">
+                {(['student', 'parent'] as const).map((role) => {
+                  const status = visibilityStatus.find((s) => s.role === role);
+                  return (
+                    <div key={role} className="flex items-center justify-between rounded-lg border p-3">
+                      <div>
+                        <p className="text-sm font-medium capitalize">{role}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {status
+                            ? `Expires ${new Date(status.expires_at).toLocaleDateString('en-IN')} ${status.is_extended ? '(extended)' : ''}`
+                            : 'Not currently visible'}
+                        </p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant={role === 'student' ? 'default' : 'secondary'}
+                        onClick={async () => {
+                          if (!extendReceipt) return;
+                          setExtendLoading(true);
+                          const { error } = await api.extendReceiptVisibilityForRole(extendReceipt.id, role, extendDays);
+                          if (error) {
+                            toast.error(error.message);
+                          } else {
+                            toast.success(`Receipt ${extendReceipt.receipt_number} visibility extended for ${role} by ${extendDays} days.`);
+                            const { data } = await api.getReceiptVisibilityStatus(extendReceipt.id);
+                            setVisibilityStatus(data ?? []);
+                          }
+                          setExtendLoading(false);
+                        }}
+                        disabled={extendLoading}
+                      >
+                        {extendLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Extend'}
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="flex justify-end">
+                <Button variant="outline" onClick={() => setExtendReceipt(null)}>Close</Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </DialogContent>
     </Dialog>
   );
@@ -247,10 +384,10 @@ interface StudentLedgerRowProps {
 
 export function StudentLedgerRow({ student, masterFeeTotal, onOpen }: StudentLedgerRowProps) {
   const statusCls = student.fee_status === 'Paid'
-    ? 'bg-green-100 text-green-700'
+    ? 'bg-success/10 text-success'
     : student.fee_status === 'Pending'
-      ? 'bg-amber-100 text-amber-700'
-      : 'bg-red-100 text-red-700';
+      ? 'bg-warning/10 text-warning'
+      : 'bg-destructive/10 text-destructive';
 
   return (
     <button

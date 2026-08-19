@@ -80,22 +80,22 @@ export default function AttendanceSettings() {
 
   return (
     <div className="max-w-2xl space-y-6">
-      <Card className="border-none shadow-lg rounded-[2.5rem] bg-card overflow-hidden">
+      <Card className="border-none shadow-lg rounded-2xl bg-card overflow-hidden">
         <CardHeader className="bg-primary/5 p-8 border-b border-primary/10">
           <div className="flex items-center gap-4">
             <div className="bg-primary/10 p-3 rounded-2xl">
               <Clock className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <CardTitle className="text-2xl font-black text-primary uppercase tracking-tight">Time Window Control</CardTitle>
-              <CardDescription className="text-sm font-medium text-muted-foreground uppercase tracking-widest mt-1">Define when teachers can mark attendance</CardDescription>
+              <CardTitle className="text-2xl font-semibold text-primary uppercase tracking-tight">Time Window Control</CardTitle>
+              <CardDescription className="text-sm font-medium text-muted-foreground font-medium mt-1">Define when teachers can mark attendance</CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent className="p-8 space-y-8">
           <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border border-dashed">
             <div className="space-y-0.5">
-              <Label className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
+              <Label className="text-sm font-semibold flex items-center gap-2">
                 <Shield className="w-4 h-4 text-primary" />
                 Time Restriction
               </Label>
@@ -110,7 +110,7 @@ export default function AttendanceSettings() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
-              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Start Time</Label>
+              <Label className="text-xs font-semibold text-muted-foreground ml-1">Start Time</Label>
               <div className="relative group">
                 <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <Input 
@@ -123,7 +123,7 @@ export default function AttendanceSettings() {
               </div>
             </div>
             <div className="space-y-3">
-              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">End Time</Label>
+              <Label className="text-xs font-semibold text-muted-foreground ml-1">End Time</Label>
               <div className="relative group">
                 <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <Input 
@@ -137,11 +137,11 @@ export default function AttendanceSettings() {
             </div>
           </div>
 
-          <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-900/20 rounded-2xl p-4 flex gap-4">
-            <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+          <div className="bg-warning/10 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-900/20 rounded-2xl p-4 flex gap-4">
+            <AlertCircle className="w-5 h-5 text-warning dark:text-amber-400 shrink-0 mt-0.5" />
             <div className="space-y-1">
               <p className="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-tight">Restriction Protocol</p>
-              <p className="text-[11px] text-amber-700/80 dark:text-amber-400/80 leading-relaxed font-medium">
+              <p className="text-[11px] text-warning/80 dark:text-amber-400/80 leading-relaxed font-medium">
                 When enabled, teachers will be restricted from marking or editing attendance outside the defined {startTime} - {endTime} window. Admins bypass this restriction and can always modify attendance.
               </p>
             </div>
@@ -150,7 +150,7 @@ export default function AttendanceSettings() {
           <Button 
             onClick={handleSave} 
             disabled={saving}
-            className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-black text-lg shadow-xl shadow-primary/20 flex items-center justify-center gap-3 transition-all hover:scale-[1.01] active:scale-[0.99]"
+            className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-lg shadow-xl shadow-primary/20 flex items-center justify-center gap-3 transition-all hover:scale-[1.01] active:scale-[0.99]"
           >
             {saving ? <Loader2 className="w-6 h-6 animate-spin" /> : <Save className="w-6 h-6" />}
             Update Restriction Window
@@ -159,22 +159,22 @@ export default function AttendanceSettings() {
       </Card>
 
 
-      <Card className="border-none shadow-lg rounded-[2.5rem] bg-card overflow-hidden">
+      <Card className="border-none shadow-lg rounded-2xl bg-card overflow-hidden">
         <CardHeader className="bg-primary/5 p-8 border-b border-primary/10">
           <div className="flex items-center gap-4">
             <div className="bg-primary/10 p-3 rounded-2xl">
               <Clock className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <CardTitle className="text-2xl font-black text-primary uppercase tracking-tight">Early Leave Window</CardTitle>
-              <CardDescription className="text-sm font-medium text-muted-foreground uppercase tracking-widest mt-1">Define when teachers can mark early leaves</CardDescription>
+              <CardTitle className="text-2xl font-semibold text-primary uppercase tracking-tight">Early Leave Window</CardTitle>
+              <CardDescription className="text-sm font-medium text-muted-foreground font-medium mt-1">Define when teachers can mark early leaves</CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent className="p-8 space-y-8">
           <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border border-dashed">
             <div className="space-y-0.5">
-              <Label className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
+              <Label className="text-sm font-semibold flex items-center gap-2">
                 <Shield className="w-4 h-4 text-primary" />
                 Early Leave Restriction
               </Label>
@@ -189,7 +189,7 @@ export default function AttendanceSettings() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
-              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Start Time</Label>
+              <Label className="text-xs font-semibold text-muted-foreground ml-1">Start Time</Label>
               <div className="relative group">
                 <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <Input 
@@ -202,7 +202,7 @@ export default function AttendanceSettings() {
               </div>
             </div>
             <div className="space-y-3">
-              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">End Time</Label>
+              <Label className="text-xs font-semibold text-muted-foreground ml-1">End Time</Label>
               <div className="relative group">
                 <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <Input 
@@ -216,11 +216,11 @@ export default function AttendanceSettings() {
             </div>
           </div>
 
-          <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-900/20 rounded-2xl p-4 flex gap-4">
-            <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+          <div className="bg-warning/10 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-900/20 rounded-2xl p-4 flex gap-4">
+            <AlertCircle className="w-5 h-5 text-warning dark:text-amber-400 shrink-0 mt-0.5" />
             <div className="space-y-1">
               <p className="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-tight">Early Leave Protocol</p>
-              <p className="text-[11px] text-amber-700/80 dark:text-amber-400/80 leading-relaxed font-medium">
+              <p className="text-[11px] text-warning/80 dark:text-amber-400/80 leading-relaxed font-medium">
                 When enabled, early leave marking will only be allowed between {earlyLeaveStartTime} and {earlyLeaveEndTime}.
               </p>
             </div>
@@ -229,7 +229,7 @@ export default function AttendanceSettings() {
           <Button 
             onClick={handleSave} 
             disabled={saving}
-            className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-black text-lg shadow-xl shadow-primary/20 flex items-center justify-center gap-3 transition-all hover:scale-[1.01] active:scale-[0.99]"
+            className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-lg shadow-xl shadow-primary/20 flex items-center justify-center gap-3 transition-all hover:scale-[1.01] active:scale-[0.99]"
           >
             {saving ? <Loader2 className="w-6 h-6 animate-spin" /> : <Save className="w-6 h-6" />}
             Update Early Leave settings

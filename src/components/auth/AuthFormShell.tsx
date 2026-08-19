@@ -36,7 +36,7 @@ export function AuthFormShell({
           <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/25 [&>svg]:w-5 [&>svg]:h-5">
             {icon}
           </div>
-          <span className="text-xs font-bold uppercase tracking-[0.22em] text-muted-foreground">
+          <span className="text-xs font-bold font-medium text-muted-foreground">
             RSBS School
           </span>
         </div>

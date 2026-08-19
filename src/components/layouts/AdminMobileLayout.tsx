@@ -67,16 +67,16 @@ export default function AdminMobileLayout() {
     <div className="flex flex-col h-dvh w-full overflow-hidden bg-background">
 
       {/* ── Mobile Top Bar ─────────────────────────────────────── */}
-      <header className="flex h-12 shrink-0 items-center justify-between px-3 border-b bg-background/90 backdrop-blur-md z-40 sticky top-0">
+      <header className="flex h-12 shrink-0 items-center justify-between px-3 border-b border-primary-foreground/10 bg-gradient-to-r from-primary to-primary/95 text-primary-foreground backdrop-blur-md z-40 sticky top-0">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-primary flex items-center justify-center shadow-sm shadow-primary/30">
-            <span className="text-primary-foreground font-black text-[10px] tracking-tight">RS</span>
+          <div className="w-6 h-6 rounded-md bg-accent flex items-center justify-center shadow-sm shadow-accent/20">
+            <span className="text-accent-foreground font-semibold text-xs">RS</span>
           </div>
-          <span className="font-black text-[10px] uppercase tracking-[0.18em] text-primary">Admin</span>
+          <span className="font-semibold text-sm text-primary-foreground">Admin</span>
         </div>
-        <Avatar className="h-7 w-7 border border-muted">
+        <Avatar className="h-7 w-7 border border-primary-foreground/20">
           <AvatarImage src={profile.avatar_url || ''} />
-          <AvatarFallback className="bg-primary/10 text-primary font-black text-[10px]">{userInitial}</AvatarFallback>
+          <AvatarFallback className="bg-accent/20 text-accent-foreground font-semibold text-xs">{userInitial}</AvatarFallback>
         </Avatar>
       </header>
 
@@ -127,7 +127,7 @@ export default function AdminMobileLayout() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', stiffness: 340, damping: 34 }}
-              className="fixed bottom-0 left-0 right-0 z-50 rounded-t-2xl bg-background border-t shadow-2xl"
+              className="fixed bottom-0 left-0 right-0 z-50 rounded-t-2xl bg-background border-t shadow-dropdown"
             >
               {/* Drag handle */}
               <div className="flex justify-center pt-2 pb-1">
@@ -136,19 +136,19 @@ export default function AdminMobileLayout() {
 
               {/* Profile header */}
               <div className="flex items-center gap-3 px-4 py-3 border-b">
-                <Avatar className="h-10 w-10 border-2 border-primary/20">
+                <Avatar className="h-10 w-10 border border-border">
                   <AvatarImage src={profile.avatar_url || ''} />
-                  <AvatarFallback className="bg-primary/10 text-primary font-black text-xs">{userInitial}</AvatarFallback>
+                  <AvatarFallback className="bg-accent/10 text-accent font-semibold text-xs">{userInitial}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className="font-black text-sm uppercase tracking-widest truncate">{profile.username}</p>
+                  <p className="font-semibold text-sm truncate">{profile.username}</p>
                   <div className="flex items-center gap-1.5 mt-0.5">
-                    <Badge className="h-4 text-[8px] bg-primary/10 text-primary border-none font-black uppercase px-1.5">
+                    <Badge className="h-4 text-xs bg-accent/10 text-accent border-none font-medium px-1.5">
                       {profile.is_master ? 'Master Admin' : 'Administrator'}
                     </Badge>
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" className="rounded-full shrink-0 h-8 w-8" onClick={() => setMenuOpen(false)}>
+                <Button variant="ghost" size="icon" className="rounded-lg shrink-0 h-8 w-8" onClick={() => setMenuOpen(false)}>
                   <X className="w-4 h-4" />
                 </Button>
               </div>
@@ -162,10 +162,10 @@ export default function AdminMobileLayout() {
                     onClick={() => setMenuOpen(false)}
                     className="flex items-center gap-3 px-2.5 py-2.5 rounded-lg hover:bg-muted/60 active:scale-[0.98] transition-all"
                   >
-                    <div className="w-7 h-7 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-                      <link.icon className="w-3.5 h-3.5 text-primary" />
+                    <div className="w-7 h-7 rounded-md bg-accent/10 flex items-center justify-center shrink-0">
+                      <link.icon className="w-3.5 h-3.5 text-accent" />
                     </div>
-                    <span className="font-semibold text-sm flex-1">{link.label}</span>
+                    <span className="font-medium text-sm flex-1">{link.label}</span>
                     <ChevronRight className="w-4 h-4 text-muted-foreground" />
                   </Link>
                 ))}
@@ -175,7 +175,7 @@ export default function AdminMobileLayout() {
               <div className="px-3 pb-5 pt-2 border-t mt-1">
                 <Button
                   variant="ghost"
-                  className="w-full justify-start gap-3 text-destructive hover:text-destructive hover:bg-destructive/5 rounded-lg px-2.5 py-2.5 h-auto font-black text-xs uppercase tracking-widest"
+                  className="w-full justify-start gap-3 text-destructive hover:text-destructive hover:bg-destructive/5 rounded-lg px-2.5 py-2.5 h-auto font-medium text-sm"
                   onClick={() => { setMenuOpen(false); signOut(); }}
                 >
                   <LogOut className="w-4 h-4" />
@@ -188,7 +188,7 @@ export default function AdminMobileLayout() {
       </AnimatePresence>
 
       {/* ── Sticky Bottom Navigation ──────────────────────────────── */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-lg border-t safe-area-inset-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-primary to-primary/95 text-primary-foreground backdrop-blur-lg border-t border-primary-foreground/10 safe-area-inset-bottom">
         <div className="flex justify-around items-center h-14 px-1">
           {ADMIN_MOBILE_TABS.map(tab => {
             const isActive = tab.url !== '__menu__'
@@ -199,14 +199,14 @@ export default function AdminMobileLayout() {
               <div
                 className={cn(
                   'flex flex-col items-center justify-center gap-0.5 flex-1 h-full relative transition-all duration-200 select-none',
-                  isActive ? 'text-primary' : 'text-muted-foreground'
+                  isActive ? 'text-accent' : 'text-primary-foreground/60'
                 )}
               >
                 {/* Active pill indicator */}
                 {isActive && (
                   <motion.div
                     layoutId="admin-mobile-indicator"
-                    className="absolute top-0 inset-x-4 h-[2px] bg-primary rounded-full"
+                    className="absolute top-0 inset-x-4 h-[2px] bg-accent rounded-full"
                     transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                   />
                 )}
@@ -216,7 +216,7 @@ export default function AdminMobileLayout() {
                 >
                   <tab.icon className={cn('w-[18px] h-[18px]', isActive && 'stroke-[2.5px]')} />
                 </motion.div>
-                <span className="text-[9px] font-bold uppercase tracking-wider leading-none">{tab.label}</span>
+                <span className="text-xs font-medium leading-none">{tab.label}</span>
               </div>
             );
 

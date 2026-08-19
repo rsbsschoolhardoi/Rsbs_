@@ -88,23 +88,23 @@ export function VerificationRequired() {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-md p-4 animate-in fade-in duration-500">
-      <Card className="w-full max-w-md border-none shadow-2xl rounded-[2.5rem] overflow-hidden bg-white">
+      <Card className="w-full max-w-md border-none shadow-2xl rounded-2xl overflow-hidden bg-white">
         <div className="h-2 bg-amber-500 w-full" />
         <CardHeader className="text-center pt-8">
-          <div className="mx-auto w-20 h-20 bg-amber-100 rounded-3xl flex items-center justify-center mb-6 animate-pulse">
-            <Mail className="w-10 h-10 text-amber-600" />
+          <div className="mx-auto w-20 h-20 bg-warning/10 rounded-2xl flex items-center justify-center mb-6 animate-pulse">
+            <Mail className="w-10 h-10 text-warning" />
           </div>
-          <CardTitle className="text-3xl font-black text-primary">Verification Required</CardTitle>
+          <CardTitle className="text-3xl font-semibold text-primary">Verification Required</CardTitle>
           <CardDescription className="text-muted-foreground font-bold px-4">
             Email verification required. Please complete the verification process sent to your email.
           </CardDescription>
         </CardHeader>
         
         <CardContent className="space-y-6 px-8 text-center pb-8">
-          <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex items-start gap-3 text-left">
-            <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="p-4 bg-warning/10 rounded-2xl border border-amber-100 flex items-start gap-3 text-left">
+            <AlertCircle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
             <p className="text-sm font-medium text-amber-800 leading-relaxed">
-              Account activation required. Please contact a <span className="font-black underline decoration-amber-300">Master Administrator</span> to verify and activate your administrative account (<span className="font-black underline decoration-amber-300">{profile?.email}</span>).
+              Account activation required. Please contact a <span className="font-semibold underline decoration-amber-300">Master Administrator</span> to verify and activate your administrative account (<span className="font-semibold underline decoration-amber-300">{profile?.email}</span>).
             </p>
           </div>
 
@@ -129,7 +129,7 @@ export function VerificationRequired() {
         </CardContent>
         
         <CardFooter className="bg-muted/30 border-t flex justify-center py-4">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] font-black">
+          <p className="text-xs text-muted-foreground font-medium font-semibold">
             RSBS School Management System Security
           </p>
         </CardFooter>

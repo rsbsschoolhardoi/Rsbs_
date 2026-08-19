@@ -1,37 +1,32 @@
-## Vibe
-- Startup Fresh × editorial restraint: clean, airy and professional school ERP with a warm human touch.
+# Theme Name: Minimal
+# Vibe & Description: Prioritizing a sense of airiness, it establishes information hierarchy through ample whitespace and clear distinctions in font size, weight, and spacing. The design remains extremely restrained, with almost no use of shadows or decorative colors, while ensuring long‑term reading comfort through gentle contrast and fine, non‑sharp typefaces.
 
-## Color
-- Primary: #1E3A5F
-- On Primary: #FFFFFF
-- Accent: #D4A31C
-- On Accent: #1E3A5F
-- Background: #F9F9F7
-- Foreground: #1A1A1A
-- Muted: #EFEFEC
-- Border: #E8E8E4
-- Secondary: #F4F4F2
+# Color
+- Primary Background: #FFFFFF;
+-Secondary Background: #F8F9FB → Use only extremely subtle color differences to distinguish layers.
+- Primary Text: #111827 (dark gray rather than pure black).
+- Secondary Text: #6B7280.
+- Border: #E5E7EB (1px).
+- Unique Signal Color (selectable based on user requirements): Used for selected states, primary buttons, and current status indicators.
 
-## Typography
-- Heading: Poppins (family: 'Poppins', weight: 500/600/700, url: https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap)
-- Body: Jost (family: 'Jost', weight: 400/500, url: https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&display=swap)
+# Font
+- Heading & Body: Montserrat (url: https://resource-static.bj.bcebos.com/fonts/Montserrat-VariableFont_wght.woff2)
+# Animation
+## Elemental animation
+-The animation is minimalist and linear. Elements slide into place along the grid lines;
+## Entrance animation
+- There is no bouncing or elasticity effect; the page scrolls naturally like a document with an ease-out effect.
+##Transition animation
+- Use a fade-in or slight displacement when loading content;
+##Animation implementation
+- The project integrates the tailwindcss-intersect plugin, which allows you to achieve animation effects when elements enter the viewport in a manner similar to the following:
+opacity-0 intersect:opacity-100 transition duration-700
+- Animations can also be achieved using motion/react.
 
-## Visual Language
-- Core visual signature: hairline borders and generous whitespace replace heavy shadows; near-white backgrounds with small primary/accent accents.
-- Material & depth: flat, minimal shadows; subtle surface borders for separation.
-- Containers & buttons: rounded corners, soft muted fills for secondary surfaces, primary solid for main CTAs.
-- Layout rhythm: generous internal padding, clear hierarchy, primary/accent used as 10% emphasis on icons, active states and key labels.
+# Layout
+- Content is organized into clear modules. Ample white space is used to distinguish different sections.
+- Prefers left-aligned text and structured image layouts, avoiding decorative misalignments.
 
-## Animation
-- Entrance: message bubbles fade in and slide up 200ms ease-out.
-- Interaction: buttons scale 0.98 on press; cards lift 2px on hover.
-- Scroll / transition: smooth scroll with `scroll-behavior: smooth`; page transitions fade 200ms.
-
-## Forbidden
-- Blue-to-purple gradients
-- Heavy drop shadows
-- Emoji icons in navigation or headers
-
-## Additional Notes
-- All user-visible copy is in English.
-- Maintain existing design tokens for consistency across the Student Panel.
+# Elements
+- Prefers minimalist linear charts with uniform stroke thickness and no fill.
+- Shadow ≈ 0, border ≤ 1px, minimizes the button's visual impact; main button ≠ large color block, emphasizes text more.

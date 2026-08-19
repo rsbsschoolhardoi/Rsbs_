@@ -13,12 +13,8 @@ import type { Student, BrandingSettings, DocumentTemplate, FeeReceiptData } from
 import { legacyToElements, StudioElement, PAGE_PRESETS } from '@/components/template-studio/types';
 import { buildPlaceholderMap, resolvePlaceholder } from './placeholderResolver';
 
-const PAGE_MM: Record<string, { w: number; h: number }> = {
-  A4:     { w: 210.0, h: 297.0 },
-  A5:     { w: 148.0, h: 210.0 },
-  Letter: { w: 215.9, h: 279.4 },
-  Custom: { w: 210.0, h: 297.0 },
-};
+const MM_PER_PX = 25.4 / 96; // 1 CSS pixel = 0.26458 mm
+const PT_PER_PX = 72 / 96;   // 1 CSS pixel = 0.75 pt (jsPDF setFontSize uses pt)
 
 interface Rgba {
   r: number;
@@ -306,6 +302,20 @@ async function prefetchImages(
   for (const el of elements) {
     if (el.hidden) continue;
 
+    if (el.type === 'background' && el.imageUrl) {
+      const dataUrl = await toDataURL(el.imageUrl);
+      if (dataUrl) {
+        const processed = await processImageDataUrl(
+          dataUrl,
+          el.objectFit ?? 'cover',
+          el.width,
+          el.height,
+        );
+        map.set(el.id, processed);
+      }
+      continue;
+    }
+
     if (el.type === 'qrcode') {
       const value = pmap['{{verification_url}}'] ||
         `${typeof window !== 'undefined' ? window.location.origin : ''}/verify?id=${student.verification_id}`;
@@ -421,6 +431,11 @@ function drawElement(el: StudioElement, ctx: RenderContext) {
 
   switch (el.type) {
     case 'background': {
+      const bgImg = imgMap.get(el.id);
+      if (bgImg?.dataUrl) {
+        safeAddImage(doc, bgImg.dataUrl, x, y, w, h);
+        return;
+      }
       const bg = hexToRgba(el.backgroundColor ?? '#FFFFFF');
       if (bg.a <= 0.05) return;
       withOpacity(doc, bg.a, () => {
@@ -457,6 +472,37 @@ function drawElement(el: StudioElement, ctx: RenderContext) {
       doc.setLineWidth(el.borderWidth && el.borderWidth > 0 ? el.borderWidth * scale : 0.3);
       const cy = y + h / 2;
       doc.line(x, cy, x + w, cy);
+      break;
+    }
+
+    case 'table': {
+      // Draw a placeholder grid matching the StudioPreview placeholder.
+      const cols = 3;
+      const rows = 3;
+      const cellW = w / cols;
+      const cellH = h / rows;
+      const borderColor = el.borderColor && el.borderColor !== 'transparent'
+        ? el.borderColor : '#00000026';
+      setStroke(doc, borderColor);
+      doc.setLineWidth((el.borderWidth ?? 0.5) * scale);
+      doc.roundedRect(x, y, w, h, r, r, 'S');
+      doc.setLineWidth(0.2);
+      for (let i = 1; i < cols; i++) {
+        doc.line(x + cellW * i, y, x + cellW * i, y + h);
+      }
+      for (let i = 1; i < rows; i++) {
+        doc.line(x, y + cellH * i, x + w, y + cellH * i);
+      }
+      const headerFontSize = Math.max(4, Math.min(48, (el.fontSize ?? 9) * PT_PER_PX));
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(headerFontSize);
+      setTextCol(doc, el.color ?? '#00000066');
+      for (let c = 0; c < cols; c++) {
+        doc.text(`Col ${c + 1}`, x + cellW * c + cellW / 2, y + cellH / 2 + headerFontSize / 2, {
+          align: 'center',
+          baseline: 'middle',
+        });
+      }
       break;
     }
 
@@ -532,35 +578,38 @@ function drawElement(el: StudioElement, ctx: RenderContext) {
         (el.placeholder ? isImageUrlPlaceholder(el.placeholder) : true)
       ) break;
 
-      let fontSize = (el.fontSize ?? 10) * scale;
-      fontSize = Math.max(4, Math.min(48, fontSize));
+      const pxFontSize = Math.max(4, Math.min(120, el.fontSize ?? 10));
+      const fontSizeMM = pxFontSize * MM_PER_PX;   // element/preview unit
+      const fontSizePt = pxFontSize * PT_PER_PX;   // jsPDF font-size unit
       const isBold =
         el.fontWeight === 'bold' ||
         el.fontWeight === '600' ||
         el.fontWeight === '800';
       doc.setFont('helvetica', isBold ? 'bold' : 'normal');
-      doc.setFontSize(fontSize);
+      doc.setFontSize(fontSizePt);
       setTextCol(doc, el.color ?? '#000000');
 
       const align = el.textAlign ?? 'left';
       const padding = (el.padding ?? 0) * scale;
       const boxW = Math.max(1, w - padding * 2);
       const boxH = Math.max(1, h - padding * 2);
-      const lineHeight = (el.lineHeight ?? 1.3) * fontSize;
+      const lineHeight = (el.lineHeight ?? 1.3); // factor, same as preview CSS
+      const lineHeightMM = fontSizeMM * lineHeight;
       const lines = doc.splitTextToSize(raw, boxW);
-      const maxLines = Math.max(1, Math.floor(boxH / lineHeight));
+      const maxLines = Math.max(1, Math.floor(boxH / lineHeightMM));
       const visibleLines = lines.slice(0, maxLines);
 
       let tx = x + padding;
       if (align === 'center') tx = x + w / 2;
       if (align === 'right') tx = x + w - padding;
 
-      const totalH = visibleLines.length * lineHeight;
-      const ty = y + (h - totalH) / 2 + fontSize;
+      const totalH = visibleLines.length * lineHeightMM;
+      const ty = y + (h - totalH) / 2;
 
       doc.text(visibleLines, tx, ty, {
         align,
         baseline: 'top',
+        lineHeightFactor: lineHeight,
         maxWidth: boxW,
       });
       break;
@@ -581,16 +630,24 @@ export async function generateTemplateDocumentPDF({
   feeData?: FeeReceiptData;
   filename?: string;
 }): Promise<jsPDF> {
-  // Use the page size stored in the template if available; otherwise default to A4.
-  const pageSize = 'A4';
-  const pxSize = PAGE_PRESETS[pageSize as keyof typeof PAGE_PRESETS] ?? PAGE_PRESETS.A4;
-  const mmSize = PAGE_MM[pageSize] ?? PAGE_MM.A4;
-  const scale = mmSize.w / pxSize.w;
+  // Use the exact page size stored in the template so the exported PDF matches the
+  // editor preview (page dimensions, orientation and element positions) — no extra
+  // background or second canvas is created.
+  const savedSize = (template.layout_config?.page_size as keyof typeof PAGE_PRESETS) ?? 'A4';
+  const savedOrientation = template.layout_config?.orientation ?? 'portrait';
+  const preset = PAGE_PRESETS[savedSize] ?? PAGE_PRESETS.A4;
+  let pxW = template.layout_config?.page_width ??
+    (savedOrientation === 'landscape' ? Math.max(preset.w, preset.h) : Math.min(preset.w, preset.h));
+  let pxH = template.layout_config?.page_height ??
+    (savedOrientation === 'landscape' ? Math.min(preset.w, preset.h) : Math.max(preset.w, preset.h));
+  const mmW = pxW * MM_PER_PX;
+  const mmH = pxH * MM_PER_PX;
+  const scale = mmW / pxW;
 
   const doc = new jsPDF({
-    orientation: 'portrait',
+    orientation: pxW > pxH ? 'landscape' : 'portrait',
     unit: 'mm',
-    format: pageSize.toLowerCase() as any,
+    format: [mmW, mmH],
   });
 
   const pmap = buildPlaceholderMap(student, branding, feeData);
@@ -606,12 +663,23 @@ export async function generateTemplateDocumentPDF({
 
   // Draw a default white background so the page is never transparent
   doc.setFillColor(255, 255, 255);
-  doc.rect(0, 0, mmSize.w, mmSize.h, 'F');
+  doc.rect(0, 0, mmW, mmH, 'F');
 
   const imgMap = await prefetchImages(sorted, pmap, student);
 
   for (const el of sorted) {
-    drawElement(el, { doc, scale, pmap, imgMap, pageW: mmSize.w, pageH: mmSize.h });
+    drawElement(el, { doc, scale, pmap, imgMap, pageW: mmW, pageH: mmH });
+  }
+
+  // Draw exact fee period on every receipt PDF so it is always visible even if
+  // the template does not include the period placeholder.
+  if (feeData?.period_value) {
+    const periodText = feeData.period_type
+      ? `${feeData.period_type.charAt(0).toUpperCase() + feeData.period_type.slice(1)}: ${feeData.period_value}`
+      : `Period: ${feeData.period_value}`;
+    doc.setFontSize(9);
+    doc.setTextColor(60, 60, 60);
+    doc.text(periodText, 10, mmH - 10, { maxWidth: mmW - 20 });
   }
 
   return doc;

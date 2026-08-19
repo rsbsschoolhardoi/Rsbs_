@@ -15,6 +15,7 @@ function ElementPreview({ el }: { el: StudioElement }) {
   const isImage = ['photo','logo','custom_image','signature','principal_signature'].includes(el.type);
   const isQrBar = el.type === 'qrcode' || el.type === 'barcode';
   const isLine  = el.type === 'line' || el.type === 'divider';
+  const isBackground = el.type === 'background';
 
   const baseText: React.CSSProperties = {
     fontSize: el.fontSize,
@@ -71,6 +72,9 @@ function ElementPreview({ el }: { el: StudioElement }) {
         </div>
       )}
       {isLine && <div style={{ width: '100%', height: '100%', background: el.backgroundColor || '#e2e8f0' }} />}
+      {isBackground && el.imageUrl && (
+        <img src={el.imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: (el.objectFit || 'cover') as React.CSSProperties['objectFit'] }} />
+      )}
       {el.type === 'table' && (
         <div style={{ width: '100%', height: '100%', border: '1px solid rgba(0,0,0,0.15)', borderRadius: 4, overflow: 'hidden' }}>
           <table style={{ width: '100%', height: '100%', borderCollapse: 'collapse' }}>

@@ -301,10 +301,10 @@ export default function AttendanceNew() {
           <div className="flex-1 overflow-hidden flex flex-col min-h-0">
             <Tabs defaultValue="attendance" className="flex-1 flex flex-col min-h-0">
               <TabsList className="w-full max-w-md h-12 bg-muted/20 p-1 rounded-2xl border border-muted/50 mb-4 shrink-0">
-                <TabsTrigger value="attendance" className="flex-1 rounded-xl font-black uppercase tracking-widest text-[10px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <TabsTrigger value="attendance" className="flex-1 rounded-xl font-semibold text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                   <Users className="w-3.5 h-3.5 mr-2" /> Attendance
                 </TabsTrigger>
-                <TabsTrigger value="early-leave" className="flex-1 rounded-xl font-black uppercase tracking-widest text-[10px] data-[state=active]:bg-amber-500 data-[state=active]:text-white">
+                <TabsTrigger value="early-leave" className="flex-1 rounded-xl font-semibold text-xs data-[state=active]:bg-amber-500 data-[state=active]:text-white">
                   <LogOut className="w-3.5 h-3.5 mr-2" /> Early Leave
                 </TabsTrigger>
               </TabsList>
@@ -315,7 +315,7 @@ export default function AttendanceNew() {
                     <Loader2 className="w-8 h-8 animate-spin text-primary" />
                   </div>
                 ) : filteredStudents.length === 0 ? (
-                  <div className="text-center py-20 bg-muted/20 rounded-3xl border border-dashed">
+                  <div className="text-center py-20 bg-muted/20 rounded-2xl border border-dashed">
                     <p className="text-muted-foreground">No students found in this class.</p>
                   </div>
                 ) : (
@@ -375,9 +375,9 @@ export default function AttendanceNew() {
 
                     <TabsContent value="early-leave" className="m-0 space-y-3 focus-visible:ring-0">
                       {filteredStudents.filter(s => attendanceMap[s.id] === 'Present').length === 0 ? (
-                        <div className="text-center py-20 bg-muted/20 rounded-3xl border border-dashed px-6">
+                        <div className="text-center py-20 bg-muted/20 rounded-2xl border border-dashed px-6">
                           <p className="text-muted-foreground text-sm font-medium leading-relaxed">
-                            Only students marked as <span className="font-black text-primary uppercase tracking-tight">Present</span> are eligible for Early Leave.
+                            Only students marked as <span className="font-semibold text-primary uppercase tracking-tight">Present</span> are eligible for Early Leave.
                           </p>
                         </div>
                       ) : (
@@ -386,7 +386,7 @@ export default function AttendanceNew() {
                           return (
                             <Card key={student.id} className={cn(
                               "border-none shadow-sm rounded-2xl transition-all relative overflow-hidden",
-                              existing ? 'bg-amber-50 border border-amber-200 shadow-md shadow-amber-500/5' : 'bg-card border border-muted hover:shadow-md transition-shadow'
+                              existing ? 'bg-warning/10 border border-amber-200 shadow-md shadow-amber-500/5' : 'bg-card border border-muted hover:shadow-md transition-shadow'
                             )}>
                               <CardContent className="p-3 md:p-4 flex items-center justify-between gap-4">
                                 <div className="flex items-center gap-3 min-w-0">
@@ -398,10 +398,10 @@ export default function AttendanceNew() {
                                     <span className="font-bold text-sm truncate text-foreground">{student.name}</span>
                                     {existing && (
                                       <div className="flex items-center gap-2 mt-0.5">
-                                        <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tight border-amber-200 text-amber-700 bg-amber-100 py-0 h-4">
+                                        <Badge variant="outline" className="text-xs font-semibold uppercase tracking-tight border-amber-200 text-warning bg-warning/10 py-0 h-4">
                                           {formatTime(existing.exit_time.substring(0, 5))}
                                         </Badge>
-                                        <span className="text-[10px] text-muted-foreground truncate italic font-medium max-w-[150px]">"{existing.reason}"</span>
+                                        <span className="text-xs text-muted-foreground truncate italic font-medium max-w-[150px]">"{existing.reason}"</span>
                                       </div>
                                     )}
                                   </div>
@@ -414,7 +414,7 @@ export default function AttendanceNew() {
                                         size="icon" 
                                         variant="ghost" 
                                         onClick={() => openEarlyLeaveModal(student)}
-                                        className="h-10 w-10 rounded-xl bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors"
+                                        className="h-10 w-10 rounded-xl bg-warning/10 text-warning hover:bg-amber-200 transition-colors"
                                       >
                                         <Edit2 className="w-4 h-4" />
                                       </Button>
@@ -422,7 +422,7 @@ export default function AttendanceNew() {
                                         size="icon" 
                                         variant="ghost" 
                                         onClick={() => deleteEarlyLeave(existing.id)}
-                                        className="h-10 w-10 rounded-xl bg-red-100 text-red-700 hover:bg-red-200 transition-colors"
+                                        className="h-10 w-10 rounded-xl bg-destructive/10 text-destructive hover:bg-red-200 transition-colors"
                                       >
                                         <Trash2 className="w-4 h-4" />
                                       </Button>
@@ -432,7 +432,7 @@ export default function AttendanceNew() {
                                       variant="outline"
                                       size="sm"
                                       onClick={() => openEarlyLeaveModal(student)}
-                                      className="h-10 px-4 rounded-xl font-black uppercase tracking-widest text-[10px] border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100 transition-all active:scale-95"
+                                      className="h-10 px-4 rounded-xl font-semibold text-xs border-amber-200 text-warning bg-warning/10 hover:bg-warning/10 transition-all active:scale-95"
                                     >
                                       Mark Early Leave
                                     </Button>
@@ -501,9 +501,9 @@ export default function AttendanceNew() {
       
       {/* Early Leave Modal */}
       <Dialog open={isEarlyLeaveModalOpen} onOpenChange={setIsEarlyLeaveModalOpen}>
-        <DialogContent className="sm:max-w-[425px] rounded-3xl p-6">
+        <DialogContent className="sm:max-w-[425px] rounded-2xl p-6">
           <DialogHeader>
-            <DialogTitle className="text-xl font-black uppercase tracking-tight flex items-center gap-2">
+            <DialogTitle className="text-xl font-semibold uppercase tracking-tight flex items-center gap-2">
               <LogOut className="w-5 h-5 text-amber-500" />
               Early Leave
             </DialogTitle>
@@ -513,7 +513,7 @@ export default function AttendanceNew() {
           </DialogHeader>
           <div className="grid gap-6 py-4">
             <div className="space-y-2">
-              <Label htmlFor="exit-time" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+              <Label htmlFor="exit-time" className="text-xs font-semibold text-muted-foreground ml-1">
                 Exit Time
               </Label>
               <div className="relative">
@@ -528,7 +528,7 @@ export default function AttendanceNew() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="reason" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+              <Label htmlFor="reason" className="text-xs font-semibold text-muted-foreground ml-1">
                 Reason for Leaving
               </Label>
               <Textarea
@@ -541,10 +541,10 @@ export default function AttendanceNew() {
             </div>
           </div>
           <DialogFooter className="flex-col sm:flex-row gap-2 pt-2">
-            <Button variant="outline" onClick={() => setIsEarlyLeaveModalOpen(false)} className="rounded-xl h-12 font-bold uppercase tracking-widest text-xs flex-1">
+            <Button variant="outline" onClick={() => setIsEarlyLeaveModalOpen(false)} className="rounded-xl h-12 font-bold font-medium text-xs flex-1">
               Cancel
             </Button>
-            <Button onClick={handleMarkEarlyLeave} className="rounded-xl h-12 font-black uppercase tracking-widest text-xs flex-1 bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-500/20">
+            <Button onClick={handleMarkEarlyLeave} className="rounded-xl h-12 font-semibold text-xs flex-1 bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-500/20">
               {isEditingEarlyLeave ? 'Update Record' : 'Save Record'}
             </Button>
           </DialogFooter>
@@ -553,22 +553,22 @@ export default function AttendanceNew() {
 
       {/* Confirmation Dialog */}
       <AlertDialog open={isEarlyLeaveConfirmOpen} onOpenChange={setIsEarlyLeaveConfirmOpen}>
-        <AlertDialogContent className="rounded-3xl p-6">
+        <AlertDialogContent className="rounded-2xl p-6">
           <AlertDialogHeader>
-            <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mb-4">
-              <AlertCircle className="w-6 h-6 text-amber-600" />
+            <div className="w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center mb-4">
+              <AlertCircle className="w-6 h-6 text-warning" />
             </div>
-            <AlertDialogTitle className="text-xl font-black uppercase tracking-tight">Confirm Early Leave</AlertDialogTitle>
+            <AlertDialogTitle className="text-xl font-semibold uppercase tracking-tight">Confirm Early Leave</AlertDialogTitle>
             <AlertDialogDescription className="font-medium text-muted-foreground leading-relaxed">
               Are you sure you want to mark <span className="text-foreground font-bold">{selectedStudentForEarlyLeave?.name}</span> as Early Leave for today? 
               This will be recorded formally in the system.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 mt-4">
-            <AlertDialogCancel className="rounded-xl h-12 font-bold uppercase tracking-widest text-xs flex-1">Go Back</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-xl h-12 font-bold font-medium text-xs flex-1">Go Back</AlertDialogCancel>
             <AlertDialogAction 
               onClick={confirmEarlyLeave}
-              className="rounded-xl h-12 font-black uppercase tracking-widest text-xs flex-1 bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-500/20 border-none"
+              className="rounded-xl h-12 font-semibold text-xs flex-1 bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-500/20 border-none"
             >
               Confirm & Save
             </AlertDialogAction>

@@ -525,6 +525,33 @@ export const DOCUMENT_PLACEHOLDERS: PlaceholderMetadata[] = [
     fallback: '0.00',
     source: 'FeeReceiptData.grand_total',
   },
+  {
+    key: '{{fee_period_type}}',
+    label: 'Fee Period Type',
+    category: 'Fee Receipt Data',
+    dataType: 'String',
+    description: 'Fee period type: Monthly, Annual, Combined, Session, Extra.',
+    fallback: '',
+    source: 'FeeReceiptData.period_type',
+  },
+  {
+    key: '{{fee_period}}',
+    label: 'Fee Period',
+    category: 'Fee Receipt Data',
+    dataType: 'String',
+    description: 'Exact fee period label, e.g. April 2026 or April-June 2026.',
+    fallback: '',
+    source: 'FeeReceiptData.period_value',
+  },
+  {
+    key: '{{fee_period_months}}',
+    label: 'Fee Period Months',
+    category: 'Fee Receipt Data',
+    dataType: 'String',
+    description: 'List of months covered by the fee payment.',
+    fallback: '',
+    source: 'FeeReceiptData.period_months',
+  },
 
   // ─── General System ───────────────────────────────────────────────────────
   {

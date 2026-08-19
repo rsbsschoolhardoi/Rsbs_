@@ -121,16 +121,16 @@ function CopyButton({ value }: { value: string }) {
   };
   return (
     <Button type="button" variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={copy}>
-      {copied ? <CheckCircle2 className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
+      {copied ? <CheckCircle2 className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
     </Button>
   );
 }
 
 function StatusBadge({ status }: { status: StatusType }) {
   const map: Record<StatusType, { label: string; icon: React.ReactNode; cls: string }> = {
-    active:       { label: 'Connected',      icon: <Wifi className="w-3 h-3" />,         cls: 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400' },
+    active:       { label: 'Connected',      icon: <Wifi className="w-3 h-3" />,         cls: 'bg-success/10 text-success border-green-200 dark:bg-green-900/30 dark:text-green-400' },
     warning:      { label: 'Not Tested',     icon: <AlertCircle className="w-3 h-3" />,  cls: 'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400' },
-    error:        { label: 'Error',          icon: <WifiOff className="w-3 h-3" />,      cls: 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400' },
+    error:        { label: 'Error',          icon: <WifiOff className="w-3 h-3" />,      cls: 'bg-destructive/10 text-destructive border-red-200 dark:bg-red-900/30 dark:text-red-400' },
     unconfigured: { label: 'Not Configured', icon: <PlugZap className="w-3 h-3" />,      cls: 'bg-muted text-muted-foreground border-border' },
   };
   const { label, icon, cls } = map[status];
@@ -518,11 +518,11 @@ export default function LoginIntegration() {
 
               <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-muted/30">
                 <div>
-                  <div className="text-xs text-muted-foreground uppercase tracking-wider font-medium mb-1">Integration Status</div>
+                  <div className="text-xs text-muted-foreground font-medium font-medium mb-1">Integration Status</div>
                   <StatusBadge status={status} />
                 </div>
                 <div className="text-right">
-                  <div className="text-xs text-muted-foreground uppercase tracking-wider font-medium mb-1">Health</div>
+                  <div className="text-xs text-muted-foreground font-medium font-medium mb-1">Health</div>
                   <div className="flex items-center gap-2">
                     <Progress value={status === 'active' ? 100 : status === 'warning' ? 50 : 0} className="w-20 h-1.5" />
                     <span className="text-xs font-semibold text-foreground">
@@ -535,14 +535,14 @@ export default function LoginIntegration() {
               <div className="p-4 rounded-xl border border-border bg-muted/30 sm:col-span-2">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <div>
-                    <div className="text-xs text-muted-foreground uppercase tracking-wider font-medium mb-1">Last Connection Test</div>
+                    <div className="text-xs text-muted-foreground font-medium font-medium mb-1">Last Connection Test</div>
                     <p className="text-sm font-medium text-foreground">
                       {form.last_test_timestamp
                         ? new Date(form.last_test_timestamp).toLocaleString()
                         : 'Never tested'}
                     </p>
                     {form.last_test_result && form.last_test_result !== 'success' && (
-                      <p className="text-xs text-red-600 mt-0.5 line-clamp-1">{form.last_test_result}</p>
+                      <p className="text-xs text-destructive mt-0.5 line-clamp-1">{form.last_test_result}</p>
                     )}
                   </div>
                   <Button type="button" variant="outline" size="sm" onClick={handleTestConnection} disabled={testing} className="shrink-0">
@@ -637,7 +637,7 @@ export default function LoginIntegration() {
                   <Button type="button" variant="ghost" size="icon" className="h-9 w-9 shrink-0"
                     onClick={() => setRedirectEditMode(v => !v)}
                   >
-                    {redirectEditMode ? <Save className="w-3.5 h-3.5 text-green-600" /> : <Edit2 className="w-3.5 h-3.5" />}
+                    {redirectEditMode ? <Save className="w-3.5 h-3.5 text-success" /> : <Edit2 className="w-3.5 h-3.5" />}
                   </Button>
                 </div>
                 {!redirectEditMode && <p className="text-xs text-muted-foreground">Read-only. Click the edit icon to modify.</p>}
@@ -869,7 +869,7 @@ export default function LoginIntegration() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 {testResult?.success
-                  ? <CheckCircle2 className="w-5 h-5 text-green-600" />
+                  ? <CheckCircle2 className="w-5 h-5 text-success" />
                   : <AlertCircle className="w-5 h-5 text-destructive" />}
                 Connection Test Result
               </DialogTitle>

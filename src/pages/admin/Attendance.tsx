@@ -14,19 +14,19 @@ export default function AttendancePage() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
         <div className="flex items-center justify-between shrink-0 mb-4 bg-muted/30 p-1 rounded-2xl w-fit">
           <TabsList className="grid grid-cols-4 h-10 rounded-xl bg-transparent gap-1">
-            <TabsTrigger value="mark" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold text-xs uppercase tracking-widest px-6 transition-all">
+            <TabsTrigger value="mark" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold text-xs font-medium px-6 transition-all">
               <CalendarIcon className="w-3.5 h-3.5 mr-2" />
               Mark Attendance
             </TabsTrigger>
-            <TabsTrigger value="history" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold text-xs uppercase tracking-widest px-6 transition-all">
+            <TabsTrigger value="history" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold text-xs font-medium px-6 transition-all">
               <History className="w-3.5 h-3.5 mr-2" />
               History Reports
             </TabsTrigger>
-            <TabsTrigger value="settings" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold text-xs uppercase tracking-widest px-6 transition-all">
+            <TabsTrigger value="settings" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold text-xs font-medium px-6 transition-all">
               <Settings className="w-3.5 h-3.5 mr-2" />
               Settings
             </TabsTrigger>
-            <TabsTrigger value="api" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold text-xs uppercase tracking-widest px-6 transition-all">
+            <TabsTrigger value="api" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold text-xs font-medium px-6 transition-all">
               <Send className="w-3.5 h-3.5 mr-2" />
               API Activity
             </TabsTrigger>

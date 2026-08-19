@@ -116,7 +116,7 @@ export default function SystemBackup() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-black uppercase tracking-tight text-primary flex items-center gap-3">
+          <h1 className="text-3xl font-semibold uppercase tracking-tight text-primary flex items-center gap-3">
             <Database className="w-8 h-8" />
             System Full Data Backup
           </h1>
@@ -125,7 +125,7 @@ export default function SystemBackup() {
           </p>
         </div>
         {lastBackup && (
-          <Badge variant="outline" className="h-10 px-4 rounded-xl border-green-200 bg-green-50 text-green-700 font-bold flex items-center gap-2">
+          <Badge variant="outline" className="h-10 px-4 rounded-xl border-green-200 bg-success/10 text-success font-bold flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4" />
             Last Backup: {lastBackup.date}
           </Badge>
@@ -133,22 +133,22 @@ export default function SystemBackup() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2 rounded-3xl border-none shadow-xl shadow-primary/5 bg-card/50 backdrop-blur-sm overflow-hidden border border-muted/50">
+        <Card className="lg:col-span-2 rounded-2xl border-none shadow-xl shadow-primary/5 bg-card/50 backdrop-blur-sm overflow-hidden border border-muted/50">
           <CardHeader className="pb-4">
-            <CardTitle className="text-xl font-black uppercase tracking-tight flex items-center gap-2">
+            <CardTitle className="text-xl font-semibold uppercase tracking-tight flex items-center gap-2">
               <Download className="w-5 h-5 text-primary" />
               Full System Restoration Engine
             </CardTitle>
-            <CardDescription className="font-medium text-muted-foreground uppercase text-[10px] tracking-widest">
+            <CardDescription className="font-medium text-muted-foreground uppercase text-xs tracking-widest">
               Live data extraction for schema and all database records
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-8">
-            <div className="bg-amber-100/50 dark:bg-amber-900/20 border border-amber-200/50 dark:border-amber-900/30 p-6 rounded-3xl flex items-start gap-4">
-              <AlertTriangle className="w-6 h-6 text-amber-600 mt-1 shrink-0" />
+            <div className="bg-warning/10/50 dark:bg-amber-900/20 border border-amber-200/50 dark:border-amber-900/30 p-6 rounded-2xl flex items-start gap-4">
+              <AlertTriangle className="w-6 h-6 text-warning mt-1 shrink-0" />
               <div className="space-y-2">
-                <h4 className="font-black uppercase tracking-tight text-amber-800 dark:text-amber-400">Security Protocol Warning</h4>
-                <p className="text-sm font-medium text-amber-700/80 dark:text-amber-400/80 leading-relaxed">
+                <h4 className="font-semibold uppercase tracking-tight text-amber-800 dark:text-amber-400">Security Protocol Warning</h4>
+                <p className="text-sm font-medium text-warning/80 dark:text-amber-400/80 leading-relaxed">
                   Warning: This action will generate a complete snapshot of all system data. 
                   The resulting file is highly sensitive as it contains all records, user profiles, 
                   and relational data. Ensure the output ZIP is stored in a secure, encrypted environment.
@@ -160,8 +160,8 @@ export default function SystemBackup() {
               {loading && (
                 <div className="space-y-3">
                   <div className="flex justify-between items-end">
-                    <span className="text-xs font-black uppercase tracking-widest text-primary animate-pulse">{status}</span>
-                    <span className="text-xs font-black tracking-widest text-primary">{progress}%</span>
+                    <span className="text-xs font-semibold text-primary animate-pulse">{status}</span>
+                    <span className="text-xs font-semibold tracking-widest text-primary">{progress}%</span>
                   </div>
                   <Progress value={progress} className="h-2 rounded-full" />
                 </div>
@@ -170,7 +170,7 @@ export default function SystemBackup() {
               <Button 
                 onClick={generateBackup} 
                 disabled={loading}
-                className="w-full h-16 rounded-2xl text-lg font-black uppercase tracking-widest shadow-xl shadow-primary/20 transition-all active:scale-[0.98]"
+                className="w-full h-16 rounded-2xl text-lg font-semibold shadow-xl shadow-primary/20 transition-all active:scale-[0.98]"
               >
                 {loading ? (
                   <>
@@ -189,9 +189,9 @@ export default function SystemBackup() {
         </Card>
 
         <div className="space-y-6">
-          <Card className="rounded-3xl border-none shadow-xl shadow-primary/5 bg-card/50 border border-muted/50">
+          <Card className="rounded-2xl border-none shadow-xl shadow-primary/5 bg-card/50 border border-muted/50">
             <CardHeader>
-              <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground">Scope Specifications</CardTitle>
+              <CardTitle className="text-sm font-semibold text-muted-foreground">Scope Specifications</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {[
@@ -204,8 +204,8 @@ export default function SystemBackup() {
                 <div key={i} className="flex gap-3">
                   <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5" />
                   <div>
-                    <p className="text-xs font-black uppercase tracking-tight text-foreground">{item.label}</p>
-                    <p className="text-[10px] font-medium text-muted-foreground leading-tight">{item.desc}</p>
+                    <p className="text-xs font-semibold uppercase tracking-tight text-foreground">{item.label}</p>
+                    <p className="text-xs font-medium text-muted-foreground leading-tight">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -213,16 +213,16 @@ export default function SystemBackup() {
           </Card>
 
           {lastBackup && (
-            <Card className="rounded-3xl border-none shadow-xl shadow-primary/5 bg-primary text-primary-foreground p-6">
+            <Card className="rounded-2xl border-none shadow-xl shadow-primary/5 bg-primary text-primary-foreground p-6">
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="bg-white/20 p-2 rounded-xl">
                     <CheckCircle2 className="w-5 h-5 text-white" />
                   </div>
-                  <p className="text-sm font-black uppercase tracking-widest">Backup Ready</p>
+                  <p className="text-sm font-semibold">Backup Ready</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] uppercase font-bold text-white/70 tracking-widest">File Info</p>
+                  <p className="text-xs uppercase font-bold text-white/70 tracking-widest">File Info</p>
                   <p className="text-xs font-bold truncate">{lastBackup.name}</p>
                   <p className="text-xs font-bold">{lastBackup.size}</p>
                 </div>

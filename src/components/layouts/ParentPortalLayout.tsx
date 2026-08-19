@@ -68,7 +68,7 @@ function ParentLayoutContent() {
                 )}
               >
                 <item.icon className={cn("w-5 h-5 md:w-6 md:h-6", isActive && "stroke-[2.5px]")} />
-                <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider">{item.label}</span>
+                <span className="text-xs md:text-xs font-bold font-medium">{item.label}</span>
                 {isActive && (
                   <motion.div 
                     layoutId="parent-bottom-nav-indicator"

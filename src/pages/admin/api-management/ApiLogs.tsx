@@ -42,9 +42,9 @@ export default function ApiLogs() {
   }, []);
 
   const getStatusColor = (code: number) => {
-    if (code >= 200 && code < 300) return 'bg-green-100 text-green-700';
-    if (code >= 400 && code < 500) return 'bg-amber-100 text-amber-700';
-    return 'bg-red-100 text-red-700';
+    if (code >= 200 && code < 300) return 'bg-success/10 text-success';
+    if (code >= 400 && code < 500) return 'bg-warning/10 text-warning';
+    return 'bg-destructive/10 text-destructive';
   };
 
   return (
@@ -67,17 +67,17 @@ export default function ApiLogs() {
         </Button>
       </div>
 
-      <Card className="border-none shadow-sm rounded-[2.5rem] bg-background border flex flex-col overflow-hidden">
+      <Card className="border-none shadow-sm rounded-2xl bg-background border flex flex-col overflow-hidden">
         <CardContent className="p-0">
           <Table>
             <TableHeader className="bg-muted/30">
               <TableRow className="hover:bg-transparent border-none">
-                <TableHead className="w-[150px] text-[10px] font-bold uppercase tracking-widest h-12 pl-8">Client Key</TableHead>
-                <TableHead className="text-[10px] font-bold uppercase tracking-widest h-12">Endpoint / Path</TableHead>
-                <TableHead className="text-[10px] font-bold uppercase tracking-widest h-12">Method</TableHead>
-                <TableHead className="text-[10px] font-bold uppercase tracking-widest h-12">Status</TableHead>
-                <TableHead className="text-[10px] font-bold uppercase tracking-widest h-12">Source IP</TableHead>
-                <TableHead className="text-right text-[10px] font-bold uppercase tracking-widest h-12 pr-8">Timestamp</TableHead>
+                <TableHead className="w-[150px] text-xs font-bold font-medium h-12 pl-8">Client Key</TableHead>
+                <TableHead className="text-xs font-bold font-medium h-12">Endpoint / Path</TableHead>
+                <TableHead className="text-xs font-bold font-medium h-12">Method</TableHead>
+                <TableHead className="text-xs font-bold font-medium h-12">Status</TableHead>
+                <TableHead className="text-xs font-bold font-medium h-12">Source IP</TableHead>
+                <TableHead className="text-right text-xs font-bold font-medium h-12 pr-8">Timestamp</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -86,7 +86,7 @@ export default function ApiLogs() {
                   <TableCell colSpan={6} className="h-48 text-center">
                     <div className="flex flex-col items-center justify-center gap-4">
                       <Loader2 className="w-8 h-8 animate-spin text-primary/30" />
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Streaming access logs...</p>
+                      <p className="text-xs font-bold font-medium text-muted-foreground">Streaming access logs...</p>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -102,7 +102,7 @@ export default function ApiLogs() {
               ) : (
                 logs.map((log) => (
                   <TableRow key={log.id} className="group hover:bg-muted/10 transition-colors border-none">
-                    <TableCell className="font-black text-[11px] uppercase tracking-wider pl-8">
+                    <TableCell className="font-semibold text-[11px] font-medium pl-8">
                       <div className="flex items-center gap-2">
                         <div className="w-6 h-6 rounded bg-primary/10 flex items-center justify-center text-primary">
                           <CheckCircle2 className="w-3.5 h-3.5" />
@@ -112,19 +112,19 @@ export default function ApiLogs() {
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-col">
-                        <span className="text-sm font-black text-foreground font-mono">{log.path}</span>
-                        <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-tighter truncate max-w-[200px]">
+                        <span className="text-sm font-semibold text-foreground font-mono">{log.path}</span>
+                        <span className="text-xs text-muted-foreground font-bold uppercase tracking-tighter truncate max-w-[200px]">
                           {log.response_summary || 'No details available'}
                         </span>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest border-primary/20 text-primary bg-primary/5">
+                      <Badge variant="outline" className="text-xs font-semibold border-primary/20 text-primary bg-primary/5">
                         {log.method}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge className={`text-[10px] font-bold uppercase rounded-lg border-none ${getStatusColor(log.status_code)}`}>
+                      <Badge className={`text-xs font-bold uppercase rounded-lg border-none ${getStatusColor(log.status_code)}`}>
                         {log.status_code}
                       </Badge>
                     </TableCell>
@@ -137,7 +137,7 @@ export default function ApiLogs() {
                     <TableCell className="text-right pr-8">
                       <div className="flex flex-col items-end">
                         <span className="text-xs font-bold text-foreground">{new Date(log.created_at).toLocaleDateString()}</span>
-                        <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">
+                        <span className="text-xs text-muted-foreground font-medium uppercase tracking-tighter">
                           {new Date(log.created_at).toLocaleTimeString()}
                         </span>
                       </div>

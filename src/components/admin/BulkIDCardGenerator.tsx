@@ -223,7 +223,7 @@ export default function BulkIDCardGenerator({
         </DialogHeader>
 
         {(!frontTemplate || !backTemplate) && (
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-sm">
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-warning/10 border border-amber-200 text-warning text-sm">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>ID Card front/back templates are not selected. Configure them in the Certificate Generator page.</span>
           </div>

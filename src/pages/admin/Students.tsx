@@ -530,7 +530,7 @@ export default function Students() {
                   {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-20 w-full bg-muted rounded-2xl" />)}
                 </div>
               ) : filteredStudents.length === 0 ? (
-                <div className="text-center py-20 bg-muted/20 rounded-3xl border border-dashed">
+                <div className="text-center py-20 bg-muted/20 rounded-2xl border border-dashed">
                   <p className="text-muted-foreground">No students found.</p>
                 </div>
               ) : (
@@ -575,15 +575,15 @@ export default function Students() {
                                 <ProfileTagBadge tag={student.profile_tag} size="sm" />
                               </div>
                               <div className="flex flex-col gap-0.5 mt-0.5">
-                                <span className="text-[9px] text-muted-foreground uppercase font-mono tracking-tighter leading-none">L: {student.login_id}</span>
-                                <span className="text-[9px] text-primary/80 uppercase font-mono font-bold tracking-tighter leading-none">V: {student.verification_id}</span>
+                                <span className="text-xs text-muted-foreground uppercase font-mono tracking-tighter leading-none">L: {student.login_id}</span>
+                                <span className="text-xs text-primary/80 uppercase font-mono font-bold tracking-tighter leading-none">V: {student.verification_id}</span>
                               </div>
                               <div className="flex flex-wrap gap-1 mt-1">
-                                <Badge variant="outline" className="text-[9px] h-4 px-1 w-fit border-primary/20 text-primary bg-primary/5">
+                                <Badge variant="outline" className="text-xs h-4 px-1 w-fit border-primary/20 text-primary bg-primary/5">
                                   {student.student_type}
                                 </Badge>
                                 {student.linked_parents && student.linked_parents.length > 0 && (
-                                  <Badge variant="secondary" className="text-[9px] h-4 px-1 w-fit bg-blue-50 text-blue-700 hover:bg-blue-50 border-none">
+                                  <Badge variant="secondary" className="text-xs h-4 px-1 w-fit bg-info/10 text-info hover:bg-info/10 border-none">
                                     {student.linked_parents[0].full_name} ({student.linked_parents[0].parent_id})
                                   </Badge>
                                 )}
@@ -596,10 +596,10 @@ export default function Students() {
                         <TableCell className="font-mono text-xs">{student.login_id}</TableCell>
                         <TableCell>
                           <Badge className={cn(
-                            "text-[10px] px-2 py-0 h-5",
-                            student.fee_status === 'Paid' ? 'bg-green-100 text-green-700 hover:bg-green-100 border-none' : 
-                            student.fee_status === 'Pending' ? 'bg-amber-100 text-amber-700 hover:bg-amber-100 border-none' : 
-                            'bg-red-100 text-red-700 hover:bg-red-100 border-none'
+                            "text-xs px-2 py-0 h-5",
+                            student.fee_status === 'Paid' ? 'bg-success/10 text-success hover:bg-success/10 border-none' : 
+                            student.fee_status === 'Pending' ? 'bg-warning/10 text-warning hover:bg-warning/10 border-none' : 
+                            'bg-destructive/10 text-destructive hover:bg-destructive/10 border-none'
                           )}>
                             {student.fee_status}
                           </Badge>
@@ -607,13 +607,13 @@ export default function Students() {
                         <TableCell className="text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="outline" size="sm" className="h-8 px-2 font-black flex items-center gap-1 bg-background hover:bg-muted transition-all border-muted-foreground/20">
+                              <Button variant="outline" size="sm" className="h-8 px-2 font-semibold flex items-center gap-1 bg-background hover:bg-muted transition-all border-muted-foreground/20">
                                 Manage
                                 <ChevronDown className="w-3 h-3 text-muted-foreground" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-52 rounded-xl p-1.5 shadow-xl border-muted-foreground/10 animate-in fade-in-0 zoom-in-95 data-[side=bottom]:slide-in-from-top-2">
-                              <DropdownMenuLabel className="px-3 py-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Management Options</DropdownMenuLabel>
+                              <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold text-muted-foreground/70">Management Options</DropdownMenuLabel>
                               <DropdownMenuSeparator className="bg-muted" />
                               <DropdownMenuItem
                                 className="rounded-lg px-3 py-2 text-sm font-bold flex items-center gap-2 cursor-pointer transition-colors"
@@ -782,7 +782,7 @@ export default function Students() {
                       <div className="flex items-center justify-between">
                         <FormLabel>Email Address (Required/Unique)</FormLabel>
                         {!isSecondaryLoginEnabled && (
-                          <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground bg-muted/20">
+                          <Badge variant="outline" className="text-xs font-bold font-medium text-muted-foreground bg-muted/20">
                             Secondary Login: Disabled
                           </Badge>
                         )}
@@ -794,10 +794,10 @@ export default function Students() {
                 />
 
                 {!editingStudent && (
-                  <div className="p-5 rounded-3xl bg-primary/5 border border-primary/10 col-span-full space-y-6">
+                  <div className="p-5 rounded-2xl bg-primary/5 border border-primary/10 col-span-full space-y-6">
                     <div>
-                      <h3 className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-1">Guardian Information</h3>
-                      <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">Link an existing parent or create a new profile</p>
+                      <h3 className="text-xs font-semibold text-primary mb-1">Guardian Information</h3>
+                      <p className="text-xs text-muted-foreground font-medium font-medium">Link an existing parent or create a new profile</p>
                     </div>
 
                     <FormField
@@ -833,7 +833,7 @@ export default function Students() {
                           name="existing_parent_id"
                           render={({ field }) => (
                             <FormItem className="flex flex-col">
-                              <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Search Existing Parent (Name or ID)</FormLabel>
+                              <FormLabel className="text-xs font-semibold text-muted-foreground">Search Existing Parent (Name or ID)</FormLabel>
                               <Popover>
                                 <PopoverTrigger asChild>
                                   <Button
@@ -873,7 +873,7 @@ export default function Students() {
                                           />
                                           <div className="flex flex-col">
                                             <span className="font-bold text-sm">{parent.full_name}</span>
-                                            <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">{parent.parent_id}</span>
+                                            <span className="text-xs text-muted-foreground uppercase font-semibold tracking-widest">{parent.parent_id}</span>
                                           </div>
                                         </CommandItem>
                                       ))}
@@ -888,18 +888,18 @@ export default function Students() {
 
                         {form.watch('existing_parent_id') && (
                           <div className="bg-white/50 border border-dashed rounded-2xl p-4 space-y-2">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Selected Parent Details</p>
+                            <p className="text-xs font-semibold text-muted-foreground">Selected Parent Details</p>
                             {(() => {
                               const p = parents.find(parent => parent.id === form.watch('existing_parent_id'));
                               return p ? (
                                 <div className="grid grid-cols-2 gap-4">
                                   <div>
                                     <p className="text-xs font-bold">{p.full_name}</p>
-                                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Name</p>
+                                    <p className="text-xs text-muted-foreground font-medium">Name</p>
                                   </div>
                                   <div>
                                     <p className="text-xs font-bold">{p.phone || 'N/A'}</p>
-                                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Phone</p>
+                                    <p className="text-xs text-muted-foreground font-medium">Phone</p>
                                   </div>
                                 </div>
                               ) : null;
@@ -912,7 +912,7 @@ export default function Students() {
                           name="parent_relationship"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Relationship</FormLabel>
+                              <FormLabel className="text-xs font-semibold text-muted-foreground">Relationship</FormLabel>
                               <Select onValueChange={field.onChange} value={field.value}>
                                 <FormControl>
                                   <SelectTrigger className="h-12 rounded-2xl bg-white border-muted font-bold">
@@ -940,7 +940,7 @@ export default function Students() {
                           name="parent_name"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">New Parent Name</FormLabel>
+                              <FormLabel className="text-xs font-semibold text-muted-foreground">New Parent Name</FormLabel>
                               <FormControl><Input placeholder="Full Name" className="h-12 rounded-2xl bg-white border-muted font-bold" {...field} /></FormControl>
                               <FormMessage />
                             </FormItem>
@@ -951,7 +951,7 @@ export default function Students() {
                           name="parent_phone"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">New Parent Phone</FormLabel>
+                              <FormLabel className="text-xs font-semibold text-muted-foreground">New Parent Phone</FormLabel>
                               <FormControl><Input placeholder="+91 XXXXX XXXXX" className="h-12 rounded-2xl bg-white border-muted font-bold" {...field} /></FormControl>
                               <FormMessage />
                             </FormItem>
@@ -962,7 +962,7 @@ export default function Students() {
                           name="parent_relationship"
                           render={({ field }) => (
                             <FormItem className="col-span-full">
-                              <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Relationship</FormLabel>
+                              <FormLabel className="text-xs font-semibold text-muted-foreground">Relationship</FormLabel>
                               <Select onValueChange={field.onChange} value={field.value}>
                                 <FormControl>
                                   <SelectTrigger className="h-12 rounded-2xl bg-white border-muted font-bold">
@@ -991,14 +991,14 @@ export default function Students() {
                   <div className="space-y-2 col-span-full border-b pb-4 mb-2 bg-primary/5 p-4 rounded-2xl">
                     <Label className="text-primary font-bold">Verification Record ID</Label>
                     <div className="flex items-center gap-4">
-                      <div className="bg-white border-2 border-primary/20 rounded-xl px-6 py-3 font-mono text-primary font-black tracking-widest text-xl shadow-sm">
+                      <div className="bg-white border-2 border-primary/20 rounded-xl px-6 py-3 font-mono text-primary font-semibold tracking-widest text-xl shadow-sm">
                         {editingStudent.verification_id}
                       </div>
                       <div className="flex-1 space-y-1">
                         <p className="text-xs text-muted-foreground font-medium leading-relaxed">
                           Official immutable record identifier. Use this for lookups, verification portal searches, and QR generation.
                         </p>
-                        <p className="text-[10px] text-destructive uppercase font-bold tracking-widest">
+                        <p className="text-xs text-destructive uppercase font-bold tracking-widest">
                           * Cannot be used for authentication
                         </p>
                       </div>
@@ -1051,7 +1051,7 @@ export default function Students() {
                     <FormItem>
                       <FormLabel>Initial PIN (Optional)</FormLabel>
                       <FormControl><Input type="password" maxLength={4} placeholder="4-digit PIN" {...field} onChange={(e) => field.onChange(e.target.value.replace(/[^0-9]/g, ''))} /></FormControl>
-                      <FormDescription className="text-[10px]">Student must change this on next login.</FormDescription>
+                      <FormDescription className="text-xs">Student must change this on next login.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -1349,12 +1349,12 @@ export default function Students() {
                 {editingStudent && (
                   <div className="col-span-full border rounded-2xl p-6 bg-muted/20 flex flex-col items-center gap-4 text-center">
                     <div className="space-y-1">
-                       <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary flex items-center justify-center gap-2">
+                       <h3 className="text-xs font-semibold text-primary flex items-center justify-center gap-2">
                          <QrCode className="w-4 h-4" /> Student Verification Code
                        </h3>
                        <p className="text-xs text-muted-foreground font-medium italic">Scan to verify student status securely.</p>
                     </div>
-                    <div className="bg-white p-4 rounded-[2rem] shadow-inner border-4 border-muted/30">
+                    <div className="bg-white p-4 rounded-2xl shadow-inner border-4 border-muted/30">
                        <QRCodeDataUrl 
                          text={`${window.location.origin}/verify?id=${editingStudent.verification_id}`} 
                          width={160}
@@ -1375,7 +1375,7 @@ export default function Students() {
       </Dialog>
 
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border-none shadow-2xl p-0 overflow-hidden">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border-none shadow-2xl p-0 overflow-hidden">
           <div className="bg-gradient-to-br from-primary/10 via-background to-background p-6">
             <DialogHeader className="mb-6">
               <div className="flex items-center gap-3">
@@ -1383,7 +1383,7 @@ export default function Students() {
                   <Eye className="w-5 h-5 text-blue-500" />
                 </div>
                 <div>
-                  <DialogTitle className="text-xl font-black text-foreground">Student Profile</DialogTitle>
+                  <DialogTitle className="text-xl font-semibold text-foreground">Student Profile</DialogTitle>
                   <p className="text-xs text-muted-foreground font-medium">Complete record information (Read-Only)</p>
                 </div>
               </div>
@@ -1391,20 +1391,20 @@ export default function Students() {
 
             {viewingStudent && (
               <div className="space-y-6">
-                <div className="flex items-center gap-5 p-5 rounded-3xl bg-white/50 dark:bg-black/20 border border-white dark:border-white/5 shadow-sm backdrop-blur-sm">
+                <div className="flex items-center gap-5 p-5 rounded-2xl bg-white/50 dark:bg-black/20 border border-white dark:border-white/5 shadow-sm backdrop-blur-sm">
                   <Avatar className="h-20 w-20 border-4 border-white dark:border-black shadow-lg">
                     <AvatarImage src={viewingStudent.profile_picture_url || ''} />
-                    <AvatarFallback className="text-2xl font-black bg-primary text-primary-foreground">{viewingStudent.name[0]}</AvatarFallback>
+                    <AvatarFallback className="text-2xl font-semibold bg-primary text-primary-foreground">{viewingStudent.name[0]}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <h3 className="text-2xl font-black text-foreground leading-tight">
+                    <h3 className="text-2xl font-semibold text-foreground leading-tight">
                       {viewingStudent.prefix && <span>{viewingStudent.prefix} </span>}
                       {viewingStudent.name}
                     </h3>
                     <div className="flex flex-wrap gap-2 mt-2">
-                      <Badge className="bg-primary/10 text-primary border-none font-bold rounded-lg px-2.5 py-1 uppercase text-[10px] tracking-wider">{viewingStudent.student_type}</Badge>
+                      <Badge className="bg-primary/10 text-primary border-none font-bold rounded-lg px-2.5 py-1 uppercase text-xs tracking-wider">{viewingStudent.student_type}</Badge>
                       <ProfileTagBadge tag={viewingStudent.profile_tag} />
-                      <Badge variant="outline" className="rounded-lg font-mono text-[10px] border-muted-foreground/20">{viewingStudent.login_id}</Badge>
+                      <Badge variant="outline" className="rounded-lg font-mono text-xs border-muted-foreground/20">{viewingStudent.login_id}</Badge>
                     </div>
                   </div>
                 </div>
@@ -1426,7 +1426,7 @@ export default function Students() {
                     { label: 'Promotion', value: viewingStudent.promotion_date || 'N/A' },
                   ].map((item, i) => (
                     <div key={i} className="p-3.5 rounded-2xl border border-muted-foreground/5 bg-white/40 dark:bg-black/10 backdrop-blur-sm">
-                      <Label className="text-[10px] uppercase tracking-widest text-muted-foreground/70 font-black block mb-1">{item.label}</Label>
+                      <Label className="text-xs font-medium text-muted-foreground/70 font-semibold block mb-1">{item.label}</Label>
                       <p className={cn("text-sm font-bold text-foreground truncate", item.mono && "font-mono text-[11px]")}>{item.value}</p>
                     </div>
                   ))}
@@ -1434,20 +1434,20 @@ export default function Students() {
 
                 {viewingStudent.linked_parents && viewingStudent.linked_parents.length > 0 && (
                   <div className="space-y-3">
-                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground/70 font-black px-1 block">Family Information</Label>
+                    <Label className="text-xs font-medium text-muted-foreground/70 font-semibold px-1 block">Family Information</Label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {viewingStudent.linked_parents.map((parent) => (
                         <div key={parent.id} className="p-4 rounded-2xl border border-muted-foreground/5 bg-white/40 dark:bg-black/10 backdrop-blur-sm flex items-center justify-between group transition-all hover:border-primary/20">
                           <div className="flex flex-col">
                             <span className="font-bold text-sm text-foreground">{parent.full_name}</span>
                             <div className="flex items-center gap-1.5 mt-0.5">
-                              <span className="text-[10px] text-muted-foreground font-mono tracking-tighter uppercase leading-none">{parent.parent_id}</span>
-                              <Badge variant="outline" className="text-[9px] h-3.5 px-1 border-primary/20 bg-primary/5 text-primary rounded-md uppercase font-black tracking-[0.05em] scale-90 origin-left">
+                              <span className="text-xs text-muted-foreground font-mono tracking-tighter uppercase leading-none">{parent.parent_id}</span>
+                              <Badge variant="outline" className="text-xs h-3.5 px-1 border-primary/20 bg-primary/5 text-primary rounded-md uppercase font-semibold tracking-[0.05em] scale-90 origin-left">
                                 {(parent as any).relationship || 'Guardian'}
                               </Badge>
                             </div>
                           </div>
-                          <div className="h-8 px-3 rounded-lg bg-primary/5 text-primary text-[10px] font-bold flex items-center">
+                          <div className="h-8 px-3 rounded-lg bg-primary/5 text-primary text-xs font-bold flex items-center">
                             {parent.phone}
                           </div>
                         </div>
@@ -1461,7 +1461,7 @@ export default function Students() {
               <Button 
                 variant="outline" 
                 onClick={() => setIsViewDialogOpen(false)} 
-                className="rounded-xl font-black uppercase text-[10px] tracking-widest h-10 px-6 border-muted-foreground/20 hover:bg-muted transition-all active:scale-95"
+                className="rounded-xl font-semibold uppercase text-xs tracking-widest h-10 px-6 border-muted-foreground/20 hover:bg-muted transition-all active:scale-95"
               >
                 Close Record
               </Button>

@@ -268,7 +268,7 @@ function buildStudentIDCard(): StudioState {
 
   return validateAndFix({
     name: 'Student ID Card', type: 'ID Card',
-    page: { size: 'ID Card', orientation: 'portrait', width: w, height: h },
+    page: { size: 'ID Card', orientation: 'landscape', width: w, height: h },
     headerEnabled: true, bodyEnabled: true, footerEnabled: true,
     showGrid: false, gridSize: 'medium', snapToGrid: false, snapToElements: true,
     elements: [
@@ -341,7 +341,7 @@ function buildTeacherIDCard(): StudioState {
 
   return validateAndFix({
     name: 'Teacher ID Card', type: 'ID Card',
-    page: { size: 'ID Card', orientation: 'portrait', width: w, height: h },
+    page: { size: 'ID Card', orientation: 'landscape', width: w, height: h },
     headerEnabled: true, bodyEnabled: true, footerEnabled: true,
     showGrid: false, gridSize: 'medium', snapToGrid: false, snapToElements: true,
     elements: [
@@ -405,7 +405,7 @@ function buildStaffIDCard(): StudioState {
 
   return validateAndFix({
     name: 'Staff ID Card', type: 'ID Card',
-    page: { size: 'ID Card', orientation: 'portrait', width: w, height: h },
+    page: { size: 'ID Card', orientation: 'landscape', width: w, height: h },
     headerEnabled: true, bodyEnabled: true, footerEnabled: true,
     showGrid: false, gridSize: 'medium', snapToGrid: false, snapToElements: true,
     elements: [
@@ -469,7 +469,7 @@ function buildEmployeeID(): StudioState {
 
   return validateAndFix({
     name: 'Employee ID', type: 'ID Card',
-    page: { size: 'ID Card', orientation: 'portrait', width: w, height: h },
+    page: { size: 'ID Card', orientation: 'landscape', width: w, height: h },
     headerEnabled: true, bodyEnabled: true, footerEnabled: true,
     showGrid: false, gridSize: 'medium', snapToGrid: false, snapToElements: true,
     elements: [
@@ -533,7 +533,7 @@ function buildVisitorPass(): StudioState {
 
   return validateAndFix({
     name: 'Visitor Pass', type: 'ID Card',
-    page: { size: 'ID Card', orientation: 'portrait', width: w, height: h },
+    page: { size: 'ID Card', orientation: 'landscape', width: w, height: h },
     headerEnabled: true, bodyEnabled: true, footerEnabled: true,
     showGrid: false, gridSize: 'medium', snapToGrid: false, snapToElements: true,
     elements: [
@@ -1030,88 +1030,9 @@ function buildAdmitCard(): StudioState {
 // PRESET 12 – FEE RECEIPT (A5)
 // ═══════════════════════════════════════════════════════════════════════════════
 function buildFeeReceipt(): StudioState {
-  const { w, h } = A5;
-  const M = A4_M;
-  const headerBandH = 60;
-  const col1x = M + 8;
-  const col1w = 180;
-  const col2x = col1x + col1w + 4;
-  const col2w = w - col2x - M - 8;
-
-  const row1Y  = headerBandH + 12;
-  const row2Y  = row1Y + RH + RG;
-  const divY   = row2Y + RH + 10;
-  const nameY  = divY + 10;
-  const infoY  = nameY + RH + 4;
-  const thY    = infoY + RH + 14;
-  const thH    = 24;
-  const feeRH  = 26;
-  const nFees  = 5;
-  const totalY = thY + thH + nFees * feeRH + 2;
-  const sigY   = h - M - 70;
-
-  const feeColL = col1x + 4;
-  const feeColR = w - M - 8 - 110;
-  const feeColRW = 106;
-
-  return validateAndFix({
-    name: 'Fee Receipt', type: 'Fee Receipt',
-    page: { size: 'A5', orientation: 'portrait', width: w, height: h },
-    headerEnabled: true, bodyEnabled: true, footerEnabled: true,
-    showGrid: false, gridSize: 'medium', snapToGrid: false, snapToElements: true,
-    elements: [
-      bg('#f0fdf4', w, h),
-      border(w, h, '#16a34a', 2, 4),
-      band(0, 0, w, headerBandH, '#16a34a', 'header', 'Header Band'),
-      logoEl(M, 8, 44, 44, 'header'),
-      ph(M + 50, 10, w - M - 56, 20,
-         '{{school_official_name}}', 'School Official Name', 13, '#ffffff', 'left', 'header'),
-      txt(M + 50, 32, w - M - 56, 14,
-          'Fee Collection Receipt', 9, 'normal', '#bbf7d0', 'left', 'header'),
-      // Receipt header info
-      txt(col1x, row1Y, 100, RH, 'Receipt No:', 10, 'bold', '#374151', 'left', 'body'),
-      ph(col1x + 104, row1Y, col1w - 108, RH,
-         '{{admission_reference_number}}', 'Admission Ref', 10, '#16a34a', 'left', 'body'),
-      txt(col2x, row1Y, 50, RH, 'Date:', 10, 'bold', '#374151', 'left', 'body'),
-      ph(col2x + 54, row1Y, col2w - 58, RH,
-         '{{document_generation_date}}', 'Generation Date', 10, '#374151', 'left', 'body'),
-      txt(col1x, row2Y, 100, RH, 'Session:', 10, 'bold', '#374151', 'left', 'body'),
-      ph(col1x + 104, row2Y, col1w - 108, RH,
-         '{{academic_session}}', 'Academic Session', 10, '#374151', 'left', 'body'),
-      divEl(M + 8, divY, w - (M + 8) * 2, '#bbf7d0', 'body'),
-      ph(col1x, nameY, w - (M + 8) * 2, 20,
-         '{{student_full_name}}', 'Student Full Name', 14, '#1a1a2e', 'left', 'body'),
-      txt(col1x, infoY, 60, RH, 'Class:', 10, 'bold', '#555555', 'left', 'body'),
-      ph(col1x + 64, infoY, 120, RH,
-         '{{student_class}}', 'Student Class', 10, '#374151', 'left', 'body'),
-      txt(col2x, infoY, 60, RH, 'Section:', 10, 'bold', '#555555', 'left', 'body'),
-      ph(col2x + 64, infoY, col2w - 68, RH,
-         '{{student_section}}', 'Student Section', 10, '#374151', 'left', 'body'),
-      // Fee table
-      rect(M + 8, thY, w - (M + 8) * 2, thH,
-           '#16a34a', 'transparent', 0, 4, 'body', 'Table Header'),
-      txt(feeColL, thY + 6, feeColR - feeColL - 4, 13, 'Fee Description', 9, 'bold', '#ffffff', 'left', 'body'),
-      txt(feeColR, thY + 6, feeColRW, 13, 'Amount (₹)', 9, 'bold', '#ffffff', 'right', 'body'),
-      ...Array.from({ length: nFees }, (_, i): StudioElement[] => {
-        const y = thY + thH + i * feeRH;
-        const even = i % 2 === 0;
-        return [
-          rect(M + 8, y, w - (M + 8) * 2, feeRH - 1,
-               even ? '#f0fdf4' : '#dcfce7', '#bbf7d0', 1, 0, 'body', `Fee Row ${i + 1}`),
-          txt(feeColL, y + 6, feeColR - feeColL - 4, 14, `Fee Item ${i + 1}`, 9, 'normal', '#374151', 'left', 'body'),
-          txt(feeColR, y + 6, feeColRW, 14, '0.00', 9, 'normal', '#16a34a', 'right', 'body'),
-        ];
-      }).flat(),
-      // Total row using {{marks_total}} as amount proxy (no fee-specific ph exists)
-      rect(M + 8, totalY, w - (M + 8) * 2, 28, '#166534', 'transparent', 0, 0, 'body', 'Total Row'),
-      txt(feeColL, totalY + 7, feeColR - feeColL - 4, 14, 'TOTAL', 11, 'bold', '#ffffff', 'left', 'body'),
-      ph(feeColR, totalY + 7, feeColRW, 14, '{{marks_obtained}}', 'Amount', 11, '#bbf7d0', 'right', 'body'),
-      sigEl(w - M - 8 - 150, sigY, 150, 40, true, 'footer'),
-      txt(w - M - 8 - 150, sigY + 44, 150, 14, 'Authorised Signatory', 8, 'bold', '#555555', 'center', 'footer'),
-      txt(M + 8, h - M - 20, w - (M + 8) * 2 - 160, 14,
-          'Thank you! This is a computer-generated receipt.', 8, 'normal', '#9ca3af', 'left', 'footer'),
-    ],
-  });
+  // The default Fee Receipt is now the same professional, A4-ready layout as the
+  // Premium preset so the live receipt output always looks polished and readable.
+  return { ...buildPremiumFeeReceipt(), name: 'Fee Receipt' };
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1127,58 +1048,59 @@ function buildPremiumFeeReceipt(): StudioState {
   const GOLD    = '#C9A84C';
   const IVORY   = '#F7F8FA';
   const SLATE   = '#5A6A7A';
-  const DIVIDER = '#D8E0EA';
-  const TEXT    = '#0B1D3A';
+  const DIVIDER = '#E2E8F0';
+  const TEXT    = '#1F2937';
 
-  // ── Header band ───────────────────────────────────────────────────────────
-  const headerH = 70;
-  const logoSz  = 44;
-  const logoX   = M;
-  const logoY   = 12;
-  const titleX  = logoX + logoSz + 10;
-  const titleW  = w - titleX - M;
+  // ── Header ──────────────────────────────────────────────────────────────────
+  const headerH = 130;
+  const logoSz  = 64;
+  const logoX   = M + 8;
+  const logoY   = 18;
+  const titleX  = logoX + logoSz + 18;
+  const titleW  = w - titleX - M - 8;
 
-  // ── Receipt meta row (under header) ───────────────────────────────────────
-  const metaY = headerH + 14;
-  const metaH = RH;
-  const col1x = M + 8;
-  const col2x = M + Math.floor((w - 2 * M) / 2) + 8;
-  const colW  = Math.floor((w - 2 * M) / 2) - 16;
+  // ── Receipt meta card ───────────────────────────────────────────────────────
+  const metaCardY = headerH + 24;
+  const metaCardH = 76;
+  const metaColW  = Math.floor((w - 2 * M - 24) / 3);
+  const metaCol1X = M + 8;
+  const metaCol2X = metaCol1X + metaColW + 4;
+  const metaCol3X = metaCol2X + metaColW + 4;
+  const metaInnerY = metaCardY + 14;
 
-  // ── Student info section ──────────────────────────────────────────────────
-  const studentY = metaY + metaH + 18;
+  // ── Student info ────────────────────────────────────────────────────────────
+  const studentY = metaCardY + metaCardH + 28;
   const infoColW = Math.floor((w - 2 * M - 16) / 2);
   const infoCol1X = M + 8;
   const infoCol2X = infoCol1X + infoColW + 8;
-  const infoRowH = 22;
-  const infoLabelH = 8;
-  const infoValueH = 12;
-  const infoGap = 2;
+  const infoRowH = 48;
+  const infoLabelH = 12;
+  const infoValueH = 18;
+  const infoGap = 4;
 
-  // ── Fee table ─────────────────────────────────────────────────────────────
-  const tableTop = studentY + 10 + (infoRowH + 8) * 4; // 7 info rows arranged in 2 cols
-  const thY = tableTop;
-  const thH = 28;
-  const rowH = 28;
-  const feeRows = 6;
+  // ── Fee table ───────────────────────────────────────────────────────────────
   const tableX = M + 8;
   const tableW = w - (M + 8) * 2;
-  const descColW = Math.floor(tableW * 0.65);
+  const tableY = studentY + infoRowH * 4 + 28;
+  const thH = 36;
+  const rowH = 34;
+  const feeRows = 6;
+  const descColW = Math.floor(tableW * 0.62);
   const amtColW = tableW - descColW;
-  const descColX = tableX + 4;
-  const amtColX = tableX + descColW + 4;
-  const totalY = thY + thH + feeRows * rowH + 4;
-  const totalH = 32;
+  const descColX = tableX + 12;
+  const amtColX = tableX + descColW + 12;
+  const totalY = tableY + thH + feeRows * rowH + 8;
+  const totalH = 40;
 
-  // ── Footer signature ──────────────────────────────────────────────────────
-  const sigW = 140;
-  const sigH = 44;
+  // ── Footer / signature ──────────────────────────────────────────────────────
+  const sigW = 180;
+  const sigH = 52;
   const sigX = w - M - 8 - sigW;
-  const sigY = h - M - 68;
-  const sigRuleY = sigY + sigH + 2;
-  const sigLabelY = sigRuleY + 6;
+  const sigY = h - M - 100;
+  const sigRuleY = sigY + sigH + 6;
+  const sigLabelY = sigRuleY + 8;
 
-  const footerTextY = sigY + sigH + 24;
+  const footerTextY = sigY + sigH + 34;
 
   return validateAndFix({
     name: 'Premium Fee Receipt', type: 'Fee Receipt',
@@ -1188,167 +1110,176 @@ function buildPremiumFeeReceipt(): StudioState {
     elements: [
 
       // Background
-      bg(IVORY, w, h),
+      bg(WHITE, w, h),
 
-      // Subtle dot pattern overlay
-      { ...bg('#C9A84C08', w, h), x: 0, y: 0, width: w, height: h, zIndex: 0, locked: true, label: 'Dot Pattern' },
-
-      // Border
-      { ...border(w, h, NAVY, 1, 4), zIndex: 1 },
-      { ...border(w, h, GOLD, 0.8, 3),
-        x: 2, y: 2, width: w - 4, height: h - 4, zIndex: 2 },
+      // Soft page border
+      { ...border(w, h, NAVY, 1, 0), zIndex: 1 },
+      { ...border(w, h, GOLD, 0.8, 0),
+        x: 4, y: 4, width: w - 8, height: h - 8, zIndex: 2 },
 
       // Header band
       band(0, 0, w, headerH, NAVY, 'header', 'Header Band'),
 
-      // School logo
+      // Gold accent line under header
+      { ...divEl(0, headerH, w, GOLD, 'header'), height: 3, zIndex: 7 },
+
+      // School logo (contained, square box — no distortion)
       { ...logoEl(logoX, logoY, logoSz, logoSz, 'header'), zIndex: 6 },
 
       // School official name
-      { ...ph(titleX, logoY + 2, titleW, 18,
+      { ...ph(titleX, logoY + 2, titleW, 24,
           '{{school_official_name}}', 'School Official Name',
-          14, WHITE, 'left', 'header'),
+          24, WHITE, 'left', 'header'),
         fontWeight: 'bold', zIndex: 6 },
 
-      // "Fee Collection Receipt" subtitle
-      txt(titleX, logoY + 22, titleW, 16,
-        'Fee Collection Receipt', 11, 'normal', GOLD, 'left', 'header', 'Receipt Title'),
+      // School address / contact
+      { ...ph(titleX, logoY + 30, titleW, 16,
+          '{{school_address}}', 'School Address',
+          11, 'rgba(255,255,255,0.85)', 'left', 'header'),
+        zIndex: 6 },
 
-      // Academic session (top right corner)
-      txt(w - M - 8 - 140, logoY + 4, 60, 12,
-        'Session:', 8, 'bold', GOLD, 'left', 'header', 'Session Label'),
-      { ...ph(w - M - 8 - 78, logoY + 4, 78, 12,
-          '{{academic_session}}', 'Academic Session',
-          8, WHITE, 'left', 'header'), zIndex: 6 },
+      // "Fee Collection Receipt" title — top right
+      { ...ph(w - M - 8 - 230, 20, 230, 22,
+          '{{school_name}}', 'School Name',
+          22, GOLD, 'right', 'header'),
+        fontWeight: 'bold', zIndex: 6 },
+      txt(w - M - 8 - 230, 46, 230, 16,
+        'Fee Collection Receipt', 14, 'normal', WHITE, 'right', 'header', 'Receipt Title'),
 
-      // Receipt meta info
-      txt(col1x, metaY, 80, metaH,
-        'Receipt No:', 10, 'bold', SLATE, 'left', 'body', 'Receipt No Label'),
-      { ...ph(col1x + 84, metaY, colW - 84, metaH,
+      // Receipt meta card
+      rect(tableX, metaCardY, tableW, metaCardH, WHITE, DIVIDER, 1, 6, 'body', 'Meta Card'),
+      txt(metaCol1X, metaInnerY, metaColW - 12, 16,
+        'Receipt No.', 11, 'bold', SLATE, 'left', 'body', 'Receipt No Label'),
+      { ...ph(metaCol1X, metaInnerY + 16, metaColW - 12, 22,
           '{{receipt_number}}', 'Receipt Number',
-          10, NAVY, 'left', 'body'), fontWeight: '600' },
+          16, NAVY, 'left', 'body'), fontWeight: 'bold' },
 
-      txt(col2x, metaY, 80, metaH,
-        'Date:', 10, 'bold', SLATE, 'left', 'body', 'Date Label'),
-      { ...ph(col2x + 84, metaY, colW - 84, metaH,
+      txt(metaCol2X, metaInnerY, metaColW - 12, 16,
+        'Date', 11, 'bold', SLATE, 'left', 'body', 'Date Label'),
+      { ...ph(metaCol2X, metaInnerY + 16, metaColW - 12, 22,
           '{{document_generation_date}}', 'Generation Date',
-          10, NAVY, 'left', 'body') },
+          16, NAVY, 'left', 'body'), fontWeight: 'bold' },
 
-      txt(col1x, metaY + metaH + 6, 80, metaH,
-        'Adm. Ref:', 10, 'bold', SLATE, 'left', 'body', 'Adm Ref Label'),
-      { ...ph(col1x + 84, metaY + metaH + 6, colW - 84, metaH,
-          '{{admission_reference_number}}', 'Admission Reference Number',
-          10, NAVY, 'left', 'body') },
+      txt(metaCol3X, metaInnerY, metaColW - 12, 16,
+        'Session', 11, 'bold', SLATE, 'left', 'body', 'Session Label'),
+      { ...ph(metaCol3X, metaInnerY + 16, metaColW - 12, 22,
+          '{{academic_session}}', 'Academic Session',
+          16, NAVY, 'left', 'body'), fontWeight: 'bold' },
 
       // Student info section title
-      txt(M + 8, studentY, w - (M + 8) * 2, 14,
-        'Student Information', 11, 'bold', NAVY, 'left', 'body', 'Student Info Title'),
-      { ...divEl(M + 8, studentY + 14, 160, GOLD, 'body'), height: 1.5 },
+      txt(M + 8, studentY, w - (M + 8) * 2, 18,
+        'Student Information', 16, 'bold', NAVY, 'left', 'body', 'Student Info Title'),
+      { ...divEl(M + 8, studentY + 18, 180, GOLD, 'body'), height: 2 },
 
       // Student info grid (2 columns × 4 rows)
       // Row 1
-      txt(infoCol1X, studentY + 24, 60, infoLabelH,
-        'Student Name', 8, 'bold', SLATE, 'left', 'body'),
-      { ...ph(infoCol1X, studentY + 24 + infoLabelH + infoGap, infoColW - 8, infoValueH,
+      txt(infoCol1X, studentY + 32, infoColW - 8, infoLabelH,
+        'Student Name', 11, 'bold', SLATE, 'left', 'body'),
+      { ...ph(infoCol1X, studentY + 32 + infoLabelH + infoGap, infoColW - 8, infoValueH,
           '{{student_full_name}}', 'Student Full Name',
-          10, TEXT, 'left', 'body'), fontWeight: 'bold' },
+          14, TEXT, 'left', 'body'), fontWeight: 'bold' },
 
-      txt(infoCol2X, studentY + 24, 60, infoLabelH,
-        'Login ID', 8, 'bold', SLATE, 'left', 'body'),
-      { ...ph(infoCol2X, studentY + 24 + infoLabelH + infoGap, infoColW - 8, infoValueH,
+      txt(infoCol2X, studentY + 32, infoColW - 8, infoLabelH,
+        'Login ID', 11, 'bold', SLATE, 'left', 'body'),
+      { ...ph(infoCol2X, studentY + 32 + infoLabelH + infoGap, infoColW - 8, infoValueH,
           '{{student_login_id}}', 'Student Login ID',
-          10, TEXT, 'left', 'body'), fontWeight: 'bold' },
+          14, TEXT, 'left', 'body'), fontWeight: 'bold' },
 
       // Row 2
-      txt(infoCol1X, studentY + 24 + infoRowH, 60, infoLabelH,
-        'Class / Section', 8, 'bold', SLATE, 'left', 'body'),
-      { ...ph(infoCol1X, studentY + 24 + infoRowH + infoLabelH + infoGap, infoColW - 8, infoValueH,
+      txt(infoCol1X, studentY + 32 + infoRowH, infoColW - 8, infoLabelH,
+        'Class / Section', 11, 'bold', SLATE, 'left', 'body'),
+      { ...ph(infoCol1X, studentY + 32 + infoRowH + infoLabelH + infoGap, infoColW - 8, infoValueH,
           '{{student_class}}', 'Student Class',
-          10, TEXT, 'left', 'body'), fontWeight: 'bold' },
-      { ...ph(infoCol1X + 60, studentY + 24 + infoRowH + infoLabelH + infoGap, infoColW - 68, infoValueH,
+          14, TEXT, 'left', 'body'), fontWeight: 'bold' },
+      { ...ph(infoCol1X + 80, studentY + 32 + infoRowH + infoLabelH + infoGap, infoColW - 88, infoValueH,
           '{{student_section}}', 'Student Section',
-          10, TEXT, 'left', 'body') },
+          14, TEXT, 'left', 'body') },
 
-      txt(infoCol2X, studentY + 24 + infoRowH, 60, infoLabelH,
-        'Verification ID', 8, 'bold', SLATE, 'left', 'body'),
-      { ...ph(infoCol2X, studentY + 24 + infoRowH + infoLabelH + infoGap, infoColW - 8, infoValueH,
+      txt(infoCol2X, studentY + 32 + infoRowH, infoColW - 8, infoLabelH,
+        'Verification ID', 11, 'bold', SLATE, 'left', 'body'),
+      { ...ph(infoCol2X, studentY + 32 + infoRowH + infoLabelH + infoGap, infoColW - 8, infoValueH,
           '{{student_verification_id}}', 'Student Verification ID',
-          10, GOLD, 'left', 'body'), fontWeight: 'bold' },
+          14, GOLD, 'left', 'body'), fontWeight: 'bold' },
 
       // Row 3
-      txt(infoCol1X, studentY + 24 + infoRowH * 2, 60, infoLabelH,
-        'Roll Number', 8, 'bold', SLATE, 'left', 'body'),
-      { ...ph(infoCol1X, studentY + 24 + infoRowH * 2 + infoLabelH + infoGap, infoColW - 8, infoValueH,
+      txt(infoCol1X, studentY + 32 + infoRowH * 2, infoColW - 8, infoLabelH,
+        'Roll Number', 11, 'bold', SLATE, 'left', 'body'),
+      { ...ph(infoCol1X, studentY + 32 + infoRowH * 2 + infoLabelH + infoGap, infoColW - 8, infoValueH,
           '{{student_roll_number}}', 'Roll Number',
-          10, TEXT, 'left', 'body'), fontWeight: 'bold' },
+          14, TEXT, 'left', 'body'), fontWeight: 'bold' },
 
-      txt(infoCol2X, studentY + 24 + infoRowH * 2, 60, infoLabelH,
-        'Admission Ref.', 8, 'bold', SLATE, 'left', 'body'),
-      { ...ph(infoCol2X, studentY + 24 + infoRowH * 2 + infoLabelH + infoGap, infoColW - 8, infoValueH,
+      txt(infoCol2X, studentY + 32 + infoRowH * 2, infoColW - 8, infoLabelH,
+        'Admission Ref.', 11, 'bold', SLATE, 'left', 'body'),
+      { ...ph(infoCol2X, studentY + 32 + infoRowH * 2 + infoLabelH + infoGap, infoColW - 8, infoValueH,
           '{{admission_reference_number}}', 'Admission Reference Number',
-          10, TEXT, 'left', 'body'), fontWeight: 'bold' },
+          14, TEXT, 'left', 'body'), fontWeight: 'bold' },
+
+      // Row 4 - QR verification
+      txt(infoCol2X, studentY + 32 + infoRowH * 3, infoColW - 8, infoLabelH,
+        'Verify Online', 11, 'bold', SLATE, 'left', 'body'),
+      { ...qrEl(infoCol2X, studentY + 32 + infoRowH * 3 + infoLabelH + infoGap, 44, 'body'), zIndex: 6 },
 
       // Fee table header
-      rect(tableX, thY, tableW, thH, NAVY, 'transparent', 0, 0, 'body', 'Table Header'),
-      txt(descColX, thY + 7, descColW - 8, 14,
-        'Fee Description', 10, 'bold', WHITE, 'left', 'body'),
-      txt(amtColX, thY + 7, amtColW - 8, 14,
-        'Amount (₹)', 10, 'bold', WHITE, 'right', 'body'),
+      rect(tableX, tableY, tableW, thH, NAVY, 'transparent', 0, 0, 'body', 'Table Header'),
+      txt(descColX, tableY + 10, descColW - 8, 18,
+        'Fee Description', 13, 'bold', WHITE, 'left', 'body'),
+      txt(amtColX, tableY + 10, amtColW - 8, 18,
+        'Amount (₹)', 13, 'bold', WHITE, 'right', 'body'),
 
       // Tuition Fee row
-      rect(tableX, thY + thH, tableW, rowH - 1, '#FFFFFF', DIVIDER, 0.5, 0, 'body', 'Tuition Row'),
-      txt(descColX, thY + thH + 7, descColW - 8, 14, 'Tuition Fee', 10, '600', TEXT, 'left', 'body'),
-      { ...ph(amtColX, thY + thH + 7, amtColW - 8, 14,
+      rect(tableX, tableY + thH, tableW, rowH - 1, '#FFFFFF', DIVIDER, 0.5, 0, 'body', 'Tuition Row'),
+      txt(descColX, tableY + thH + 8, descColW - 8, 18, 'Tuition Fee', 13, '600', TEXT, 'left', 'body'),
+      { ...ph(amtColX, tableY + thH + 8, amtColW - 8, 18,
           '{{tuition_fee}}', 'Tuition Fee',
-          10, NAVY, 'right', 'body'), fontWeight: '600' },
+          13, NAVY, 'right', 'body'), fontWeight: '600' },
 
       // Admission Fee row
-      rect(tableX, thY + thH + rowH, tableW, rowH - 1, IVORY, DIVIDER, 0.5, 0, 'body', 'Admission Row'),
-      txt(descColX, thY + thH + rowH + 7, descColW - 8, 14, 'Admission Fee', 10, '600', TEXT, 'left', 'body'),
-      { ...ph(amtColX, thY + thH + rowH + 7, amtColW - 8, 14,
+      rect(tableX, tableY + thH + rowH, tableW, rowH - 1, IVORY, DIVIDER, 0.5, 0, 'body', 'Admission Row'),
+      txt(descColX, tableY + thH + rowH + 8, descColW - 8, 18, 'Admission Fee', 13, '600', TEXT, 'left', 'body'),
+      { ...ph(amtColX, tableY + thH + rowH + 8, amtColW - 8, 18,
           '{{admission_fee}}', 'Admission Fee',
-          10, NAVY, 'right', 'body'), fontWeight: '600' },
+          13, NAVY, 'right', 'body'), fontWeight: '600' },
 
       // Examination Fee row
-      rect(tableX, thY + thH + rowH * 2, tableW, rowH - 1, '#FFFFFF', DIVIDER, 0.5, 0, 'body', 'Exam Row'),
-      txt(descColX, thY + thH + rowH * 2 + 7, descColW - 8, 14, 'Examination Fee', 10, '600', TEXT, 'left', 'body'),
-      { ...ph(amtColX, thY + thH + rowH * 2 + 7, amtColW - 8, 14,
+      rect(tableX, tableY + thH + rowH * 2, tableW, rowH - 1, '#FFFFFF', DIVIDER, 0.5, 0, 'body', 'Exam Row'),
+      txt(descColX, tableY + thH + rowH * 2 + 8, descColW - 8, 18, 'Examination Fee', 13, '600', TEXT, 'left', 'body'),
+      { ...ph(amtColX, tableY + thH + rowH * 2 + 8, amtColW - 8, 18,
           '{{examination_fee}}', 'Examination Fee',
-          10, NAVY, 'right', 'body'), fontWeight: '600' },
+          13, NAVY, 'right', 'body'), fontWeight: '600' },
 
       // Discount row
-      rect(tableX, thY + thH + rowH * 3, tableW, rowH - 1, IVORY, DIVIDER, 0.5, 0, 'body', 'Discount Row'),
-      txt(descColX, thY + thH + rowH * 3 + 7, descColW - 8, 14, 'Discount', 10, '600', '#16a34a', 'left', 'body'),
-      { ...ph(amtColX, thY + thH + rowH * 3 + 7, amtColW - 8, 14,
+      rect(tableX, tableY + thH + rowH * 3, tableW, rowH - 1, IVORY, DIVIDER, 0.5, 0, 'body', 'Discount Row'),
+      txt(descColX, tableY + thH + rowH * 3 + 8, descColW - 8, 18, 'Discount', 13, '600', '#16a34a', 'left', 'body'),
+      { ...ph(amtColX, tableY + thH + rowH * 3 + 8, amtColW - 8, 18,
           '{{discount}}', 'Discount',
-          10, '#16a34a', 'right', 'body'), fontWeight: '600' },
+          13, '#16a34a', 'right', 'body'), fontWeight: '600' },
 
       // Previous Due row
-      rect(tableX, thY + thH + rowH * 4, tableW, rowH - 1, '#FFFFFF', DIVIDER, 0.5, 0, 'body', 'Due Row'),
-      txt(descColX, thY + thH + rowH * 4 + 7, descColW - 8, 14, 'Previous Due', 10, '600', '#dc2626', 'left', 'body'),
-      { ...ph(amtColX, thY + thH + rowH * 4 + 7, amtColW - 8, 14,
+      rect(tableX, tableY + thH + rowH * 4, tableW, rowH - 1, '#FFFFFF', DIVIDER, 0.5, 0, 'body', 'Due Row'),
+      txt(descColX, tableY + thH + rowH * 4 + 8, descColW - 8, 18, 'Previous Due', 13, '600', '#dc2626', 'left', 'body'),
+      { ...ph(amtColX, tableY + thH + rowH * 4 + 8, amtColW - 8, 18,
           '{{previous_due}}', 'Previous Due',
-          10, '#dc2626', 'right', 'body'), fontWeight: '600' },
+          13, '#dc2626', 'right', 'body'), fontWeight: '600' },
 
       // Grand total row
       rect(tableX, totalY, tableW, totalH, NAVY, GOLD, 1, 0, 'body', 'Grand Total Row'),
-      txt(descColX, totalY + 8, descColW - 8, 16,
-        'Grand Total', 12, 'bold', WHITE, 'left', 'body'),
-      { ...ph(amtColX, totalY + 8, amtColW - 8, 16,
+      txt(descColX, totalY + 10, descColW - 8, 20,
+        'Grand Total', 15, 'bold', WHITE, 'left', 'body'),
+      { ...ph(amtColX, totalY + 10, amtColW - 8, 20,
           '{{grand_total}}', 'Grand Total',
-          12, GOLD, 'right', 'body'), fontWeight: 'bold' },
+          15, GOLD, 'right', 'body'), fontWeight: 'bold' },
 
       // Principal signature
       { ...divEl(sigX, sigRuleY, sigW, DIVIDER, 'footer'), height: 1 },
       { ...sigEl(sigX, sigY, sigW, sigH, true, 'footer'), zIndex: 6 },
-      txt(sigX, sigLabelY, sigW, 10,
-        'Authorised Signatory', 8, 'bold', SLATE, 'center', 'footer', 'Signatory Label'),
+      txt(sigX, sigLabelY, sigW, 12,
+        'Authorised Signatory', 10, 'bold', SLATE, 'center', 'footer', 'Signatory Label'),
 
       // Footer text
-      txt(M + 8, footerTextY, w - (M + 8) * 2, 12,
-        'This is a computer generated receipt.', 7, 'normal', SLATE, 'center', 'footer', 'Generated Note'),
-      txt(M + 8, footerTextY + 12, w - (M + 8) * 2, 12,
-        'Powered by Inolas Technologies', 7, 'bold', NAVY, 'center', 'footer', 'Powered By'),
+      txt(M + 8, footerTextY, w - (M + 8) * 2, 14,
+        'This is a computer generated receipt.', 9, 'normal', SLATE, 'center', 'footer', 'Generated Note'),
+      txt(M + 8, footerTextY + 14, w - (M + 8) * 2, 14,
+        'Powered by RSBS School ERP', 9, 'bold', NAVY, 'center', 'footer', 'Powered By'),
 
       // Gold baseline bar
       { ...divEl(4, h - 4, w - 8, GOLD, 'footer'), height: 3, zIndex: 7 },
@@ -1437,7 +1368,7 @@ function buildPremiumStudentIDFront(): StudioState {
 
   return validateAndFix({
     name: 'Premium Student ID — Front', type: 'ID Card',
-    page: { size: 'ID Card', orientation: 'portrait', width: w, height: h },
+    page: { size: 'ID Card', orientation: 'landscape', width: w, height: h },
     headerEnabled: true, bodyEnabled: true, footerEnabled: true,
     showGrid: false, gridSize: 'medium', snapToGrid: false, snapToElements: true,
     elements: [
@@ -1570,7 +1501,7 @@ function buildPremiumStudentIDBack(): StudioState {
 
   return validateAndFix({
     name: 'Premium Student ID — Back', type: 'ID Card',
-    page: { size: 'ID Card', orientation: 'portrait', width: w, height: h },
+    page: { size: 'ID Card', orientation: 'landscape', width: w, height: h },
     headerEnabled: true, bodyEnabled: true, footerEnabled: true,
     showGrid: false, gridSize: 'medium', snapToGrid: false, snapToElements: true,
     elements: [
@@ -1749,7 +1680,7 @@ function buildUltraPremiumIDCardFront(): StudioState {
 
   return validateAndFix({
     name: 'Ultra Premium Student ID — Front', type: 'ID Card',
-    page: { size: 'ID Card', orientation: 'portrait', width: w, height: h },
+    page: { size: 'ID Card', orientation: 'landscape', width: w, height: h },
     headerEnabled: true, bodyEnabled: true, footerEnabled: true,
     showGrid: false, gridSize: 'medium', snapToGrid: false, snapToElements: true,
     elements: [
@@ -1942,7 +1873,7 @@ function buildUltraPremiumIDCardBack(): StudioState {
 
   return validateAndFix({
     name: 'Ultra Premium Student ID — Back', type: 'ID Card',
-    page: { size: 'ID Card', orientation: 'portrait', width: w, height: h },
+    page: { size: 'ID Card', orientation: 'landscape', width: w, height: h },
     headerEnabled: true, bodyEnabled: true, footerEnabled: true,
     showGrid: false, gridSize: 'medium', snapToGrid: false, snapToElements: true,
     elements: [
@@ -2145,9 +2076,9 @@ export const TEMPLATE_PRESETS: TemplatePreset[] = [
     id: 'fee-receipt',
     name: 'Fee Receipt',
     category: 'Admin',
-    description: 'Itemised fee collection receipt with school branding and signature.',
-    paperSize: 'A5',
-    tags: ['fee', 'receipt', 'payment'],
+    description: 'Professional, premium A4 fee collection receipt with school branding, itemised fees, grand total and authorised signature.',
+    paperSize: 'A4',
+    tags: ['fee', 'receipt', 'payment', 'premium', 'invoice'],
     build: buildFeeReceipt,
   },
   {

@@ -6,21 +6,23 @@ import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Button } from '@/components/ui/button';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import {
   AlignLeft, AlignCenter, AlignRight, Bold, Italic, Underline,
-  LayoutTemplate, Settings2,
+  LayoutTemplate, Settings2, Upload, ImageOff,
 } from 'lucide-react';
 import type { StudioElement, StudioState, PageSize, Orientation } from './types';
-import { PAGE_PRESETS } from './types';
+import { PAGE_PRESETS, adaptElementsToPage } from './types';
 
 interface PropertiesPanelProps {
   state: StudioState;
   selectedElement: StudioElement | null;
   onUpdateElement: (id: string, patch: Partial<StudioElement>) => void;
   onUpdateState: (patch: Partial<StudioState>) => void;
+  onBackgroundImageChange?: (file: File) => void;
 }
 
 /** Compact row label */
@@ -81,10 +83,18 @@ const Sep: React.FC<{ label: string }> = ({ label }) => (
 );
 
 export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
-  state, selectedElement, onUpdateElement, onUpdateState,
+  state, selectedElement, onUpdateElement, onUpdateState, onBackgroundImageChange,
 }) => {
   const el = selectedElement;
   const upd = (patch: Partial<StudioElement>) => el && onUpdateElement(el.id, patch);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    onBackgroundImageChange?.(file);
+    e.target.value = '';
+  };
 
   /* ── Document Settings (nothing selected) ── */
   if (!el) {
@@ -126,7 +136,11 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
             onValueChange={v => {
               const size = v as PageSize;
               const preset = PAGE_PRESETS[size];
-              onUpdateState({ page: { ...state.page, size, width: preset.w, height: preset.h } });
+              const newPage = { ...state.page, size, width: preset.w, height: preset.h };
+              onUpdateState({
+                page: newPage,
+                elements: adaptElementsToPage(state.page, newPage, state.elements),
+              });
             }}
           >
             <SelectTrigger className="h-8 text-xs rounded-lg bg-muted/30 border-border/60">
@@ -148,13 +162,15 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 key={o}
                 onClick={() => {
                   const p = state.page;
+                  const newPage = {
+                    ...p,
+                    orientation: o,
+                    width:  o === 'landscape' ? Math.max(p.width, p.height) : Math.min(p.width, p.height),
+                    height: o === 'landscape' ? Math.min(p.width, p.height) : Math.max(p.width, p.height),
+                  };
                   onUpdateState({
-                    page: {
-                      ...p,
-                      orientation: o,
-                      width:  o === 'landscape' ? Math.max(p.width, p.height) : Math.min(p.width, p.height),
-                      height: o === 'landscape' ? Math.min(p.width, p.height) : Math.max(p.width, p.height),
-                    }
+                    page: newPage,
+                    elements: adaptElementsToPage(p, newPage, state.elements),
                   });
                 }}
                 className={cn(
@@ -174,11 +190,23 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
           <div className="grid grid-cols-2 gap-2">
             <div>
               <Label className="text-[10px] font-bold text-muted-foreground">W (px)</Label>
-              <NumInput value={state.page.width} onChange={v => onUpdateState({ page: { ...state.page, width: v } })} />
+              <NumInput value={state.page.width} onChange={v => {
+                const newPage = { ...state.page, width: v };
+                onUpdateState({
+                  page: newPage,
+                  elements: adaptElementsToPage(state.page, newPage, state.elements),
+                });
+              }} />
             </div>
             <div>
               <Label className="text-[10px] font-bold text-muted-foreground">H (px)</Label>
-              <NumInput value={state.page.height} onChange={v => onUpdateState({ page: { ...state.page, height: v } })} />
+              <NumInput value={state.page.height} onChange={v => {
+                const newPage = { ...state.page, height: v };
+                onUpdateState({
+                  page: newPage,
+                  elements: adaptElementsToPage(state.page, newPage, state.elements),
+                });
+              }} />
             </div>
           </div>
         )}
@@ -225,6 +253,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
   /* ── Element Properties ── */
   const isText = ['text', 'placeholder'].includes(el.type);
+  const isBackground = el.type === 'background';
 
   return (
     <div className="p-3 space-y-2 overflow-y-auto h-full">
@@ -234,6 +263,49 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
           {el.label || el.type}
         </span>
       </div>
+
+      {/* Background controls */}
+      {isBackground && (
+        <>
+          <Sep label="Background" />
+          <div className="space-y-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1 h-8 text-xs"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Upload className="w-3 h-3 mr-1" />
+                {el.imageUrl ? 'Replace Image' : 'Upload Image'}
+              </Button>
+              {el.imageUrl && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 text-xs"
+                  onClick={() => upd({ imageUrl: undefined })}
+                >
+                  <ImageOff className="w-3 h-3 mr-1" />
+                  Remove
+                </Button>
+              )}
+            </div>
+            <p className="text-[10px] text-muted-foreground">
+              {el.imageUrl
+                ? 'An image is applied. Use the controls to replace or remove it.'
+                : 'Select an image and crop it to the document ratio before applying.'}
+            </p>
+          </div>
+        </>
+      )}
 
       {/* Position & Size */}
       <Sep label="Position" />
@@ -345,8 +417,8 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       )}
 
       {/* Fill / Border */}
-      <Sep label="Fill & Border" />
-      <ColorRow label="Fill" value={el.backgroundColor === 'transparent' ? '#ffffff' : el.backgroundColor} onChange={v => upd({ backgroundColor: v })} />
+      <Sep label={isBackground ? 'Background Color' : 'Fill & Border'} />
+      <ColorRow label={isBackground ? 'Color' : 'Fill'} value={el.backgroundColor === 'transparent' ? '#ffffff' : el.backgroundColor} onChange={v => upd({ backgroundColor: v })} />
       <ColorRow label="Stroke" value={el.borderColor === 'transparent' ? '#000000' : el.borderColor} onChange={v => upd({ borderColor: v })} />
       <Row label="Stroke W">
         <NumInput value={el.borderWidth} onChange={v => upd({ borderWidth: v })} min={0} max={20} />

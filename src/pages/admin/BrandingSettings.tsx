@@ -239,7 +239,7 @@ export default function BrandingSettingsPage() {
       </div>
 
       {/* ── Live Branding Preview ─────────────────────────────────────────── */}
-      <Card className="rounded-3xl border-none shadow-sm overflow-hidden">
+      <Card className="rounded-2xl border-none shadow-sm overflow-hidden">
         <div className="h-2" style={{ background: `linear-gradient(to right, ${watched.theme_color || '#3b82f6'}, ${watched.secondary_color || '#6366f1'})` }} />
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl font-bold">
@@ -258,7 +258,7 @@ export default function BrandingSettingsPage() {
                   : <Building2 className="w-7 h-7 text-muted-foreground opacity-30" />}
               </div>
               <div className="min-w-0">
-                <p className="font-black text-lg leading-tight truncate" style={{ color: watched.theme_color || '#3b82f6' }}>
+                <p className="font-semibold text-lg leading-tight truncate" style={{ color: watched.theme_color || '#3b82f6' }}>
                   {watched.school_name || 'School Name'}
                 </p>
                 {watched.school_short_name && (
@@ -300,7 +300,7 @@ export default function BrandingSettingsPage() {
             {/* Principal sig */}
             <div className="flex items-center gap-4">
               <div>
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Principal Signature</p>
+                <p className="text-xs font-bold text-muted-foreground font-medium mb-1">Principal Signature</p>
                 <div className="w-28 h-12 rounded-lg border bg-background flex items-center justify-center overflow-hidden shadow-inner">
                   {watched.principal_signature_url
                     ? <img src={watched.principal_signature_url} alt="Signature" className="max-w-full max-h-full object-contain" />
@@ -311,7 +311,7 @@ export default function BrandingSettingsPage() {
 
               {/* Theme swatches */}
               <div className="ml-auto text-right space-y-1">
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Theme</p>
+                <p className="text-xs font-bold text-muted-foreground font-medium">Theme</p>
                 <div className="flex items-center gap-2 justify-end">
                   <div className="w-6 h-6 rounded-full border shadow-sm" style={{ background: watched.theme_color || '#3b82f6' }} />
                   <div className="w-6 h-6 rounded-full border shadow-sm" style={{ background: watched.secondary_color || '#6366f1' }} />
@@ -321,7 +321,7 @@ export default function BrandingSettingsPage() {
 
             {/* Incomplete warning */}
             {missingFields.length > 0 && (
-              <div className="flex items-start gap-2 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800">
+              <div className="flex items-start gap-2 p-3 rounded-xl bg-warning/10 border border-amber-200 text-amber-800">
                 <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                 <p className="text-xs font-medium">
                   Incomplete: <span className="font-bold">{missingFields.join(', ')}</span> — templates using these placeholders will show fallback values until filled.
@@ -337,7 +337,7 @@ export default function BrandingSettingsPage() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 
           {/* Basic identity */}
-          <Card className="rounded-3xl border-none shadow-sm bg-card/50 backdrop-blur-sm">
+          <Card className="rounded-2xl border-none shadow-sm bg-card/50 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl font-bold">
                 <Building2 className="w-5 h-5 text-primary" />
@@ -356,21 +356,21 @@ export default function BrandingSettingsPage() {
                 )} />
                 <FormField control={form.control} name="school_short_name" render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold">Short Name <Badge variant="outline" className="ml-1 text-[9px]">Optional</Badge></FormLabel>
+                    <FormLabel className="font-bold">Short Name <Badge variant="outline" className="ml-1 text-xs">Optional</Badge></FormLabel>
                     <FormControl><Input {...field} placeholder="e.g. RSBS" className="h-11 rounded-xl" /></FormControl>
                   </FormItem>
                 )} />
               </div>
               <FormField control={form.control} name="school_motto" render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">School Motto <Badge variant="outline" className="ml-1 text-[9px]">Optional</Badge></FormLabel>
+                  <FormLabel className="font-bold">School Motto <Badge variant="outline" className="ml-1 text-xs">Optional</Badge></FormLabel>
                   <FormControl><Input {...field} placeholder="e.g. Knowledge is Power" className="h-11 rounded-xl" /></FormControl>
                 </FormItem>
               )} />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField control={form.control} name="school_registration_number" render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold">Registration Number <Badge variant="outline" className="ml-1 text-[9px]">Optional</Badge></FormLabel>
+                    <FormLabel className="font-bold">Registration Number <Badge variant="outline" className="ml-1 text-xs">Optional</Badge></FormLabel>
                     <FormControl><Input {...field} placeholder="Govt. registration no." className="h-11 rounded-xl" /></FormControl>
                   </FormItem>
                 )} />
@@ -399,7 +399,7 @@ export default function BrandingSettingsPage() {
           </Card>
 
           {/* Contact & Address */}
-          <Card className="rounded-3xl border-none shadow-sm bg-card/50 backdrop-blur-sm">
+          <Card className="rounded-2xl border-none shadow-sm bg-card/50 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl font-bold">
                 <MapPin className="w-5 h-5 text-primary" />
@@ -449,7 +449,7 @@ export default function BrandingSettingsPage() {
                 )} />
                 <FormField control={form.control} name="school_website" render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold flex items-center gap-1"><Globe className="w-3.5 h-3.5" />Website <Badge variant="outline" className="ml-1 text-[9px]">Optional</Badge></FormLabel>
+                    <FormLabel className="font-bold flex items-center gap-1"><Globe className="w-3.5 h-3.5" />Website <Badge variant="outline" className="ml-1 text-xs">Optional</Badge></FormLabel>
                     <FormControl><Input {...field} placeholder="https://school.edu" className="h-11 rounded-xl" /></FormControl>
                   </FormItem>
                 )} />
@@ -458,7 +458,7 @@ export default function BrandingSettingsPage() {
           </Card>
 
           {/* Visuals */}
-          <Card className="rounded-3xl border-none shadow-sm bg-card/50 backdrop-blur-sm">
+          <Card className="rounded-2xl border-none shadow-sm bg-card/50 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl font-bold">
                 <Building2 className="w-5 h-5 text-primary" />
@@ -489,7 +489,7 @@ export default function BrandingSettingsPage() {
           </Card>
 
           {/* Principal */}
-          <Card className="rounded-3xl border-none shadow-sm bg-card/50 backdrop-blur-sm">
+          <Card className="rounded-2xl border-none shadow-sm bg-card/50 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl font-bold">
                 <UserCircle className="w-5 h-5 text-primary" />
@@ -519,7 +519,7 @@ export default function BrandingSettingsPage() {
           </Card>
 
           {/* Theme & Document */}
-          <Card className="rounded-3xl border-none shadow-sm bg-card/50 backdrop-blur-sm">
+          <Card className="rounded-2xl border-none shadow-sm bg-card/50 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl font-bold">
                 <Palette className="w-5 h-5 text-primary" />
@@ -570,7 +570,7 @@ export default function BrandingSettingsPage() {
 
           {/* Incomplete fields summary */}
           {missingFields.length > 0 && (
-            <div className="flex items-start gap-3 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800">
+            <div className="flex items-start gap-3 p-4 rounded-2xl bg-warning/10 border border-amber-200 text-amber-800">
               <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
               <div>
                 <p className="font-bold text-sm">Incomplete branding fields</p>
@@ -589,7 +589,7 @@ export default function BrandingSettingsPage() {
           )}
 
           <div className="flex justify-end pt-2">
-            <Button type="submit" size="lg" className="h-12 px-10 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-primary/20 active:scale-95 transition-all">
+            <Button type="submit" size="lg" className="h-12 px-10 rounded-2xl font-semibold shadow-xl shadow-primary/20 active:scale-95 transition-all">
               <Save className="w-5 h-5 mr-2" />
               Save Branding Settings
             </Button>

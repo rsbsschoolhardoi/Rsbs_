@@ -395,13 +395,13 @@ export function AppSidebar({ role }: { role: 'admin' | 'student' | 'teacher' | '
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
+            <SidebarMenuButton size="lg" asChild className="rounded-lg">
               <Link to={role === 'admin' ? "/admin" : "/student"}>
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-accent text-accent-foreground shadow-sm">
                   <School className="size-4" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold text-primary">RSBS School</span>
+                  <span className="font-semibold text-foreground">RSBS School</span>
                   <span className="text-xs text-muted-foreground">
                     {role === 'admin' ? 'Admin Panel' : 
                      role === 'teacher' ? 'Teacher Portal' : 
@@ -420,11 +420,12 @@ export function AppSidebar({ role }: { role: 'admin' | 'student' | 'teacher' | '
               <SidebarMenuButton
                 asChild
                 tooltip={item.title}
+                className="rounded-lg transition-colors"
                 isActive={location.pathname === item.url || (item.url.length > 1 && location.pathname.startsWith(item.url))}
               >
                 <Link to={item.url}>
-                  <item.icon />
-                  <span>{item.title}</span>
+                  <item.icon className="size-4" />
+                  <span className="font-medium">{item.title}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -435,24 +436,24 @@ export function AppSidebar({ role }: { role: 'admin' | 'student' | 'teacher' | '
         <SidebarMenu>
           {profile && (
             <SidebarMenuItem className="px-2 py-2">
-              <div className="flex items-center gap-3 px-2 py-1.5 rounded-xl bg-muted/50 border border-muted-foreground/10 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:border-none transition-all duration-300">
-                <Avatar className="h-8 w-8 rounded-lg border-2 border-primary/20 transition-transform hover:scale-105">
-                  <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-bold">
+              <div className="flex items-center gap-3 px-2 py-2 rounded-xl bg-muted/50 border border-border/60 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:border-none transition-all duration-300">
+                <Avatar className="h-8 w-8 rounded-lg border border-border transition-transform hover:scale-105">
+                  <AvatarFallback className="rounded-lg bg-accent/10 text-accent font-semibold">
                     {profile.username?.[0].toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col gap-0.5 min-w-0 group-data-[collapsible=icon]:hidden">
-                  <span className="text-sm font-bold text-foreground truncate max-w-[140px]">
+                  <span className="text-sm font-semibold text-foreground truncate max-w-[140px]">
                     {profile.username}
                   </span>
                   <div className="flex items-center gap-1.5">
                     {profile.role === 'admin' && !profile.email_verified ? (
-                      <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-black uppercase tracking-wider text-amber-600 border-amber-200 bg-amber-50 whitespace-nowrap">
+                      <Badge variant="outline" className="h-4 px-1.5 text-xs font-medium text-warning border-amber-200 bg-warning/10 whitespace-nowrap">
                         <AlertCircle className="w-2.5 h-2.5 mr-0.5" />
                         Unverified
                       </Badge>
                     ) : (
-                      <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest truncate">
+                      <span className="text-xs text-muted-foreground font-medium truncate">
                         {role === 'admin' ? (profile.admin_custom_tag || 'System Administrator') : role === 'teacher' ? 'Faculty Member' : role === 'parent' ? 'Parent Guardian' : 'Enrolled Student'}
                       </span>
                     )}
@@ -465,9 +466,9 @@ export function AppSidebar({ role }: { role: 'admin' | 'student' | 'teacher' | '
           <SidebarMenuItem className="flex items-center justify-between p-2 gap-1">
             <ThemeToggle />
             <LanguageSwitcher />
-            <SidebarMenuButton onClick={() => setLogoutOpen(true)} className="flex-1">
-              <LogOut />
-              <span>Sign Out</span>
+            <SidebarMenuButton onClick={() => setLogoutOpen(true)} className="flex-1 rounded-lg">
+              <LogOut className="size-4" />
+              <span className="font-medium">Sign Out</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

@@ -107,6 +107,51 @@ export const GRID_PX: Record<'small' | 'medium' | 'large', number> = {
   large:  32,
 };
 
+/** Scale existing elements so the layout fits a new page size.
+ *  Uses the page width/height ratio to reposition and resize every element,
+ *  preserving font sizes relative to the smaller dimension so the design
+ *  stays readable and proportional after the page is resized.
+ */
+export function adaptElementsToPage(
+  oldPage: PageConfig,
+  newPage: PageConfig,
+  elements: StudioElement[],
+): StudioElement[] {
+  const scaleX = newPage.width / oldPage.width;
+  const scaleY = newPage.height / oldPage.height;
+  const fontScale = Math.min(scaleX, scaleY);
+
+  return elements.map(el => {
+    // Background always fills the page; all other elements scale proportionally.
+    if (el.type === 'background') {
+      return { ...el, x: 0, y: 0, width: newPage.width, height: newPage.height };
+    }
+
+    const x = el.x * scaleX;
+    const y = el.y * scaleY;
+    const width = el.width * scaleX;
+    const height = el.height * scaleY;
+    const fontSize = el.fontSize != null
+      ? Math.max(4, Math.min(120, el.fontSize * fontScale))
+      : el.fontSize;
+
+    return {
+      ...el,
+      x,
+      y,
+      width,
+      height,
+      fontSize,
+      borderWidth: el.borderWidth != null ? el.borderWidth * fontScale : el.borderWidth,
+      borderRadius: el.borderRadius != null ? el.borderRadius * fontScale : el.borderRadius,
+      padding: el.padding != null ? el.padding * fontScale : el.padding,
+      shadowBlur: el.shadowBlur != null ? el.shadowBlur * fontScale : el.shadowBlur,
+      shadowX: el.shadowX != null ? el.shadowX * fontScale : el.shadowX,
+      shadowY: el.shadowY != null ? el.shadowY * fontScale : el.shadowY,
+    };
+  });
+}
+
 /** Convert StudioElement[] back to legacy TemplateElement[] format */
 export function elementsToLegacy(elements: StudioElement[], section: 'header' | 'body' | 'footer') {
   return elements
@@ -154,17 +199,37 @@ export function elementsToLegacy(elements: StudioElement[], section: 'header' | 
 }
 
 /** Convert legacy TemplateElement[] to StudioElement[] */
+export function defaultLabelFor(el: Partial<StudioElement> & { type: ElementType }, fallbackIndex = 0): string {
+  if (el.label) return el.label;
+  if (el.type === 'background') return 'Background';
+  if (el.type === 'placeholder') return el.placeholder || 'Placeholder';
+  if (el.type === 'text') return el.text || 'Text';
+  if (el.type === 'principal_signature') return 'Principal Signature';
+  if (el.type === 'custom_image') return 'Custom Image';
+  if (el.type === 'qrcode') return 'QR Code';
+  if (el.type === 'barcode') return 'Barcode';
+  return el.type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
 export function legacyToElements(legacy: any[], section: 'header' | 'body' | 'footer'): StudioElement[] {
   return legacy.map((el, i) => {
     const s = el._studio || {};
+    const type = s.elementType || (el.type === 'dynamic' ? 'placeholder' : 'text');
+    const inferred: Partial<StudioElement> = {
+      type,
+      label: s.label,
+      text: el.text,
+      placeholder: el.placeholder,
+      backgroundColor: s.backgroundColor,
+    };
     return {
       id: el.id || Math.random().toString(36).slice(2),
-      type: s.elementType || (el.type === 'dynamic' ? 'placeholder' : 'text'),
+      type,
       x: el.x ?? 0,
       y: el.y ?? 0,
       width: el.width ?? 200,
       height: el.height ?? 40,
-      label: s.label || el.text || el.placeholder || `Element ${i + 1}`,
+      label: defaultLabelFor(inferred as any, i),
       locked: s.locked ?? false,
       hidden: s.hidden ?? false,
       text: el.text,
@@ -252,7 +317,7 @@ export function makeElement(
     shadowY: 0,
     section,
     zIndex,
-    label: type.replace(/_/g, ' ').replace(/^\w/, c => c.toUpperCase()),
+    label: defaultLabelFor({ type, label: overrides.label, text: overrides.text, placeholder: overrides.placeholder }, 0),
     ...base,
     ...overrides,
   };

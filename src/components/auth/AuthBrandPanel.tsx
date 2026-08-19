@@ -39,7 +39,7 @@ export function AuthBrandPanel({
 
       {/* School wordmark */}
       <div className="relative z-10">
-        <span className="text-xs font-bold uppercase tracking-[0.25em] text-white/60">
+        <span className="text-xs font-bold font-medium text-white/60">
           RSBS School
         </span>
       </div>
@@ -47,7 +47,7 @@ export function AuthBrandPanel({
       {/* Central content */}
       <div className="relative z-10 flex flex-col gap-8">
         {/* Icon circle */}
-        <div className="flex items-center justify-center w-20 h-20 rounded-3xl bg-white/15 backdrop-blur-sm border border-white/20 shadow-2xl">
+        <div className="flex items-center justify-center w-20 h-20 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/20 shadow-2xl">
           <div className="text-white [&>svg]:w-10 [&>svg]:h-10">{icon}</div>
         </div>
 
@@ -76,7 +76,7 @@ export function AuthBrandPanel({
 
       {/* Bottom footnote */}
       <div className="relative z-10">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">
+        <p className="text-xs font-bold font-medium text-white/40">
           © {new Date().getFullYear()} RSBS School Management System
         </p>
       </div>

@@ -13,10 +13,10 @@ export default function ApiManagement() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto px-4 pt-4 pb-20">
-      <Card className="border-none shadow-lg bg-primary text-white overflow-hidden relative rounded-[2.5rem] shrink-0">
+      <Card className="border-none shadow-lg bg-primary text-white overflow-hidden relative rounded-2xl shrink-0">
         <CardContent className="p-8 relative z-10">
           <div className="flex items-center gap-6">
-            <div className="w-16 h-16 rounded-3xl bg-white/20 flex items-center justify-center shrink-0">
+            <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center shrink-0">
               <Server className="w-8 h-8 text-white" />
             </div>
             <div className="space-y-1 min-w-0">

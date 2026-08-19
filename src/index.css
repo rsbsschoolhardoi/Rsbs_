@@ -7,98 +7,99 @@
 All colors MUST be HSL.
 */
 
-/* Professional school theme — Ivy League academy palette */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
+/* Premium modern admin theme — Inter/SF-Pro-like system font stack */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
-    /* Professional School — Ivy League academy palette */
-    --background: 220 20% 98%;
-    --foreground: 218 47% 10%;
+    /* Premium Modern — neutral slate + indigo accent */
+    --background: 0 0% 98%;
+    --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 218 47% 10%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 218 47% 10%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 210 52% 24%;
+    --primary: 222 47% 11%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 45% 34%;
+    --secondary: 215 16% 47%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 218 24% 95%;
-    --muted-foreground: 215 20% 40%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
 
-    --accent: 45 75% 47%;
-    --accent-foreground: 218 47% 10%;
+    --accent: 243 75% 59%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 20% 86%;
-    --input: 214 20% 86%;
-    --ring: 210 52% 24%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 243 75% 59%;
 
     --success: 160 84% 39%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
     --info: 212 95% 68%;
-    --info-foreground: 218 47% 10%;
+    --info-foreground: 222 47% 11%;
 
-    --shadow-card: 0 4px 20px hsl(var(--primary) / 0.04);
-    --shadow-hover: 0 8px 24px hsl(var(--primary) / 0.06);
+    --shadow-card: 0 1px 2px hsl(222 47% 11% / 0.04), 0 4px 8px hsl(222 47% 11% / 0.02);
+    --shadow-hover: 0 4px 12px hsl(222 47% 11% / 0.05);
+    --shadow-dropdown: 0 8px 24px hsl(222 47% 11% / 0.08);
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     /* Chart colors */
-    --chart-1: 210 52% 24%;
-    --chart-2: 45 75% 47%;
-    --chart-3: 210 45% 34%;
-    --chart-4: 218 24% 95%;
-    --chart-5: 218 47% 10%;
+    --chart-1: 222 47% 11%;
+    --chart-2: 243 75% 59%;
+    --chart-3: 215 16% 47%;
+    --chart-4: 210 40% 96%;
+    --chart-5: 222 47% 11%;
 
     /* Sidebar */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 218 47% 10%;
-    --sidebar-primary: 210 52% 24%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 243 75% 59%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 218 24% 95%;
-    --sidebar-accent-foreground: 210 52% 24%;
-    --sidebar-border: 214 20% 86%;
-    --sidebar-ring: 210 52% 24%;
+    --sidebar-accent: 243 75% 96%;
+    --sidebar-accent-foreground: 243 75% 45%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 243 75% 59%;
   }
 
   .dark {
-    --background: 217 33% 6%;
+    --background: 222 39% 7%;
     --foreground: 220 20% 93%;
 
-    --card: 215 26% 10%;
+    --card: 220 27% 10%;
     --card-foreground: 220 20% 93%;
 
-    --popover: 215 26% 10%;
+    --popover: 220 27% 10%;
     --popover-foreground: 220 20% 93%;
 
-    --primary: 213 38% 47%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 220 20% 93%;
+    --primary-foreground: 222 47% 11%;
 
-    --secondary: 213 40% 39%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 215 16% 55%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 215 25% 12%;
+    --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
 
-    --accent: 45 70% 52%;
-    --accent-foreground: 217 33% 6%;
+    --accent: 234 100% 73%;
+    --accent-foreground: 222 47% 11%;
 
     --destructive: 0 63% 31%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 22% 21%;
-    --input: 215 22% 21%;
-    --ring: 213 38% 47%;
+    --border: 217 19% 27%;
+    --input: 217 19% 27%;
+    --ring: 234 100% 73%;
 
     --success: 160 60% 45%;
     --success-foreground: 0 0% 100%;
@@ -107,17 +108,18 @@ All colors MUST be HSL.
     --info: 212 80% 60%;
     --info-foreground: 222 47% 11%;
 
-    --shadow-card: 0 4px 20px hsl(var(--primary) / 0.08);
-    --shadow-hover: 0 8px 24px hsl(var(--primary) / 0.12);
+    --shadow-card: 0 1px 2px hsl(0 0% 0% / 0.08), 0 4px 8px hsl(0 0% 0% / 0.06);
+    --shadow-hover: 0 4px 12px hsl(0 0% 0% / 0.12);
+    --shadow-dropdown: 0 8px 24px hsl(0 0% 0% / 0.18);
 
-    --sidebar-background: 215 26% 8%;
+    --sidebar-background: 220 27% 8%;
     --sidebar-foreground: 220 20% 93%;
-    --sidebar-primary: 213 38% 47%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 215 25% 12%;
-    --sidebar-accent-foreground: 220 20% 93%;
-    --sidebar-border: 215 22% 21%;
-    --sidebar-ring: 213 38% 47%;
+    --sidebar-primary: 234 100% 73%;
+    --sidebar-primary-foreground: 222 47% 11%;
+    --sidebar-accent: 234 40% 22%;
+    --sidebar-accent-foreground: 234 100% 80%;
+    --sidebar-border: 217 19% 27%;
+    --sidebar-ring: 234 100% 73%;
   }
 }
 

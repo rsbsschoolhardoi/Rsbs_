@@ -1,13 +1,14 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/db/api';
-import { Student, BrandingSettings, MasterFee, ExtraFee } from '@/types';
+import { Student, BrandingSettings, MasterFee, ExtraFee, FeePayment, FeeReceipt, FeeReceiptData, DocumentTemplate } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +19,8 @@ import * as z from 'zod';
 import { toast } from 'sonner';
 import { Search, CreditCard, Plus, Trash2, Receipt, Loader2, BookOpen, IndianRupee, AlertTriangle, Wallet } from 'lucide-react';
 import { getLocalDateString } from '@/lib/utils';
+import { generateTemplateDocumentPDF } from '@/utils/templateDocumentGenerator';
+import { paymentPeriodToMonths, getAvailablePeriodOptions, expandPeriodMonths } from '@/lib/feePeriods';
 import ReceiptGenerator from '@/components/admin/ReceiptGenerator';
 import MasterFeesPanel from '@/components/admin/MasterFeesPanel';
 import StudentLedger, { StudentLedgerRow } from '@/components/admin/StudentLedger';
@@ -29,15 +32,6 @@ function getCurrentSession(): string {
   const y = now.getFullYear();
   return now.getMonth() >= 3 ? `${y}-${y + 1}` : `${y - 1}-${y}`;
 }
-
-const MONTHS = ['April', 'May', 'June', 'July', 'August', 'September',
-  'October', 'November', 'December', 'January', 'February', 'March'];
-
-const PAYMENT_PERIOD_OPTIONS = [
-  'Full Year',
-  ...MONTHS,
-  'April-June', 'July-September', 'October-December', 'January-March',
-];
 
 const PAYMENT_METHODS = ['Cash', 'UPI', 'Card', 'Net Banking', 'Cheque', 'Bank Draft', 'Online Transfer', 'Other'];
 
@@ -89,6 +83,7 @@ export default function Fees() {
   // ── Student ledger (Receipts tab) ────────────────────────────────────────────
   const [ledgerStudent, setLedgerStudent] = useState<Student | null>(null);
   const [receiptSearch, setReceiptSearch] = useState('');
+  const [ledgerRefreshKey, setLedgerRefreshKey] = useState(0);
 
   // ── Core fee dialog ──────────────────────────────────────────────────────────
   const [coreDialogOpen, setCoreDialogOpen] = useState(false);
@@ -96,12 +91,30 @@ export default function Fees() {
   const [masterFee, setMasterFee] = useState<MasterFee | null>(null);
   const [corePaidTotal, setCorePaidTotal] = useState(0);
   const [coreLoading, setCoreLoading] = useState(false);
+  const [paidMonths, setPaidMonths] = useState<string[]>([]);
+  const [corePeriodOptions, setCorePeriodOptions] = useState<{ label: string; period: string; period_type: 'monthly' | 'combined' | 'annual' }[]>([]);
+  const [isCoreFullyPaid, setIsCoreFullyPaid] = useState(false);
 
   // ── Extra/Other fee dialog ───────────────────────────────────────────────────
   const [extraDialogOpen, setExtraDialogOpen] = useState(false);
   const [extraStudent, setExtraStudent] = useState<Student | null>(null);
   const [extraFees, setExtraFees] = useState<ExtraFee[]>([]);
   const [extraLoading, setExtraLoading] = useState(false);
+
+  // ── Confirmation dialog ─────────────────────────────────────────────────────
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [confirmMode, setConfirmMode] = useState<'core' | 'extra' | null>(null);
+  const [confirmSubmitting, setConfirmSubmitting] = useState(false);
+
+  // ── Last registration revocation state ──────────────────────────────────────
+  const [revokeInfo, setRevokeInfo] = useState<{
+    paymentId: string;
+    receiptNumber?: string;
+    expiresAt: string;
+    studentName: string;
+  } | null>(null);
+  const [revokeTimeLeft, setRevokeTimeLeft] = useState(0);
+  const [revoking, setRevoking] = useState(false);
 
   const coreForm = useForm<CoreValues>({
     resolver: zodResolver(coreSchema),
@@ -153,16 +166,26 @@ export default function Fees() {
     setCoreLoading(true);
     setCoreDialogOpen(true);
     const sess = currentSession;
-    const [{ data: mf }, { data: paid }] = await Promise.all([
+    const [{ data: mf }, { data: paid }, { data: payments }] = await Promise.all([
       api.getMasterFeeForClass(student.class, sess),
       api.getStudentCorePaidTotal(student.id, sess),
+      api.getFeePayments(student.id, sess, true),
     ]);
     setMasterFee(mf);
     setCorePaidTotal(paid);
+    const expanded = expandPeriodMonths(
+      (payments ?? []).filter((p) => !p.is_revoked).flatMap((p) => p.period_months ?? []),
+      sess,
+    );
+    setPaidMonths(expanded);
+    const { options, fullyPaid } = getAvailablePeriodOptions(sess, expanded);
+    setCorePeriodOptions(options);
+    setIsCoreFullyPaid(fullyPaid);
+    const defaultPeriod = options.find((o) => o.period_type === 'annual')?.period ?? options[0]?.period ?? '';
     const remaining = mf ? Math.max(0, mf.total_amount - paid) : 0;
     coreForm.reset({
       session_year: sess,
-      payment_period: 'Full Year',
+      payment_period: defaultPeriod,
       amount: remaining,
       payment_method: 'Cash',
       payment_date: getLocalDateString(),
@@ -208,12 +231,42 @@ export default function Fees() {
       }
     }
 
+    // Parse period and enforce duplicate prevention
+    let parsed;
     try {
-      // Record payment in ledger
-      const { error: payErr } = await api.createFeePayment({
+      parsed = paymentPeriodToMonths(values.payment_period, values.session_year);
+    } catch {
+      toast.error('Invalid payment period selected.');
+      return;
+    }
+    const { data: available, error: availErr } = await api.checkCorePeriodAvailable(
+      coreStudent.id,
+      values.session_year,
+      parsed.period_months
+    );
+    if (availErr || !available) {
+      toast.error(
+        `One or more selected periods are already registered as paid for ${coreStudent.name} in ${values.session_year}.`
+      );
+      return;
+    }
+
+    setConfirmMode('core');
+    setConfirmDialogOpen(true);
+  };
+
+  const executeCoreRegistration = async (values: CoreValues) => {
+    if (!coreStudent) return;
+    const parsed = paymentPeriodToMonths(values.payment_period, values.session_year);
+    setConfirmSubmitting(true);
+    try {
+      // Record payment in ledger (atomic duplicate-safe registration)
+      const { data: payment, error: payErr } = await api.registerFeePayment({
         student_id: coreStudent.id,
         session_year: values.session_year,
         payment_period: values.payment_period,
+        period_type: parsed.period_type,
+        period_months: parsed.period_months,
         amount: values.amount,
         payment_method: values.payment_method,
         payment_date: values.payment_date,
@@ -221,7 +274,7 @@ export default function Fees() {
         notes: values.notes || undefined,
         collected_by: profile?.id,
       });
-      if (payErr) throw payErr;
+      if (payErr || !payment) throw payErr || new Error('Failed to register payment');
 
       // Also persist fee_details + status to student record (legacy compat)
       const { error: stuErr } = await api.updateStudent(coreStudent.id, {
@@ -230,46 +283,53 @@ export default function Fees() {
       });
       if (stuErr) throw stuErr;
 
-      // Auto-receipt if paid
+      let receiptNumber: string | undefined;
       if (values.fee_status === 'Paid' && values.amount > 0) {
-        try {
-          const { data: rcptNum } = await api.generateReceiptNumber();
-          if (rcptNum) {
-            const hash = api.buildReceiptHash(coreStudent.id, [values.payment_period + values.payment_date]);
-            await api.createFeeReceipt({
-              student_id: coreStudent.id,
-              receipt_number: rcptNum,
-              fee_detail_ids: [],
-              items: [{ description: `Core Fees (${values.payment_period})`, amount: values.amount }],
-              total_amount: values.amount,
-              payment_method: values.payment_method,
-              transaction_id: values.transaction_id || undefined,
-              payment_date: values.payment_date,
-              notes: values.notes || 'Core fee payment',
-              generated_by: profile?.id,
-              receipt_hash: hash,
-            });
-            toast.success(`Payment recorded & receipt ${rcptNum} auto-generated`);
-          }
-        } catch {
-          toast.success('Payment recorded — go to the Receipts tab to generate the PDF receipt.');
+        const { receiptNumber: rcptNum, receiptId } = await createReceiptRecord(
+          coreStudent,
+          [payment.id],
+          [{ description: `Core Fees (${values.payment_period})`, amount: values.amount }],
+          values.amount,
+          values.payment_method,
+          values.transaction_id || undefined,
+          values.payment_date,
+          values.notes || 'Core fee payment',
+          parsed.period_type,
+          values.payment_period,
+          parsed.period_months,
+        );
+        receiptNumber = rcptNum;
+        if (receiptId) {
+          await api.updateFeePaymentReceiptId(payment.id, receiptId);
         }
-      } else {
-        toast.success('Core fee payment recorded');
       }
 
       setCoreDialogOpen(false);
       fetchStudents();
+      setLedgerRefreshKey((k) => k + 1);
+      startRevocationWindow(payment, coreStudent.name, receiptNumber);
+      toast.success('Fee registered successfully. Receipt generated.');
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error(err.message || 'Registration failed');
+    } finally {
+      setConfirmSubmitting(false);
+      setConfirmDialogOpen(false);
+      setConfirmMode(null);
     }
   };
 
   // ── Submit: extra/other fee ───────────────────────────────────────────────
   const onExtraSubmit = async (values: ExtraValues) => {
     if (!extraStudent) return;
+    setConfirmMode('extra');
+    setConfirmDialogOpen(true);
+  };
+
+  const executeExtraRegistration = async (values: ExtraValues) => {
+    if (!extraStudent) return;
+    setConfirmSubmitting(true);
     try {
-      const { error } = await api.createExtraFee({
+      const { data: extraFee, error } = await api.createExtraFee({
         student_id: extraStudent.id,
         fee_category: values.fee_category,
         description: values.description,
@@ -281,13 +341,46 @@ export default function Fees() {
         transaction_id: values.transaction_id || undefined,
         collected_by: profile?.id,
       });
-      if (error) throw error;
-      toast.success(`${values.fee_category === 'extra' ? 'Extra' : 'Other'} fee recorded for ${extraStudent.name}`);
+      if (error || !extraFee) throw error || new Error('Failed to register extra fee');
+
+      const { receiptNumber } = await createReceiptRecord(
+        extraStudent,
+        [extraFee.id],
+        [{ description: `[${values.fee_category === 'extra' ? 'Extra' : 'Other'}] ${values.description}`, amount: values.amount }],
+        values.amount,
+        values.payment_method,
+        values.transaction_id || undefined,
+        values.payment_date,
+        `${values.fee_category === 'extra' ? 'Extra' : 'Other'} fee payment`,
+        values.fee_category,
+        values.description,
+        [],
+      );
+
+      toast.success(`${values.fee_category === 'extra' ? 'Extra' : 'Other'} fee recorded for ${extraStudent.name}. Receipt ${receiptNumber} generated.`);
       extraForm.reset({ ...extraForm.getValues(), description: '', reason: '', amount: 0 });
       const { data } = await api.getExtraFees(extraStudent.id, currentSession);
       setExtraFees(data ?? []);
+      setExtraDialogOpen(false);
+      fetchStudents();
+      setLedgerRefreshKey((k) => k + 1);
+      startRevocationWindow({
+        id: extraFee.id,
+        student_id: extraFee.student_id,
+        session_year: extraFee.session_year,
+        payment_period: extraFee.description,
+        amount: extraFee.amount,
+        payment_method: extraFee.payment_method,
+        payment_date: extraFee.payment_date,
+        revocation_expires_at: extraFee.revocation_expires_at,
+        is_revoked: false,
+      } as FeePayment, extraStudent.name, receiptNumber);
     } catch (err: any) {
       toast.error(err.message);
+    } finally {
+      setConfirmSubmitting(false);
+      setConfirmDialogOpen(false);
+      setConfirmMode(null);
     }
   };
 
@@ -304,8 +397,8 @@ export default function Fees() {
   );
 
   const statusBadge = (s: string) => {
-    const cls = s === 'Paid' ? 'bg-green-100 text-green-700' :
-      s === 'Pending' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700';
+    const cls = s === 'Paid' ? 'bg-success/10 text-success' :
+      s === 'Pending' ? 'bg-warning/10 text-warning' : 'bg-destructive/10 text-destructive';
     return <span className={`text-xs px-2 py-1 rounded-full font-medium ${cls}`}>{s}</span>;
   };
 
@@ -325,6 +418,116 @@ export default function Fees() {
   const removeFeeLine = (id: string) => {
     coreForm.setValue('fee_details', coreForm.getValues('fee_details').filter(f => f.id !== id));
   };
+
+  // ── Automatic receipt PDF generation ───────────────────────────────────────
+  async function createReceiptRecord(
+    student: Student,
+    feeDetailIds: string[],
+    items: { description: string; amount: number }[],
+    amount: number,
+    paymentMethod: string,
+    transactionId: string | undefined,
+    paymentDate: string,
+    notes: string,
+    periodType: string,
+    periodValue: string,
+    periodMonths: string[]
+  ): Promise<{ receiptNumber: string; receiptId: string | undefined }> {
+    if (!receiptTemplateId) {
+      throw new Error('No receipt template selected. Choose a Fee Receipt template in the Fees module.');
+    }
+    const { data: template } = await api.getDocumentTemplateById(receiptTemplateId);
+    if (!template) {
+      throw new Error('Selected receipt template not found.');
+    }
+    if (!branding) {
+      throw new Error('School branding not loaded. Please refresh and try again.');
+    }
+
+    const { data: rcptNum } = await api.generateReceiptNumber();
+    if (!rcptNum) throw new Error('Failed to generate receipt number');
+
+    const feeData: FeeReceiptData = {
+      receipt_number: rcptNum,
+      tuition_fee: 0,
+      admission_fee: 0,
+      examination_fee: 0,
+      discount: 0,
+      previous_due: 0,
+      grand_total: amount,
+      period_type: periodType,
+      period_value: periodValue,
+      period_months: periodMonths,
+    };
+
+    const doc = await generateTemplateDocumentPDF({
+      student,
+      branding,
+      template,
+      feeData,
+      filename: `Receipt_${rcptNum}.pdf`,
+    });
+    const pdfBlob = doc.output('blob');
+    const pdfUrl = await api.uploadReceiptPdf(rcptNum, student.id, pdfBlob);
+    if (!pdfUrl) throw new Error('Receipt PDF upload failed');
+
+    const hash = api.buildReceiptHash(student.id, feeDetailIds.sort());
+    const { data: receipt, error: recErr } = await api.createFeeReceipt({
+      student_id: student.id,
+      receipt_number: rcptNum,
+      fee_detail_ids: feeDetailIds,
+      items,
+      total_amount: amount,
+      payment_method: paymentMethod,
+      transaction_id: transactionId,
+      payment_date: paymentDate,
+      notes,
+      generated_by: profile?.id,
+      pdf_url: pdfUrl,
+      receipt_hash: hash,
+      period_type: periodType,
+      period_value: periodValue,
+      period_months: periodMonths,
+    });
+    if (recErr) throw recErr;
+    if (receipt) {
+      await api.createFeeReceiptVisibility(receipt.id);
+    }
+    return { receiptNumber: rcptNum, receiptId: receipt?.id };
+  }
+
+  // ── 2-minute revocation window ─────────────────────────────────────────────
+  function startRevocationWindow(payment: FeePayment, studentName: string, receiptNumber?: string) {
+    const expiresAt = payment.revocation_expires_at || new Date(Date.now() + 120_000).toISOString();
+    setRevokeInfo({ paymentId: payment.id, receiptNumber, expiresAt, studentName });
+  }
+
+  useEffect(() => {
+    if (!revokeInfo) return;
+    const update = () => {
+      const remaining = Math.max(0, Math.ceil((new Date(revokeInfo.expiresAt).getTime() - Date.now()) / 1000));
+      setRevokeTimeLeft(remaining);
+      if (remaining === 0) setRevokeInfo(null);
+    };
+    update();
+    const interval = setInterval(update, 1000);
+    return () => clearInterval(interval);
+  }, [revokeInfo]);
+
+  async function handleRevoke() {
+    if (!revokeInfo) return;
+    setRevoking(true);
+    const { error } = await api.revokeFeeRegistration(revokeInfo.paymentId);
+    setRevoking(false);
+    if (error) {
+      toast.error(error.message || 'Revocation failed');
+      return;
+    }
+    setRevokeInfo(null);
+    fetchStudents();
+    setLedgerRefreshKey((k) => k + 1);
+    toast.success('Registration revoked. The fee period is available again.');
+  }
 
   return (
     <div className="space-y-6">
@@ -471,40 +674,41 @@ export default function Fees() {
                   <CardContent className="p-3">
                     <p className="text-xs text-muted-foreground">Yearly Cap ({coreStudent?.class})</p>
                     <p className="font-bold text-base mt-0.5">
-                      {masterFee ? `₹${masterFee.total_amount.toLocaleString('en-IN')}` : <span className="text-amber-600 text-xs">Not set</span>}
+                      {masterFee ? `₹${masterFee.total_amount.toLocaleString('en-IN')}` : <span className="text-warning text-xs">Not set</span>}
                     </p>
                   </CardContent>
                 </Card>
-                <Card className="bg-green-50 border-0">
+                <Card className="bg-success/10 border-0">
                   <CardContent className="p-3">
                     <p className="text-xs text-muted-foreground">Paid So Far</p>
-                    <p className="font-bold text-base text-green-700 mt-0.5">₹{corePaidTotal.toLocaleString('en-IN')}</p>
+                    <p className="font-bold text-base text-success mt-0.5">₹{corePaidTotal.toLocaleString('en-IN')}</p>
                   </CardContent>
                 </Card>
-                <Card className={`border-0 ${remaining !== null && remaining === 0 ? 'bg-green-50' : 'bg-amber-50'}`}>
+                <Card className={`border-0 ${remaining !== null && remaining === 0 ? 'bg-success/10' : 'bg-warning/10'}`}>
                   <CardContent className="p-3">
                     <p className="text-xs text-muted-foreground">Remaining</p>
-                    <p className={`font-bold text-base mt-0.5 ${remaining === 0 ? 'text-green-700' : 'text-amber-700'}`}>
+                    <p className={`font-bold text-base mt-0.5 ${remaining === 0 ? 'text-success' : 'text-warning'}`}>
                       {remaining !== null ? `₹${remaining.toLocaleString('en-IN')}` : '—'}
                     </p>
                   </CardContent>
                 </Card>
               </div>
 
-              {remaining === 0 && (
-                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm">
-                  <IndianRupee className="w-4 h-4 shrink-0" />
-                  Full yearly fee paid — no outstanding balance for {currentSession}.
-                </div>
-              )}
-
               {!masterFee && (
-                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-sm">
+                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-warning/10 border border-amber-200 text-warning text-sm">
                   <AlertTriangle className="w-4 h-4 shrink-0" />
                   No master fee set for class {coreStudent?.class} in {currentSession}. Go to the Master Fees tab to configure it.
                 </div>
               )}
 
+              {isCoreFullyPaid && (
+                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-success/10 border border-green-200 text-success text-sm">
+                  <IndianRupee className="w-4 h-4 shrink-0" />
+                  Full academic year fee already paid for {currentSession}.
+                </div>
+              )}
+
+              {!isCoreFullyPaid && (
               <Form {...coreForm}>
                 <form onSubmit={coreForm.handleSubmit(onCoreSubmit)} className="space-y-4 py-2">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -522,7 +726,11 @@ export default function Fees() {
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
                           <SelectContent>
-                            {PAYMENT_PERIOD_OPTIONS.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                            {corePeriodOptions.map((opt) => (
+                              <SelectItem key={opt.period} value={opt.period}>
+                                {opt.label}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -640,6 +848,7 @@ export default function Fees() {
                   </DialogFooter>
                 </form>
               </Form>
+            )}
             </>
           )}
         </DialogContent>
@@ -758,7 +967,7 @@ export default function Fees() {
                     {extraFees.map(ef => (
                       <TableRow key={ef.id}>
                         <TableCell className="whitespace-nowrap">
-                          <Badge variant="outline" className={`text-xs ${ef.fee_category === 'extra' ? 'border-orange-300 text-orange-700' : 'border-blue-300 text-blue-700'}`}>
+                          <Badge variant="outline" className={`text-xs ${ef.fee_category === 'extra' ? 'border-orange-300 text-orange-700' : 'border-blue-300 text-info'}`}>
                             {ef.fee_category === 'extra' ? 'Extra' : 'Other'}
                           </Badge>
                         </TableCell>
@@ -799,7 +1008,80 @@ export default function Fees() {
           onOpenChange={o => { if (!o) setLedgerStudent(null); }}
           onGenerateReceipt={stu => { setLedgerStudent(null); setReceiptStudent(stu); }}
           masterFeeTotal={masterFee?.total_amount}
+          refreshKey={ledgerRefreshKey}
         />
+      )}
+
+      {/* ── Confirmation Dialog ── */}
+      <AlertDialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+        <AlertDialogContent className="max-w-[calc(100%-2rem)] md:max-w-lg">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Fee Registration</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-1">
+              <p>
+                You are about to register this fee payment for{' '}
+                <strong>
+                  {confirmMode === 'core' ? coreStudent?.name : extraStudent?.name}
+                </strong>
+                {' '}for{' '}
+                <strong>
+                  {confirmMode === 'core'
+                    ? coreForm.getValues().payment_period
+                    : `${extraForm.getValues().fee_category === 'extra' ? 'Extra' : 'Other'} — ${extraForm.getValues().description}`}
+                </strong>.
+              </p>
+              <p>
+                Once confirmed, the payment will be recorded and a receipt will be generated automatically.
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => { setConfirmDialogOpen(false); setConfirmMode(null); }}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={confirmSubmitting}
+              onClick={() => {
+                if (confirmMode === 'core') {
+                  executeCoreRegistration(coreForm.getValues());
+                } else if (confirmMode === 'extra') {
+                  executeExtraRegistration(extraForm.getValues());
+                }
+              }}
+            >
+              {confirmSubmitting && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
+              Confirm & Register
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* ── Revocation Banner ── */}
+      {revokeInfo && revokeTimeLeft > 0 && (
+        <div className="fixed bottom-4 right-4 z-50 w-[calc(100%-2rem)] md:w-auto">
+          <div className="rounded-lg border bg-card p-4 shadow-lg max-w-md">
+            <div className="flex items-start justify-between gap-4">
+              <div className="text-sm">
+                <p className="font-medium text-success">Fee registered successfully.</p>
+                <p className="text-muted-foreground">Receipt generated.</p>
+                <p className="text-muted-foreground text-xs mt-1">
+                  Revoke available for {Math.floor(revokeTimeLeft / 60).toString().padStart(2, '0')}:
+                  {(revokeTimeLeft % 60).toString().padStart(2, '0')}.
+                </p>
+              </div>
+              <Button
+                size="sm"
+                variant="destructive"
+                disabled={revoking}
+                onClick={handleRevoke}
+                className="shrink-0"
+              >
+                {revoking && <Loader2 className="w-3 h-3 animate-spin mr-1" />}
+                Revoke
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

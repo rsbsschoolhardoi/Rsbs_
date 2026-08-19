@@ -149,12 +149,12 @@ export default function Notices() {
                     <CardTitle className="text-lg flex items-center gap-2">
                       {notice.title}
                       {notice.is_blue_tag && (
-                        <Badge variant="secondary" className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-blue-200">
+                        <Badge variant="secondary" className="bg-info/10 text-info hover:bg-info/10 border-blue-200">
                           <CheckCircle2 className="w-3 h-3 mr-1" /> Verified
                         </Badge>
                       )}
                       {(notice as any).author_role === 'teacher' && (
-                        <Badge variant="outline" className="text-[10px] font-bold border-purple-200 text-purple-600 bg-purple-50">
+                        <Badge variant="outline" className="text-xs font-bold border-purple-200 text-accent bg-purple-50">
                           Teacher Post
                         </Badge>
                       )}

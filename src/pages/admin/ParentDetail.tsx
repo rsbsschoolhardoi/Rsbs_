@@ -72,8 +72,8 @@ export default function ParentDetail() {
       <div className="p-6 space-y-6">
         <Skeleton className="h-10 w-40 rounded-xl" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Skeleton className="h-80 col-span-1 rounded-3xl" />
-          <Skeleton className="h-80 col-span-2 rounded-3xl" />
+          <Skeleton className="h-80 col-span-1 rounded-2xl" />
+          <Skeleton className="h-80 col-span-2 rounded-2xl" />
         </div>
       </div>
     );
@@ -102,7 +102,7 @@ export default function ParentDetail() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Profile Info */}
-        <Card className="rounded-[2rem] overflow-hidden border-muted shadow-lg bg-card col-span-1 h-fit">
+        <Card className="rounded-2xl overflow-hidden border-muted shadow-lg bg-card col-span-1 h-fit">
           <CardHeader className="bg-primary/5 border-b pb-8 pt-10">
             <div className="flex flex-col items-center gap-4">
               <div className="h-24 w-24 rounded-full bg-primary/10 flex items-center justify-center text-primary text-3xl font-bold border-4 border-background shadow-xl">
@@ -127,7 +127,7 @@ export default function ParentDetail() {
                   <Phone className="w-5 h-5" />
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Contact</span>
+                  <span className="text-xs font-medium text-muted-foreground font-bold">Contact</span>
                   <span className="font-semibold text-foreground truncate">{parent.phone || 'N/A'}</span>
                 </div>
               </div>
@@ -136,7 +136,7 @@ export default function ParentDetail() {
                   <Mail className="w-5 h-5" />
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Email</span>
+                  <span className="text-xs font-medium text-muted-foreground font-bold">Email</span>
                   <span className="font-semibold text-foreground truncate">{parent.email || 'N/A'}</span>
                 </div>
               </div>
@@ -145,7 +145,7 @@ export default function ParentDetail() {
                   <Briefcase className="w-5 h-5" />
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Occupation</span>
+                  <span className="text-xs font-medium text-muted-foreground font-bold">Occupation</span>
                   <span className="font-semibold text-foreground truncate">{parent.occupation || 'N/A'}</span>
                 </div>
               </div>
@@ -154,7 +154,7 @@ export default function ParentDetail() {
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Address</span>
+                  <span className="text-xs font-medium text-muted-foreground font-bold">Address</span>
                   <p className="text-sm font-semibold text-foreground leading-snug">{parent.address || 'N/A'}</p>
                 </div>
               </div>
@@ -164,7 +164,7 @@ export default function ParentDetail() {
 
         {/* Linked Students */}
         <div className="col-span-1 md:col-span-2 space-y-6">
-          <Card className="rounded-[2.5rem] border-muted shadow-md overflow-hidden bg-card">
+          <Card className="rounded-2xl border-muted shadow-md overflow-hidden bg-card">
             <CardHeader className="flex flex-row items-center justify-between border-b px-8 py-6">
               <div>
                 <CardTitle className="text-xl flex items-center gap-2">
@@ -250,7 +250,7 @@ export default function ParentDetail() {
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-foreground group-hover:text-primary transition-colors">{student.name}</span>
-                            <Badge variant="outline" className="text-[10px] h-4 border-primary/20 bg-primary/5 text-primary">
+                            <Badge variant="outline" className="text-xs h-4 border-primary/20 bg-primary/5 text-primary">
                               {student.relationship}
                             </Badge>
                           </div>
@@ -284,7 +284,7 @@ export default function ParentDetail() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-[2.5rem] border-muted shadow-md overflow-hidden bg-muted/5 border-dashed">
+          <Card className="rounded-2xl border-muted shadow-md overflow-hidden bg-muted/5 border-dashed">
             <CardContent className="p-8 text-center space-y-4">
               <div className="flex justify-center">
                 <ShieldCheck className="w-12 h-12 text-muted-foreground opacity-30" />

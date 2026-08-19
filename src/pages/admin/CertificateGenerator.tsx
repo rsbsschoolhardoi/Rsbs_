@@ -236,7 +236,7 @@ export default function CertificateGeneratorPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {idCardTemplates.length === 0 ? (
-                <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800">
+                <div className="flex items-start gap-3 p-4 rounded-xl bg-warning/10 border border-amber-200 text-amber-800">
                   <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
                   <div>
                     <p className="font-bold text-sm">No ID Card templates found</p>
@@ -306,7 +306,7 @@ export default function CertificateGeneratorPage() {
                         Ready — both templates selected
                       </span>
                     ) : (
-                      <span className="flex items-center gap-1.5 text-xs text-amber-600 font-semibold">
+                      <span className="flex items-center gap-1.5 text-xs text-warning font-semibold">
                         <AlertCircle className="w-3.5 h-3.5" />
                         Select both templates to enable generation
                       </span>
@@ -378,7 +378,7 @@ export default function CertificateGeneratorPage() {
                           {student.profile_picture_url ? (
                             <img src={student.profile_picture_url} alt={student.name} className="w-full h-full object-cover" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary text-2xl font-black">
+                            <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary text-2xl font-semibold">
                               {student.name.charAt(0)}
                             </div>
                           )}
@@ -402,19 +402,19 @@ export default function CertificateGeneratorPage() {
                           </span>
                           {doc && (
                             <>
-                              <span className="flex items-center gap-1.5 text-blue-600 bg-blue-50 dark:bg-blue-950/20 px-2 py-1 rounded-md">
+                              <span className="flex items-center gap-1.5 text-info bg-info/10 dark:bg-blue-950/20 px-2 py-1 rounded-md">
                                 <FileText className="w-3.5 h-3.5" />
                                 Ref: {doc.reference_number}
                               </span>
-                              <span className="flex items-center gap-1.5 text-green-600 bg-green-50 dark:bg-green-950/20 px-2 py-1 rounded-md">
+                              <span className="flex items-center gap-1.5 text-success bg-success/10 dark:bg-green-950/20 px-2 py-1 rounded-md">
                                 <CheckCircle className="w-3.5 h-3.5" />
                                 Generated: {new Date(doc.generated_at).toLocaleDateString()}
                               </span>
                               <span className={cn(
                                 "flex items-center gap-1.5 px-2 py-1 rounded-md",
                                 (activeTab === 'certificate' ? student.certificate_visible : student.id_card_visible)
-                                  ? "text-green-600 bg-green-50"
-                                  : "text-amber-600 bg-amber-50"
+                                  ? "text-success bg-success/10"
+                                  : "text-warning bg-warning/10"
                               )}>
                                 {(activeTab === 'certificate' ? student.certificate_visible : student.id_card_visible)
                                   ? "Visible to Student"

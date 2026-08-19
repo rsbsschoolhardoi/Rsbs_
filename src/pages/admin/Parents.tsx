@@ -337,7 +337,7 @@ export default function Parents() {
               {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-20 w-full bg-muted rounded-2xl" />)}
             </div>
           ) : displayParents.length === 0 ? (
-            <div className="text-center py-20 bg-muted/20 rounded-3xl border border-dashed">
+            <div className="text-center py-20 bg-muted/20 rounded-2xl border border-dashed">
               <p className="text-muted-foreground">
                 No {activeTab === "active" ? "active" : "pending"} parents found.
               </p>
@@ -366,7 +366,7 @@ export default function Parents() {
                           </div>
                           <div className="flex flex-col">
                             <span className="font-bold text-foreground">{parent.full_name}</span>
-                            <span className="text-[10px] text-muted-foreground">{parent.occupation || 'N/A'}</span>
+                            <span className="text-xs text-muted-foreground">{parent.occupation || 'N/A'}</span>
                           </div>
                         </div>
                       </TableCell>
@@ -382,7 +382,7 @@ export default function Parents() {
                       <TableCell>
                         <div className="flex -space-x-2">
                           {parent.linked_students?.map((s) => (
-                            <Badge key={s.id} variant="secondary" className="text-[10px] h-5">
+                            <Badge key={s.id} variant="secondary" className="text-xs h-5">
                               {s.name}
                             </Badge>
                           ))}
@@ -399,13 +399,13 @@ export default function Parents() {
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" className="h-8 px-2 font-black flex items-center gap-1 border-muted-foreground/20">
+                            <Button variant="outline" size="sm" className="h-8 px-2 font-semibold flex items-center gap-1 border-muted-foreground/20">
                               Manage
                               <ChevronDown className="w-3 h-3 text-muted-foreground" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-52 rounded-xl p-1.5 shadow-xl">
-                            <DropdownMenuLabel className="px-3 py-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Management Options</DropdownMenuLabel>
+                            <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold text-muted-foreground/70">Management Options</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem 
                               className="rounded-lg px-3 py-2 text-sm font-bold flex items-center gap-2"
@@ -532,7 +532,7 @@ export default function Parents() {
                     <FormItem>
                       <FormLabel>Initial PIN (Optional)</FormLabel>
                       <FormControl><Input type="password" maxLength={4} placeholder="4-digit PIN" {...field} onChange={(e) => field.onChange(e.target.value.replace(/[^0-9]/g, ''))} /></FormControl>
-                      <FormDescription className="text-[10px]">Parent must change this on next login.</FormDescription>
+                      <FormDescription className="text-xs">Parent must change this on next login.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -587,7 +587,7 @@ export default function Parents() {
                       <div className="flex items-center justify-between">
                         <FormLabel>Email Address</FormLabel>
                         {!isSecondaryLoginEnabled && (
-                          <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground bg-muted/20">
+                          <Badge variant="outline" className="text-xs font-bold font-medium text-muted-foreground bg-muted/20">
                             Secondary Login: Disabled
                           </Badge>
                         )}
@@ -654,14 +654,14 @@ export default function Parents() {
                       <FormItem className="col-span-full space-y-4">
                         <div>
                           <FormLabel className="text-sm font-bold">Link Student(s)</FormLabel>
-                          <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">Connect parent profile with student records</p>
+                          <p className="text-xs text-muted-foreground font-medium font-medium">Connect parent profile with student records</p>
                         </div>
 
-                        <div className="space-y-4 p-5 rounded-3xl bg-primary/5 border border-primary/10 shadow-inner">
+                        <div className="space-y-4 p-5 rounded-2xl bg-primary/5 border border-primary/10 shadow-inner">
                           {links.length === 0 && (
                             <div className="p-8 text-center border border-dashed border-muted rounded-2xl bg-white/50">
                                <GraduationCap className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-                               <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-widest italic">No students linked. Use search below...</p>
+                               <p className="text-[11px] text-muted-foreground font-medium font-medium italic">No students linked. Use search below...</p>
                             </div>
                           )}
                           
@@ -671,29 +671,29 @@ export default function Parents() {
                               <div key={link.id} className="flex items-center gap-3 bg-white p-3 rounded-2xl border border-muted shadow-sm group">
                                 <Avatar className="h-9 w-9 border-2 border-primary/5">
                                   <AvatarImage src={student?.profile_picture_url || ''} />
-                                  <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-black uppercase">
+                                  <AvatarFallback className="bg-primary/5 text-primary text-xs font-semibold uppercase">
                                     {student?.name[0]}
                                   </AvatarFallback>
                                 </Avatar>
                                 <div className="flex-1 min-w-0">
                                   <p className="text-xs font-bold text-foreground truncate">{student?.name || 'Unknown Student'}</p>
-                                  <p className="text-[9px] text-muted-foreground font-black uppercase tracking-widest">{student?.login_id || 'ID N/A'}</p>
+                                  <p className="text-xs text-muted-foreground font-semibold">{student?.login_id || 'ID N/A'}</p>
                                 </div>
                                 <div className="w-24 shrink-0">
                                   <Select 
                                     value={link.relationship} 
                                     onValueChange={(val) => handleUpdateRelationship(link.id, val)}
                                   >
-                                    <SelectTrigger className="h-8 rounded-lg text-[10px] font-bold px-2 bg-primary/5 border-none shadow-none">
+                                    <SelectTrigger className="h-8 rounded-lg text-xs font-bold px-2 bg-primary/5 border-none shadow-none">
                                       <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent className="rounded-xl shadow-2xl border-primary/10">
-                                      <SelectItem value="Father" className="text-[10px] font-bold">Father</SelectItem>
-                                      <SelectItem value="Mother" className="text-[10px] font-bold">Mother</SelectItem>
-                                      <SelectItem value="Guardian" className="text-[10px] font-bold">Guardian</SelectItem>
-                                      <SelectItem value="Uncle" className="text-[10px] font-bold">Uncle</SelectItem>
-                                      <SelectItem value="Aunt" className="text-[10px] font-bold">Aunt</SelectItem>
-                                      <SelectItem value="Other" className="text-[10px] font-bold">Other</SelectItem>
+                                      <SelectItem value="Father" className="text-xs font-bold">Father</SelectItem>
+                                      <SelectItem value="Mother" className="text-xs font-bold">Mother</SelectItem>
+                                      <SelectItem value="Guardian" className="text-xs font-bold">Guardian</SelectItem>
+                                      <SelectItem value="Uncle" className="text-xs font-bold">Uncle</SelectItem>
+                                      <SelectItem value="Aunt" className="text-xs font-bold">Aunt</SelectItem>
+                                      <SelectItem value="Other" className="text-xs font-bold">Other</SelectItem>
                                     </SelectContent>
                                   </Select>
                                 </div>
@@ -718,7 +718,7 @@ export default function Parents() {
                                     role="combobox"
                                     className="w-full justify-between h-10 rounded-xl bg-white border-muted font-bold text-left hover:border-primary transition-all shadow-sm"
                                   >
-                                    <span className="flex items-center gap-2 text-[11px] uppercase tracking-wider">
+                                    <span className="flex items-center gap-2 text-[11px] font-medium">
                                       <Plus className="h-3 w-3 text-primary" />
                                       Add Student to Parent...
                                     </span>
@@ -745,7 +745,7 @@ export default function Parents() {
                                               </div>
                                               <div className="flex flex-col">
                                                 <span className="font-bold text-[12px] leading-tight">{student.name}</span>
-                                                <span className="text-[8px] text-muted-foreground uppercase font-black tracking-widest leading-tight">{student.login_id}</span>
+                                                <span className="text-xs text-muted-foreground uppercase font-semibold tracking-widest leading-tight">{student.login_id}</span>
                                               </div>
                                             </div>
                                           </CommandItem>
@@ -804,7 +804,7 @@ export default function Parents() {
       </Dialog>
 
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border-none shadow-2xl p-0 overflow-hidden">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border-none shadow-2xl p-0 overflow-hidden">
           <div className="bg-gradient-to-br from-primary/10 via-background to-background p-6">
             <DialogHeader className="mb-6">
               <div className="flex items-center gap-3">
@@ -812,7 +812,7 @@ export default function Parents() {
                   <Eye className="w-5 h-5 text-blue-500" />
                 </div>
                 <div>
-                  <DialogTitle className="text-xl font-black text-foreground">Parent Profile</DialogTitle>
+                  <DialogTitle className="text-xl font-semibold text-foreground">Parent Profile</DialogTitle>
                   <p className="text-xs text-muted-foreground font-medium">Complete record information (Read-Only)</p>
                 </div>
               </div>
@@ -820,20 +820,20 @@ export default function Parents() {
             
             {viewingParent && (
               <div className="space-y-6">
-                <div className="flex items-center gap-5 p-5 rounded-3xl bg-white/50 dark:bg-black/20 border border-white dark:border-white/5 shadow-sm backdrop-blur-sm">
-                  <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary text-2xl font-black border-2 border-white dark:border-black shadow-md">
+                <div className="flex items-center gap-5 p-5 rounded-2xl bg-white/50 dark:bg-black/20 border border-white dark:border-white/5 shadow-sm backdrop-blur-sm">
+                  <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary text-2xl font-semibold border-2 border-white dark:border-black shadow-md">
                     {viewingParent.full_name[0]}
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-2xl font-black text-foreground leading-tight">
+                    <h3 className="text-2xl font-semibold text-foreground leading-tight">
                       {viewingParent.prefix && <span>{viewingParent.prefix} </span>}
                       {viewingParent.full_name}
                     </h3>
                     <div className="flex flex-wrap gap-2 mt-2">
-                      <Badge variant={viewingParent.is_active ? "default" : "secondary"} className="rounded-lg font-bold px-2.5 py-1 uppercase text-[10px] tracking-wider">
+                      <Badge variant={viewingParent.is_active ? "default" : "secondary"} className="rounded-lg font-bold px-2.5 py-1 uppercase text-xs tracking-wider">
                         {viewingParent.is_active ? "Active" : "Pending"}
                       </Badge>
-                      <Badge variant="outline" className="rounded-lg font-mono text-[10px] border-muted-foreground/20">{viewingParent.parent_id}</Badge>
+                      <Badge variant="outline" className="rounded-lg font-mono text-xs border-muted-foreground/20">{viewingParent.parent_id}</Badge>
                     </div>
                   </div>
                 </div>
@@ -848,7 +848,7 @@ export default function Parents() {
                     { label: 'Address', value: viewingParent.address || 'N/A', full: true },
                   ].map((item, i) => (
                     <div key={i} className={cn("p-4 rounded-2xl border border-muted-foreground/5 bg-white/40 dark:bg-black/10 backdrop-blur-sm", item.full && "col-span-full")}>
-                      <Label className="text-[10px] uppercase tracking-widest text-muted-foreground/70 font-black block mb-1">{item.label}</Label>
+                      <Label className="text-xs font-medium text-muted-foreground/70 font-semibold block mb-1">{item.label}</Label>
                       <p className={cn("text-sm font-bold text-foreground", item.mono && "font-mono text-[11px]")}>{item.value}</p>
                     </div>
                   ))}
@@ -856,7 +856,7 @@ export default function Parents() {
 
                 {viewingParent.linked_students && viewingParent.linked_students.length > 0 && (
                   <div className="space-y-3">
-                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground/70 font-black px-1 block">Linked Students</Label>
+                    <Label className="text-xs font-medium text-muted-foreground/70 font-semibold px-1 block">Linked Students</Label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {viewingParent.linked_students.map((student) => (
                         <div key={student.id} className="p-4 rounded-2xl border border-muted-foreground/5 bg-white/40 dark:bg-black/10 backdrop-blur-sm flex items-center justify-between group transition-all hover:border-primary/20">
@@ -866,13 +866,13 @@ export default function Parents() {
                               {student.name}
                             </span>
                             <div className="flex items-center gap-1.5 mt-0.5">
-                              <span className="text-[10px] text-muted-foreground font-mono tracking-tighter uppercase leading-none">{student.login_id}</span>
-                              <Badge variant="outline" className="text-[9px] h-3.5 px-1 border-primary/20 bg-primary/5 text-primary rounded-md uppercase font-black tracking-[0.05em] scale-90 origin-left">
+                              <span className="text-xs text-muted-foreground font-mono tracking-tighter uppercase leading-none">{student.login_id}</span>
+                              <Badge variant="outline" className="text-xs h-3.5 px-1 border-primary/20 bg-primary/5 text-primary rounded-md uppercase font-semibold tracking-[0.05em] scale-90 origin-left">
                                 {(student as any).relationship || 'Son/Daughter'}
                               </Badge>
                             </div>
                           </div>
-                          <Badge variant="secondary" className="text-[10px] px-2 h-7 rounded-lg">
+                          <Badge variant="secondary" className="text-xs px-2 h-7 rounded-lg">
                              {student.class}-{student.section}
                           </Badge>
                         </div>
@@ -886,7 +886,7 @@ export default function Parents() {
               <Button 
                 variant="outline" 
                 onClick={() => setIsViewDialogOpen(false)} 
-                className="rounded-xl font-black uppercase text-[10px] tracking-widest h-10 px-6 border-muted-foreground/20 hover:bg-muted transition-all active:scale-95"
+                className="rounded-xl font-semibold uppercase text-xs tracking-widest h-10 px-6 border-muted-foreground/20 hover:bg-muted transition-all active:scale-95"
               >
                 Close Record
               </Button>
