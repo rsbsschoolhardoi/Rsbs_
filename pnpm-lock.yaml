@@ -150,8 +150,8 @@ importers:
         specifier: 2.0.6
         version: 2.0.6(@supabase/supabase-js@2.103.1)(react-dom@18.3.1(react@18.3.1))(react-router-dom@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       miaoda-react-devkit:
-        specifier: 0.1.1-beta.15
-        version: 0.1.1-beta.15(miaoda-sc-plugin@1.0.63(rolldown-vite@7.3.1(@types/node@24.2.1)(jiti@1.21.7)(yaml@2.8.1)))(rolldown-vite@7.3.1(@types/node@24.2.1)(jiti@1.21.7)(yaml@2.8.1))
+        specifier: 0.1.1-beta.18
+        version: 0.1.1-beta.18(miaoda-sc-plugin@1.0.63(rolldown-vite@7.3.1(@types/node@24.2.1)(jiti@1.21.7)(yaml@2.8.1)))(rolldown-vite@7.3.1(@types/node@24.2.1)(jiti@1.21.7)(yaml@2.8.1))
       miaoda-sc-plugin:
         specifier: 1.0.63
         version: 1.0.63(rolldown-vite@7.3.1(@types/node@24.2.1)(jiti@1.21.7)(yaml@2.8.1))
@@ -2888,8 +2888,8 @@ packages:
       react-dom: '*'
       react-router-dom: '*'
 
-  miaoda-react-devkit@0.1.1-beta.15:
-    resolution: {integrity: sha512-GkJDMiXB6wK35I9IxRDZP5l5F0OeMrBIzuabrHvtnKiZWcTbwZQW4gUCA7ftdlmxVr2xbejSHDUicc/ZOryBUw==}
+  miaoda-react-devkit@0.1.1-beta.18:
+    resolution: {integrity: sha512-xYzjTy4UMelL5jeGCaHadRcW8iUfpE1C0boBLL4JpTsFkYz/1B9Ya8I7GJaNi4lIw6fJlViB+1AN8sjD5ZX1Zw==}
     peerDependencies:
       '@sentry/core': '>=8.0.0'
       '@sentry/react': '>=8.0.0'
@@ -6693,7 +6693,7 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       react-router-dom: 7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
-  miaoda-react-devkit@0.1.1-beta.15(miaoda-sc-plugin@1.0.63(rolldown-vite@7.3.1(@types/node@24.2.1)(jiti@1.21.7)(yaml@2.8.1)))(rolldown-vite@7.3.1(@types/node@24.2.1)(jiti@1.21.7)(yaml@2.8.1)):
+  miaoda-react-devkit@0.1.1-beta.18(miaoda-sc-plugin@1.0.63(rolldown-vite@7.3.1(@types/node@24.2.1)(jiti@1.21.7)(yaml@2.8.1)))(rolldown-vite@7.3.1(@types/node@24.2.1)(jiti@1.21.7)(yaml@2.8.1)):
     dependencies:
       '@babel/parser': 7.29.0
       '@babel/traverse': 7.29.0
